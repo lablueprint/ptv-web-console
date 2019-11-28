@@ -1,5 +1,34 @@
-Start a local Firebase development server:
+### Firebase setup
+
+To connect to the Firebase backend, create a ```.env``` file at the project root and fill it with the appropriate environment variables. These can be found in the Firebase console for the ptv-web-console Firebase app.
+
+```
+REACT_APP_API_KEY=xxxxx
+REACT_APP_AUTH_DOMAIN=xxxxx
+REACT_APP_DATABASE_URL=xxxxx
+REACT_APP_PROJECT_ID=xxxxx
+REACT_APP_STORAGE_BUCKET=xxxxx
+REACT_APP_MESSAGING_SENDER_ID=xxxxx
+REACT_APP_APP_ID=xxxxx
+REACT_APP_MEASUREMENT_ID=xxxxx
+```
+
+If you would like to have a separate Firebase app for development and production, create ```.env.development``` and ```.env.production``` and fill them with the corresponding environment variables. The file corresponding to the specified environment is chosen automatically.
+
+
+### Commands
+
+Start a local development server with hot reloading:
+```npm start```
+
+Create a production build:
+```npm run build```
+
+Run unit tests:
+```npm run test```
+
+Create a production build and deploy to a local Firebase server:
 ```npm run server```
 
-Deploy to production on Firebase Hosting:
-``` npm run deploy```
+Create a production build and deploy on Firebase Hosting:
+```npm run deploy```
