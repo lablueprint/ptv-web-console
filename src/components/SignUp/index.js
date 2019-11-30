@@ -1,10 +1,14 @@
 import React from 'react';
+import SignUpForm from './SignUpForm';
+import SignUpLink from './SignUpLink';
 
-export default function SignUp() {
+export default function SignUpPage() {
   return (
     <div>
       <h1>SignUp</h1>
-      <div>Find me in src/components/SignUp/index.js</div>
+      <SignUpForm />
     </div>
   );
 }
+
+export { SignUpForm, SignUpLink };
