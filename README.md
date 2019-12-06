@@ -40,3 +40,12 @@ By default, the linter will indicate what errors are present before you can comm
 If you wish to run the linter on a specific file, use ```npx eslint [file/directory]``` to invoke it.
 
 For more information, visit: https://eslint.org/docs/user-guide/getting-started
+
+### Prettier setup on VS Code with ESLint
+
+Prettier autoformats your code based on a specified linter.
+
+To enable this for VS Code, install the following VS Code plugins:
+
+ESLint: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+Prettier: https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
