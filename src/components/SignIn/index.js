@@ -2,7 +2,7 @@ import React from 'react';
 import SignInForm from './SignInForm';
 import { SignUpLink } from '../SignUp';
 
-export default function SignIn() {
+export default function SignInPage() {
   return (
     <div>
       <h1>SignIn</h1>

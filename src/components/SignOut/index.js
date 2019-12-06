@@ -1,10 +1,3 @@
-import React from 'react';
+import SignOutButton from './SignOutButton';
 
-export default function SignOut() {
-  return (
-    <div>
-      <h1>SignOut</h1>
-      <div>Find me in src/components/SignOut/index.js</div>
-    </div>
-  );
-}
+export { SignOutButton };
