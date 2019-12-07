@@ -9,8 +9,9 @@ import Navigation from "../Navigation";
 import PasswordForgetPage from "../PasswordForget";
 import SignInPage from "../SignIn";
 import SignUpPage from "../SignUp";
+import { withAuthentication } from "../Session";
 
-export default function App() {
+function App() {
   return (
     <Router>
       <div>
@@ -29,3 +30,5 @@ export default function App() {
     </Router>
   );
 }
+
+export default withAuthentication(App);

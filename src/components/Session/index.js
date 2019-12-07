@@ -1,10 +1,4 @@
-import React from "react";
+import AuthUserContext from "./context";
+import withAuthentication from "./withAuthentication";
 
-export default function Session() {
-  return (
-    <div>
-      <h1>Session</h1>
-      <div>Find me in src/components/Session/index.js</div>
-    </div>
-  );
-}
+export { AuthUserContext, withAuthentication };

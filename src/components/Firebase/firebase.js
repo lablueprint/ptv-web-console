@@ -18,6 +18,7 @@ export default class Firebase {
     firebase.initializeApp(config);
     this.firestore = firebase.firestore();
     this.auth = firebase.auth();
+    this.doSignOut = this.doSignOut.bind(this);
   }
 
   doCreateUserWithEmailAndPassword(email, password) {

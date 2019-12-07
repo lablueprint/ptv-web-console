@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { withFirebase } from "../Firebase";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from "react-router";
+import PropTypes from "prop-types";
+import Firebase, { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
 
 const INITIAL_STATE = {
@@ -21,12 +23,13 @@ class SignUpForm extends Component {
 
   onSubmit(event) {
     const { email, passwordOne } = this.state;
+    const { firebase, history } = this.props;
 
-    this.props.firebase
+    firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(() => {
         this.setState(INITIAL_STATE);
-        this.props.history.push(ROUTES.HOME);
+        history.push(ROUTES.HOME);
       })
       .catch(error => {
         this.setState({ error });
@@ -87,5 +90,10 @@ class SignUpForm extends Component {
     );
   }
 }
+
+SignUpForm.propTypes = {
+  firebase: PropTypes.instanceOf(Firebase).isRequired,
+  history: PropTypes.objectOf(PropTypes.object).isRequired
+};
 
 export default withFirebase(withRouter(SignUpForm));

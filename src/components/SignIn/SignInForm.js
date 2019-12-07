@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { withFirebase } from "../Firebase";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from "react-router";
+import PropTypes from "prop-types";
+import Firebase, { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
 
 const INITIAL_STATE = {
@@ -19,12 +21,13 @@ class SignInForm extends Component {
 
   onSubmit(event) {
     const { email, password } = this.state;
+    const { firebase, history } = this.props;
 
-    this.props.firebase
+    firebase
       .doSignInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState(INITIAL_STATE);
-        this.props.history.push(ROUTES.HOME);
+        history.push(ROUTES.HOME);
       })
       .catch(error => {
         this.setState({ error });
@@ -66,5 +69,10 @@ class SignInForm extends Component {
     );
   }
 }
+
+SignInForm.propTypes = {
+  firebase: PropTypes.instanceOf(Firebase).isRequired,
+  history: PropTypes.objectOf(PropTypes.object).isRequired
+};
 
 export default withRouter(withFirebase(SignInForm));
