@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { withFirebase } from '../Firebase';
-import { withRouter } from 'react-router';
-import * as ROUTES from '../../constants/routes';
+import React, { Component } from "react";
+import { withFirebase } from "../Firebase";
+import { withRouter } from "react-router";
+import * as ROUTES from "../../constants/routes";
 
 const INITIAL_STATE = {
-  email: '',
-  password: '',
+  email: "",
+  password: "",
   error: null
 };
 
@@ -39,25 +39,25 @@ class SignInForm extends Component {
 
   render() {
     const { email, password, error } = this.state;
-    const isInvalid = password === '' || email === '';
+    const isInvalid = password === "" || email === "";
 
     return (
       <form onSubmit={this.onSubmit}>
         <input
-          name='email'
+          name="email"
           value={email}
           onChange={this.onChange}
-          type='text'
-          placeholder='Email Address'
+          type="text"
+          placeholder="Email Address"
         />
         <input
-          name='password'
+          name="password"
           value={password}
           onChange={this.onChange}
-          type='password'
-          placeholder='Password'
+          type="password"
+          placeholder="Password"
         />
-        <button disabled={isInvalid} type='submit'>
+        <button disabled={isInvalid} type="submit">
           Sign In
         </button>
 
@@ -65,6 +65,6 @@ class SignInForm extends Component {
       </form>
     );
   }
-};
+}
 
 export default withRouter(withFirebase(SignInForm));

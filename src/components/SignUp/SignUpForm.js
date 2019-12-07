@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { withFirebase } from '../Firebase';
-import { withRouter } from 'react-router';
-import * as ROUTES from '../../constants/routes';
+import React, { Component } from "react";
+import { withFirebase } from "../Firebase";
+import { withRouter } from "react-router";
+import * as ROUTES from "../../constants/routes";
 
 const INITIAL_STATE = {
-  username: '',
-  email: '',
-  passwordOne: '',
-  passwordTwo: '',
-  error: null,
+  username: "",
+  email: "",
+  passwordOne: "",
+  passwordTwo: "",
+  error: null
 };
 
 class SignUpForm extends Component {
@@ -40,51 +40,45 @@ class SignUpForm extends Component {
   }
 
   render() {
-    const {
-      username,
-      email,
-      passwordOne,
-      passwordTwo,
-      error
-    } = this.state;
+    const { username, email, passwordOne, passwordTwo, error } = this.state;
 
-    const isInvalid = 
+    const isInvalid =
       passwordOne !== passwordTwo ||
-      passwordOne === '' ||
-      email === '' ||
-      username === '';
+      passwordOne === "" ||
+      email === "" ||
+      username === "";
 
     return (
       <form onSubmit={this.onSubmit}>
         <input
-          name='username'
+          name="username"
           value={username}
           onChange={this.onChange}
-          type='text'
-          placeholder='Full Name'
+          type="text"
+          placeholder="Full Name"
         />
         <input
-          name='email'
+          name="email"
           value={email}
           onChange={this.onChange}
-          type='text'
-          placeholder='Email Address'
+          type="text"
+          placeholder="Email Address"
         />
         <input
-          name='passwordOne'
+          name="passwordOne"
           value={passwordOne}
           onChange={this.onChange}
-          type='password'
-          placeholder='Password'
+          type="password"
+          placeholder="Password"
         />
         <input
-          name='passwordTwo'
+          name="passwordTwo"
           value={passwordTwo}
           onChange={this.onChange}
-          type='password'
-          placeholder='Confirm Password'
+          type="password"
+          placeholder="Confirm Password"
         />
-        <button disabled={isInvalid} type='submit'>
+        <button disabled={isInvalid} type="submit">
           Sign Up
         </button>
 

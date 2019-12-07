@@ -1,7 +1,8 @@
 module.exports = {
   env: {
     browser: true,
-    es6: true
+    es6: true,
+    jest: true
   },
   extends: [
     "plugin:react/recommended",
@@ -22,6 +23,8 @@ module.exports = {
   },
   plugins: ["react"],
   rules: {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "react/jsx-filename-extension": [1, { extensions: [".js", ".jsx"] }], // we don't care that .js files contain JSX code
+    "react/jsx-props-no-spreading": "off" // HOCs should have prop spreading
   }
 };
