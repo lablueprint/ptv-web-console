@@ -4,12 +4,14 @@ import { withRouter } from "react-router";
 import PropTypes from "prop-types";
 import Firebase, { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
+import ROLES from "../../constants/roles";
 
 const INITIAL_STATE = {
   username: "",
   email: "",
   passwordOne: "",
   passwordTwo: "",
+  role: "",
   error: null
 };
 
@@ -22,11 +24,17 @@ class SignUpForm extends Component {
   }
 
   onSubmit(event) {
-    const { email, passwordOne } = this.state;
+    const { email, passwordOne, role } = this.state;
     const { firebase, history } = this.props;
 
     firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
+      .then(authUser => {
+        return firebase.user(authUser.user.uid).set({
+          email,
+          role
+        });
+      })
       .then(() => {
         this.setState(INITIAL_STATE);
         history.push(ROUTES.HOME);
@@ -43,13 +51,35 @@ class SignUpForm extends Component {
   }
 
   render() {
-    const { username, email, passwordOne, passwordTwo, error } = this.state;
+    const {
+      username,
+      email,
+      passwordOne,
+      passwordTwo,
+      role,
+      error
+    } = this.state;
 
     const isInvalid =
       passwordOne !== passwordTwo ||
       passwordOne === "" ||
       email === "" ||
-      username === "";
+      username === "" ||
+      role === "";
+
+    const roleRadioButtons = Object.entries(ROLES).map((kv, i) => (
+      <label htmlFor={i}>
+        <input
+          name="role"
+          id={i}
+          key={kv[0]}
+          type="radio"
+          onChange={this.onChange}
+          value={kv[0]}
+        />
+        {kv[0]}
+      </label>
+    ));
 
     return (
       <form onSubmit={this.onSubmit}>
@@ -81,10 +111,10 @@ class SignUpForm extends Component {
           type="password"
           placeholder="Confirm Password"
         />
+        {roleRadioButtons}
         <button disabled={isInvalid} type="submit">
           Sign Up
         </button>
-
         {error && <p>{error.message}</p>}
       </form>
     );

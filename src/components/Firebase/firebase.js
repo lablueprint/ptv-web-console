@@ -40,4 +40,14 @@ export default class Firebase {
   doPasswordUpdate(password) {
     return this.auth.currentUser.updatePassword(password);
   }
+
+  // *** User API ***
+
+  user(uid) {
+    return this.firestore.collection("users").doc(uid);
+  }
+
+  users() {
+    return this.firestore.collection("users");
+  }
 }
