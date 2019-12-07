@@ -1,15 +1,15 @@
-import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-import Navigation from '../Navigation';
-import LandingPage from '../Landing';
-import SignUpPage from '../SignUp';
-import SignInPage from '../SignIn';
-import PasswordForgetPage from '../PasswordForget';
-import HomePage from '../Home';
-import AccountPage from '../Account';
-import AdminPage from '../Admin';
-import * as ROUTES from '../../constants/routes';
-import { withAuthentication } from '../Session';
+import React from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import * as ROUTES from "../../constants/routes";
+import AccountPage from "../Account";
+import AdminPage from "../Admin";
+import HomePage from "../Home";
+import LandingPage from "../Landing";
+import Navigation from "../Navigation";
+import PasswordForgetPage from "../PasswordForget";
+import SignInPage from "../SignIn";
+import SignUpPage from "../SignUp";
+import { withAuthentication } from "../Session";
 
 function App() {
   return (

@@ -1,6 +1,6 @@
-import React from 'react';
-import SignInForm from './SignInForm';
-import { SignUpLink } from '../SignUp';
+import React from "react";
+import SignInForm from "./SignInForm";
+import { SignUpLink } from "../SignUp";
 
 export default function SignInPage() {
   return (

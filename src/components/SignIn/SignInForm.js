@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
-import { withFirebase } from '../Firebase';
-import { withRouter } from 'react-router';
-import * as ROUTES from '../../constants/routes';
+import React, { Component } from "react";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { withRouter } from "react-router";
+import PropTypes from "prop-types";
+import Firebase, { withFirebase } from "../Firebase";
+import * as ROUTES from "../../constants/routes";
 
 const INITIAL_STATE = {
-  email: '',
-  password: '',
+  email: "",
+  password: "",
   error: null
 };
 
@@ -19,12 +21,13 @@ class SignInForm extends Component {
 
   onSubmit(event) {
     const { email, password } = this.state;
+    const { firebase, history } = this.props;
 
-    this.props.firebase
+    firebase
       .doSignInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState(INITIAL_STATE);
-        this.props.history.push(ROUTES.HOME);
+        history.push(ROUTES.HOME);
       })
       .catch(error => {
         this.setState({ error });
@@ -39,25 +42,25 @@ class SignInForm extends Component {
 
   render() {
     const { email, password, error } = this.state;
-    const isInvalid = password === '' || email === '';
+    const isInvalid = password === "" || email === "";
 
     return (
       <form onSubmit={this.onSubmit}>
         <input
-          name='email'
+          name="email"
           value={email}
           onChange={this.onChange}
-          type='text'
-          placeholder='Email Address'
+          type="text"
+          placeholder="Email Address"
         />
         <input
-          name='password'
+          name="password"
           value={password}
           onChange={this.onChange}
-          type='password'
-          placeholder='Password'
+          type="password"
+          placeholder="Password"
         />
-        <button disabled={isInvalid} type='submit'>
+        <button disabled={isInvalid} type="submit">
           Sign In
         </button>
 
@@ -65,6 +68,11 @@ class SignInForm extends Component {
       </form>
     );
   }
+}
+
+SignInForm.propTypes = {
+  firebase: PropTypes.instanceOf(Firebase).isRequired,
+  history: PropTypes.objectOf(PropTypes.object).isRequired
 };
 
 export default withRouter(withFirebase(SignInForm));
