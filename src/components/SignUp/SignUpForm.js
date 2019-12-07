@@ -93,7 +93,9 @@ class SignUpForm extends Component {
 
 SignUpForm.propTypes = {
   firebase: PropTypes.instanceOf(Firebase).isRequired,
-  history: PropTypes.objectOf(PropTypes.object).isRequired
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired
+  }).isRequired
 };
 
 export default withFirebase(withRouter(SignUpForm));

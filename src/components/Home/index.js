@@ -1,10 +1,15 @@
 import React from "react";
+import { withAuthorization } from "../Session";
 
-export default function Home() {
+function HomePage() {
   return (
     <div>
       <h1>Home</h1>
-      <div>Find me in src/components/Home/index.js</div>
+      <p>The Home Page is accessible by every signed in user.</p>
     </div>
   );
 }
+
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(HomePage);
