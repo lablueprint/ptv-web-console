@@ -1,10 +1,13 @@
 import React from "react";
+import { PasswordForgetForm } from "../PasswordForget";
+import { PasswordChangeForm } from "../PasswordChange";
 
-export default function Account() {
+export default function AccountPage() {
   return (
     <div>
       <h1>Account</h1>
-      <div>Find me in src/components/Account/index.js</div>
+      <PasswordForgetForm />
+      <PasswordChangeForm />
     </div>
   );
 }

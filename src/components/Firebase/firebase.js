@@ -32,4 +32,12 @@ export default class Firebase {
   doSignOut() {
     return this.auth.signOut();
   }
+
+  doPasswordReset(email) {
+    return this.auth.sendPasswordResetEmail(email);
+  }
+
+  doPasswordUpdate(password) {
+    return this.auth.currentUser.updatePassword(password);
+  }
 }

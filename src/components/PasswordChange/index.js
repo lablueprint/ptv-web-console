@@ -1,10 +1,4 @@
-import React from "react";
+import PasswordChangeForm from "./PasswordChangeForm";
 
-export default function PasswordChange() {
-  return (
-    <div>
-      <h1>PasswordChange</h1>
-      <div>Find me in src/components/PasswordChange/index.js</div>
-    </div>
-  );
-}
+// eslint-disable-next-line import/prefer-default-export
+export { PasswordChangeForm };
