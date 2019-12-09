@@ -20,7 +20,7 @@ class DisplayPostPage extends Component {
       .get()
       .then(snapshot => {
         this.setState({
-          posts: snapshot.docs.map(doc => doc.data())
+          posts: snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
         });
       });
   }

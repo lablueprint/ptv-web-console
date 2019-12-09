@@ -25,5 +25,11 @@ export default function UsersList(props) {
 }
 
 UsersList.propTypes = {
-  users: PropTypes.arrayOf(PropTypes.object).isRequired
+  users: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+      role: PropTypes.string.isRequired
+    })
+  ).isRequired
 };

@@ -11,9 +11,6 @@ export default function NavigationNonAuth() {
       <li>
         <Link to={ROUTES.SIGN_IN}>Sign In</Link>
       </li>
-      <li>
-        <Link to={ROUTES.FORUM}>Forum</Link>
-      </li>
     </ul>
   );
 }
