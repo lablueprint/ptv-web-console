@@ -9,6 +9,7 @@ import Navigation from "../Navigation";
 import PasswordForgetPage from "../PasswordForget";
 import SignInPage from "../SignIn";
 import SignUpPage from "../SignUp";
+import UsersPage from "../Users";
 import { withAuthentication } from "../Session";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path={ROUTES.HOME} component={HomePage} />
         <Route path={ROUTES.ACCOUNT} component={AccountPage} />
         <Route path={ROUTES.ADMIN} component={AdminPage} />
+        <Route path={ROUTES.USERS} component={UsersPage} />
       </div>
     </Router>
   );
