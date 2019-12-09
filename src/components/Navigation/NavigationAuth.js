@@ -17,6 +17,8 @@ export default function NavigationAuth() {
       </li>
       <li>
         <Link to={ROUTES.FORUM}>Forum</Link>
+        {/* TODO: protect this route so only admins can see it */}
+        <Link to={ROUTES.USERS}>Users</Link>
       </li>
       <li>
         <SignOutButton />

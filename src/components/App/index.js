@@ -10,6 +10,7 @@ import PasswordForgetPage from "../PasswordForget";
 import SignInPage from "../SignIn";
 import SignUpPage from "../SignUp";
 import ForumPage from "../Forum";
+import UsersPage from "../Users";
 import { withAuthentication } from "../Session";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
         <Route path={ROUTES.ACCOUNT} component={AccountPage} />
         <Route path={ROUTES.ADMIN} component={AdminPage} />
         <Route path={ROUTES.FORUM} component={ForumPage} />
+        <Route path={ROUTES.USERS} component={UsersPage} />
       </div>
     </Router>
   );
