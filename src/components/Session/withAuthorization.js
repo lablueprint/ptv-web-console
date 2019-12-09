@@ -36,7 +36,9 @@ const withAuthorization = condition => Component => {
 
   WithAuthorization.propTypes = {
     firebase: PropTypes.instanceOf(Firebase).isRequired,
-    history: PropTypes.objectOf(PropTypes.object).isRequired
+    history: PropTypes.shape({
+      push: PropTypes.func.isRequired
+    }).isRequired
   };
 
   return withRouter(withFirebase(WithAuthorization));
