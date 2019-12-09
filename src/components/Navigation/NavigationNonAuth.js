@@ -12,7 +12,7 @@ export default function NavigationNonAuth() {
         <Link to={ROUTES.SIGN_IN}>Sign In</Link>
       </li>
       <li>
-        <Link to ={ROUTES.FORUM}>Forum</Link>
+        <Link to={ROUTES.FORUM}>Forum</Link>
       </li>
     </ul>
   );
