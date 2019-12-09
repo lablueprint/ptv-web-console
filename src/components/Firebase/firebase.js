@@ -42,12 +42,24 @@ export default class Firebase {
   }
 
   // *** User API ***
-
   user(uid) {
     return this.firestore.collection("users").doc(uid);
   }
 
   users() {
     return this.firestore.collection("users");
+  }
+
+  // *** Forum Post API ***
+  forumPost(forumPostId) {
+    return this.firestore.collection("forum_posts").doc(forumPostId);
+  }
+
+  forumPosts() {
+    return this.firestore.collection("forum_posts");
+  }
+
+  createForumPost(forumPost) {
+    return this.firestore.collection("forum_posts").add(forumPost);
   }
 }

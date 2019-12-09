@@ -16,6 +16,9 @@ export default function NavigationAuth() {
         <Link to={ROUTES.ACCOUNT}>Account</Link>
       </li>
       <li>
+        <Link to={ROUTES.FORUM}>Forum</Link>
+      </li>
+      <li>
         <SignOutButton />
       </li>
     </ul>
