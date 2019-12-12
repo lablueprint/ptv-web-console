@@ -1,9 +1,9 @@
-import PropTypes from "prop-types";
-import React from "react";
+import PropTypes from 'prop-types';
+import React from 'react';
 
 export default function UsersList(props) {
   const { users } = props;
-  const userData = users.map(user => (
+  const userData = users.map((user) => (
     <tr key={user.id}>
       <td>{user.id}</td>
       <td>{user.email}</td>
@@ -29,7 +29,7 @@ UsersList.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
-      role: PropTypes.string.isRequired
-    })
-  ).isRequired
+      role: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
 };

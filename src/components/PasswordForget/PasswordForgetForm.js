@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Firebase, { withFirebase } from "../Firebase";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Firebase, { withFirebase } from '../Firebase';
 
 const INITIAL_STATE = {
-  email: "",
-  error: null
+  email: '',
+  error: null,
 };
 
 class PasswordForgetForm extends Component {
@@ -23,7 +23,7 @@ class PasswordForgetForm extends Component {
       .then(() => {
         this.setState(INITIAL_STATE);
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({ error });
       });
     event.preventDefault();
@@ -35,7 +35,7 @@ class PasswordForgetForm extends Component {
 
   render() {
     const { email, error } = this.state;
-    const isInvalid = email === "";
+    const isInvalid = email === '';
     return (
       <form onSubmit={this.onSubmit}>
         <input
@@ -56,7 +56,7 @@ class PasswordForgetForm extends Component {
 }
 
 PasswordForgetForm.propTypes = {
-  firebase: PropTypes.instanceOf(Firebase).isRequired
+  firebase: PropTypes.instanceOf(Firebase).isRequired,
 };
 
 export default withFirebase(PasswordForgetForm);

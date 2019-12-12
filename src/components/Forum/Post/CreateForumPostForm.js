@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Firebase, { withFirebase } from "../../Firebase";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Firebase, { withFirebase } from '../../Firebase';
 
 const INITIAL_STATE = {
-  uid: "",
-  title: "",
-  body: "",
+  uid: '',
+  title: '',
+  body: '',
   approved: false,
-  error: null
+  error: null,
 };
 
 class CreateForumPostForm extends Component {
@@ -27,7 +27,7 @@ class CreateForumPostForm extends Component {
       .then(() => {
         this.setState(INITIAL_STATE);
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({ error });
       });
   }
@@ -47,13 +47,7 @@ class CreateForumPostForm extends Component {
           onChange={this.onChange}
           placeholder="Title"
         />
-        <input
-          name="body"
-          type="body"
-          value={body}
-          onChange={this.onChange}
-          placeholder="Body"
-        />
+        <input name="body" type="body" value={body} onChange={this.onChange} placeholder="Body" />
         <button type="submit">Submit Post</button>
 
         {error && <p>{error.message}</p>}
@@ -64,7 +58,7 @@ class CreateForumPostForm extends Component {
 
 CreateForumPostForm.propTypes = {
   firebase: PropTypes.instanceOf(Firebase).isRequired,
-  uid: PropTypes.string.isRequired
+  uid: PropTypes.string.isRequired,
 };
 
 export default withFirebase(CreateForumPostForm);

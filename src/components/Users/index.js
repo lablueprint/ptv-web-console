@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Firebase, { withFirebase } from "../Firebase";
-import UsersList from "./UsersList";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Firebase, { withFirebase } from '../Firebase';
+import UsersList from './UsersList';
 
 const INITIAL_STATE = {
-  users: []
+  users: [],
 };
 
 class UsersPage extends Component {
@@ -18,14 +18,14 @@ class UsersPage extends Component {
     firebase
       .users()
       .get()
-      .then(snapshot => {
+      .then((snapshot) => {
         this.setState({
-          users: snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+          users: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
         });
       })
-      .catch(err => {
+      .catch((err) => {
         // TODO: implement flash messages
-        console.log("Error getting documents", err);
+        console.log('Error getting documents', err);
       });
   }
 
@@ -41,7 +41,7 @@ class UsersPage extends Component {
 }
 
 UsersPage.propTypes = {
-  firebase: PropTypes.instanceOf(Firebase).isRequired
+  firebase: PropTypes.instanceOf(Firebase).isRequired,
 };
 
 export default withFirebase(UsersPage);

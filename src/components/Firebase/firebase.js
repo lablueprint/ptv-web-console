@@ -1,6 +1,6 @@
-import * as firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/auth";
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/auth';
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -10,7 +10,7 @@ const config = {
   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
 export default class Firebase {
@@ -43,23 +43,23 @@ export default class Firebase {
 
   // *** User API ***
   user(uid) {
-    return this.firestore.collection("users").doc(uid);
+    return this.firestore.collection('users').doc(uid);
   }
 
   users() {
-    return this.firestore.collection("users");
+    return this.firestore.collection('users');
   }
 
   // *** Forum Post API ***
   forumPost(forumPostId) {
-    return this.firestore.collection("forum_posts").doc(forumPostId);
+    return this.firestore.collection('forum_posts').doc(forumPostId);
   }
 
   forumPosts() {
-    return this.firestore.collection("forum_posts");
+    return this.firestore.collection('forum_posts');
   }
 
   createForumPost(forumPost) {
-    return this.firestore.collection("forum_posts").add(forumPost);
+    return this.firestore.collection('forum_posts').add(forumPost);
   }
 }

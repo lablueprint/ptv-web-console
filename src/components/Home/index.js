@@ -1,5 +1,5 @@
-import React from "react";
-import { withAuthorization } from "../Session";
+import React from 'react';
+import { withAuthorization } from '../Session';
 
 function HomePage() {
   return (
@@ -10,6 +10,6 @@ function HomePage() {
   );
 }
 
-const condition = authUser => !!authUser;
+const condition = (authUser) => !!authUser;
 
 export default withAuthorization(condition)(HomePage);

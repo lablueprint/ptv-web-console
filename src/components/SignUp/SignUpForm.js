@@ -1,18 +1,18 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { withRouter } from "react-router";
-import PropTypes from "prop-types";
-import Firebase, { withFirebase } from "../Firebase";
-import * as ROUTES from "../../constants/routes";
-import ROLES from "../../constants/roles";
+import { withRouter } from 'react-router';
+import PropTypes from 'prop-types';
+import Firebase, { withFirebase } from '../Firebase';
+import * as ROUTES from '../../constants/routes';
+import ROLES from '../../constants/roles';
 
 const INITIAL_STATE = {
-  username: "",
-  email: "",
-  passwordOne: "",
-  passwordTwo: "",
-  role: "",
-  error: null
+  username: '',
+  email: '',
+  passwordOne: '',
+  passwordTwo: '',
+  role: '',
+  error: null,
 };
 
 class SignUpForm extends Component {
@@ -29,17 +29,15 @@ class SignUpForm extends Component {
 
     firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
-      .then(authUser => {
-        return firebase.user(authUser.user.uid).set({
-          email,
-          role
-        });
-      })
+      .then((authUser) => firebase.user(authUser.user.uid).set({
+        email,
+        role,
+      }))
       .then(() => {
         this.setState(INITIAL_STATE);
         history.push(ROUTES.HOME);
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({ error });
       });
 
@@ -57,15 +55,14 @@ class SignUpForm extends Component {
       passwordOne,
       passwordTwo,
       role,
-      error
+      error,
     } = this.state;
 
-    const isInvalid =
-      passwordOne !== passwordTwo ||
-      passwordOne === "" ||
-      email === "" ||
-      username === "" ||
-      role === "";
+    const isInvalid = passwordOne !== passwordTwo
+      || passwordOne === ''
+      || email === ''
+      || username === ''
+      || role === '';
 
     const roleRadioButtons = Object.entries(ROLES).map((kv, i) => (
       <label htmlFor={i}>
@@ -124,8 +121,8 @@ class SignUpForm extends Component {
 SignUpForm.propTypes = {
   firebase: PropTypes.instanceOf(Firebase).isRequired,
   history: PropTypes.shape({
-    push: PropTypes.func.isRequired
-  }).isRequired
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default withFirebase(withRouter(SignUpForm));

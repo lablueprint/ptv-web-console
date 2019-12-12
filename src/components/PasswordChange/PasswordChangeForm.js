@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Firebase, { withFirebase } from "../Firebase";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Firebase, { withFirebase } from '../Firebase';
 
 const INITIAL_STATE = {
-  passwordOne: "",
-  passwordTwo: "",
-  error: null
+  passwordOne: '',
+  passwordTwo: '',
+  error: null,
 };
 
 class PasswordChangeForm extends Component {
@@ -24,7 +24,7 @@ class PasswordChangeForm extends Component {
       .then(() => {
         this.setState(INITIAL_STATE);
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({ error });
       });
     event.preventDefault();
@@ -36,7 +36,7 @@ class PasswordChangeForm extends Component {
 
   render() {
     const { passwordOne, passwordTwo, error } = this.state;
-    const isInvalid = passwordOne !== passwordTwo || passwordOne === "";
+    const isInvalid = passwordOne !== passwordTwo || passwordOne === '';
     return (
       <form onSubmit={this.onSubmit}>
         <input
@@ -64,7 +64,7 @@ class PasswordChangeForm extends Component {
 }
 
 PasswordChangeForm.propTypes = {
-  firebase: PropTypes.instanceOf(Firebase).isRequired
+  firebase: PropTypes.instanceOf(Firebase).isRequired,
 };
 
 export default withFirebase(PasswordChangeForm);

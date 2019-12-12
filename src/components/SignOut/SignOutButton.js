@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { withRouter } from "react-router";
-import Firebase, { withFirebase } from "../Firebase";
-import * as ROUTES from "../../constants/routes";
+import { withRouter } from 'react-router';
+import Firebase, { withFirebase } from '../Firebase';
+import * as ROUTES from '../../constants/routes';
 
 class SignOutButton extends Component {
   constructor(props) {
@@ -29,8 +29,8 @@ class SignOutButton extends Component {
 SignOutButton.propTypes = {
   firebase: PropTypes.instanceOf(Firebase).isRequired,
   history: PropTypes.shape({
-    push: PropTypes.func.isRequired
-  }).isRequired
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default withRouter(withFirebase(SignOutButton));

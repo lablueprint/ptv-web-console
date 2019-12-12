@@ -1,7 +1,7 @@
-import React from "react";
-import SignInForm from "./SignInForm";
-import { SignUpLink } from "../SignUp";
-import { PasswordForgetLink } from "../PasswordForget";
+import React from 'react';
+import SignInForm from './SignInForm';
+import { SignUpLink } from '../SignUp';
+import { PasswordForgetLink } from '../PasswordForget';
 
 export default function SignInPage() {
   return (

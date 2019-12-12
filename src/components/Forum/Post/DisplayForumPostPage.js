@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Firebase, { withFirebase } from "../../Firebase";
-import ForumPostsList from "./ForumPostsList";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Firebase, { withFirebase } from '../../Firebase';
+import ForumPostsList from './ForumPostsList';
 
 const INITIAL_STATE = {
-  posts: []
+  posts: [],
 };
 
 class DisplayPostPage extends Component {
@@ -18,9 +18,9 @@ class DisplayPostPage extends Component {
     firebase
       .forumPosts()
       .get()
-      .then(snapshot => {
+      .then((snapshot) => {
         this.setState({
-          posts: snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+          posts: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
         });
       });
   }
@@ -33,7 +33,7 @@ class DisplayPostPage extends Component {
 }
 
 DisplayPostPage.propTypes = {
-  firebase: PropTypes.instanceOf(Firebase).isRequired
+  firebase: PropTypes.instanceOf(Firebase).isRequired,
 };
 
 export default withFirebase(DisplayPostPage);

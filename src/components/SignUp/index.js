@@ -1,6 +1,6 @@
-import React from "react";
-import SignUpForm from "./SignUpForm";
-import SignUpLink from "./SignUpLink";
+import React from 'react';
+import SignUpForm from './SignUpForm';
+import SignUpLink from './SignUpLink';
 
 export default function SignUpPage() {
   return (
