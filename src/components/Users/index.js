@@ -5,6 +5,7 @@ import UsersList from './UsersList';
 
 const INITIAL_STATE = {
   users: [],
+  error: null,
 };
 
 class UsersPage extends Component {
@@ -23,17 +24,17 @@ class UsersPage extends Component {
           users: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
         });
       })
-      .catch((err) => {
-        // TODO: implement flash messages
-        console.log('Error getting documents', err);
+      .catch((error) => {
+        this.setState({ error });
       });
   }
 
   render() {
-    const { users } = this.state;
+    const { users, error } = this.state;
     return (
       <div>
         <h1>Users</h1>
+        {error && <p>error.message</p>}
         <UsersList users={users} />
       </div>
     );
