@@ -1,50 +1,27 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Firebase, { withFirebase } from '../Firebase';
+import React, { useContext, useEffect, useState } from 'react';
+import { FirebaseContext } from '../Firebase';
 import UsersList from './UsersList';
 
-const INITIAL_STATE = {
-  users: [],
-  error: null,
-};
+export default function UsersPage() {
+  const firebase = useContext(FirebaseContext);
+  const [users, setUsers] = useState([]);
+  const [error, setError] = useState(null);
 
-class UsersPage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = INITIAL_STATE;
-  }
+  useEffect(() => firebase
+    .users()
+    .onSnapshot((snapshot) => {
+      setUsers(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    }, (err) => {
+      setError(err);
+    }), [firebase]);
 
-  componentDidMount() {
-    const { firebase } = this.props;
-    firebase
-      .users()
-      .get()
-      .then((snapshot) => {
-        this.setState({
-          users: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-        });
-      })
-      .catch((error) => {
-        this.setState({ error });
-      });
-  }
-
-  render() {
-    const { users, error } = this.state;
-    return (
-      <div>
-        <h1>Users</h1>
-        {error && <p>error.message</p>}
-        <UsersList users={users} />
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h1>Users</h1>
+      {error && <p>error.message</p>}
+      <UsersList users={users} />
+    </div>
+  );
 }
-
-UsersPage.propTypes = {
-  firebase: PropTypes.instanceOf(Firebase).isRequired,
-};
-
-export default withFirebase(UsersPage);
 
 export { UsersList };
