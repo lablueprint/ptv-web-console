@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function ForumPostsList(props) {
-  const { posts } = props;
-  const postData = posts.map((post) => (
+export default function ForumPostsList({ posts }) {
+  const postItems = posts.map((post) => (
     <ul key={post.id}>
       <li>{post.id}</li>
       <li>{post.title}</li>
@@ -12,7 +11,7 @@ export default function ForumPostsList(props) {
     </ul>
   ));
 
-  return <div>{postData}</div>;
+  return <div>{postItems}</div>;
 }
 
 ForumPostsList.propTypes = {

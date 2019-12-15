@@ -1,8 +1,9 @@
 import React from 'react';
 import useCollectionSnapshot from '../../hooks/useCollectionSnapshot';
 import UsersList from './UsersList';
+import { withAuthorization } from '../Session';
 
-export default function UsersPage() {
+function UsersPage() {
   const { data, loading, error } = useCollectionSnapshot('users');
 
   return (
@@ -15,4 +16,7 @@ export default function UsersPage() {
   );
 }
 
+const condition = (authUser) => !!authUser;
+
+export default withAuthorization(condition)(UsersPage);
 export { UsersList };
