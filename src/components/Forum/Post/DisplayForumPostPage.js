@@ -1,24 +1,15 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { FirebaseContext } from '../../Firebase';
+import React from 'react';
+import useCollectionSnapshot from '../../../hooks/useCollectionSnapshot';
 import ForumPostsList from './ForumPostsList';
 
 export default function DisplayPostPage() {
-  const firebase = useContext(FirebaseContext);
-  const [posts, setPosts] = useState([]);
-  const [error, setError] = useState(null);
-
-  useEffect(() => firebase
-    .forumPosts()
-    .onSnapshot((snapshot) => {
-      setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-    }, (err) => {
-      setError(err);
-    }), [firebase]);
+  const { data, loading, error } = useCollectionSnapshot('forum_posts');
 
   return (
     <div>
+      {loading && <p>loading...</p>}
       {error && <p>{error.message}</p>}
-      <ForumPostsList posts={posts} />
+      <ForumPostsList posts={data} />
     </div>
   );
 }

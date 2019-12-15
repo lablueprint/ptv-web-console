@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import CreateForumPostForm from '../CreateForumPostForm';
-import Firebase, { FirebaseContext } from '../../../Firebase';
+import App from '..';
+import Firebase, { FirebaseContext } from '../../Firebase';
 
-describe('CreateForumPostForm', () => {
-  jest.mock('../../../Firebase');
+describe('App', () => {
+  jest.mock('../../Firebase');
   const mockFirebase = new Firebase();
 
   let container;
@@ -24,7 +24,7 @@ describe('CreateForumPostForm', () => {
   it('renders without crashing', () => {
     ReactDOM.render((
       <FirebaseContext.Provider value={mockFirebase}>
-        <CreateForumPostForm uid="" />
+        <App />
       </FirebaseContext.Provider>
     ), container);
   });
