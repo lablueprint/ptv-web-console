@@ -6,6 +6,7 @@ describe('UsersList', () => {
   let container;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     container = document.createElement('div');
     document.body.appendChild(container);
   });
