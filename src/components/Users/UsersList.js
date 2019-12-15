@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default function UsersList(props) {
-  const { users } = props;
-  const userData = users.map((user) => (
+export default function UsersList({ users }) {
+  const userItems = users.map((user) => (
     <tr key={user.id}>
       <td>{user.id}</td>
       <td>{user.email}</td>
@@ -19,7 +18,7 @@ export default function UsersList(props) {
           <th>Role</th>
         </tr>
       </thead>
-      <tbody>{userData}</tbody>
+      <tbody>{userItems}</tbody>
     </table>
   );
 }

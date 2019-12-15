@@ -7,3 +7,4 @@ export const ADMIN = '/admin';
 export const PASSWORD_FORGET = '/pw-forget';
 export const FORUM = '/forum';
 export const USERS = '/users';
+export const RESOURCE_CATEGORIES = '/resources';
