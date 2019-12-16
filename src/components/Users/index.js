@@ -1,5 +1,5 @@
 import React from 'react';
-import useCollectionSnapshot from '../../hooks/useCollectionSnapshot';
+import { useCollectionSnapshot } from '../../hooks';
 import UsersList from './UsersList';
 import { withAuthorization } from '../Session';
 

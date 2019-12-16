@@ -2,11 +2,12 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { withAuthorization } from '../Session';
 import ResourcesList from './ResourcesList';
-import useCollectionSnapshot from '../../hooks/useCollectionSnapshot';
+import { useCollectionSnapshot } from '../../hooks';
 
 function ResourcesPage() {
   const { category } = useParams();
-  const { data, loading, error } = useCollectionSnapshot(`resource_categories/${category.toLowerCase()}/resources`);
+  const resourcesPath = `resource_categories/${category}/resources`;
+  const { data, loading, error } = useCollectionSnapshot(resourcesPath);
   return (
     <div>
       <h1>{category}</h1>
