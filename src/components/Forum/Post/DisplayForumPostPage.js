@@ -1,5 +1,5 @@
 import React from 'react';
-import useCollectionSnapshot from '../../../hooks/useCollectionSnapshot';
+import { useCollectionSnapshot } from '../../../hooks';
 import ForumPostsList from './ForumPostsList';
 
 export default function DisplayPostPage() {

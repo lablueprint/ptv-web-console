@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import dashify from 'dashify';
 
 export default function ResourceCategoriesList({ categories }) {
   const categoryItems = categories.map((category) => (
@@ -8,7 +9,7 @@ export default function ResourceCategoriesList({ categories }) {
       <td>{category.id}</td>
       <td>{category.title}</td>
       <td>{category.description}</td>
-      <td><Link to={`resources/${category.title.toLowerCase()}`}>View resources</Link></td>
+      <td><Link to={`resources/${encodeURI(dashify(category.title))}`}>View resources</Link></td>
     </tr>
   ));
   return (

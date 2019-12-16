@@ -14,6 +14,7 @@ import { withAuthentication } from '../Session';
 import SignInPage from '../SignIn';
 import SignUpPage from '../SignUp';
 import UsersPage from '../Users';
+import ResourcePage from '../Resource';
 
 
 function App() {
@@ -41,6 +42,9 @@ function App() {
           </Route>
           <Route exact path="/resources/:category">
             <ResourcesPage />
+          </Route>
+          <Route exact path="/resources/:category/:resourceId">
+            <ResourcePage />
           </Route>
         </Switch>
       </div>
