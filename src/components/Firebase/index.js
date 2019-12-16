@@ -1,6 +1,7 @@
 import FirebaseContext, { withFirebase } from './context';
 import Firebase from './firebase';
+import DocumentDeleteButton from './DocumentDeleteButton';
 
 export default Firebase;
 
-export { FirebaseContext, withFirebase };
+export { FirebaseContext, withFirebase, DocumentDeleteButton };

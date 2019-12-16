@@ -9,7 +9,7 @@ function ResourceCategoriesPage() {
 
   return (
     <div>
-      <h1>Categories</h1>
+      <h1>Resource Categories</h1>
       {loading && <p>loading...</p>}
       {error && <p>{error.message}</p>}
       <NewResourceCategoryForm />

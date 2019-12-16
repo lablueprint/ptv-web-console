@@ -2,24 +2,23 @@ import React, { useState, useEffect } from 'react';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 
-export default function useDocumentSnapshot(path) {
+export default function useDocumentOnce(path) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = firebase
+    firebase
       .firestore()
       .doc(path)
-      .onSnapshot((snapshot) => {
+      .get()
+      .then((snapshot) => {
         setLoading(false);
         setData({ id: snapshot.id, ...snapshot.data() });
-      }, (err) => {
+      })
+      .catch((err) => {
         setError(err);
       });
-    return () => {
-      unsubscribe();
-    };
   }, [path]);
 
   return { data, loading, error };

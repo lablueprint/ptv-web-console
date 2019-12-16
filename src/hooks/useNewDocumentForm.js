@@ -1,5 +1,5 @@
 import dashify from 'dashify';
-import * as Firebase from 'firebase/app';
+import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import { useState } from 'react';
 
@@ -15,9 +15,9 @@ export default function useNewDocumentForm(collection, initialState) {
   const onSubmit = (event) => {
     event.preventDefault();
 
-    const encodedAndDashifiedDocId = encodeURI(dashify(formState.title));
+    const encodedAndDashifiedDocId = encodeURI(dashify(formState.title, { condense: true }));
 
-    const docRef = Firebase
+    const docRef = firebase
       .firestore()
       .collection(collection)
       .doc(encodedAndDashifiedDocId);
@@ -26,7 +26,7 @@ export default function useNewDocumentForm(collection, initialState) {
       .get()
       .then((doc) => {
         if (doc.exists) {
-          setError({ message: `Category ${doc.data().title} already exists.` });
+          setError({ message: `${doc.data().title} already exists.` });
         } else {
           setError(null);
           docRef
