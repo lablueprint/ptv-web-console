@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as Firebase from 'firebase/app';
+import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 
 export default function useCollectionSnapshot(collection) {
@@ -8,7 +8,8 @@ export default function useCollectionSnapshot(collection) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = Firebase.firestore()
+    const unsubscribe = firebase
+      .firestore()
       .collection(collection)
       .onSnapshot((snapshot) => {
         setLoading(false);
