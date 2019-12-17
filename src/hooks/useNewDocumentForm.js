@@ -15,27 +15,32 @@ export default function useNewDocumentForm(collection, initialState) {
   const onSubmit = (event) => {
     event.preventDefault();
 
-    const encodedAndDashifiedDocId = encodeURI(dashify(formState.title, { condense: true }));
+    if (!formState.title) {
+      setError({ message: 'Title must not be empty' });
+    } else {
+      const encodedAndDashifiedDocId = encodeURI(dashify(formState.title, { condense: true }));
 
-    const docRef = firebase
-      .firestore()
-      .collection(collection)
-      .doc(encodedAndDashifiedDocId);
+      const docRef = firebase
+        .firestore()
+        .collection(collection)
+        .doc(encodedAndDashifiedDocId);
 
-    docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          setError({ message: `${doc.data().title} already exists.` });
-        } else {
-          setError(null);
-          docRef
-            .set(formState)
-            .catch((err) => {
-              setError(err);
-            });
-        }
-      });
+      docRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            setError({ message: `${doc.data().title} already exists.` });
+          } else {
+            setError(null);
+            setFormState(initialState);
+            docRef
+              .set(formState)
+              .catch((err) => {
+                setError(err);
+              });
+          }
+        });
+    }
   };
 
   return {
