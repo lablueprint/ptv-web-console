@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "dashify": "^2.0.0",
+    "draft-js": "^0.10.5",
+    "draftail": "^1.3.0",
     "firebase": "^7.5.0",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",

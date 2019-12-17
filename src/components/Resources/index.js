@@ -2,7 +2,7 @@ import React from 'react';
 import { useCollectionSnapshot } from '../../hooks';
 import { withAuthorization } from '../Session';
 import CategoryPage, { CategoriesList, NewCategoryForm } from './Category';
-import ResourcePage from './Resource';
+import ResourcePage, { NewResourcePage } from './Resource';
 
 function ResourcesPage() {
   const { data, loading, error } = useCollectionSnapshot('resource_categories');
@@ -21,4 +21,4 @@ function ResourcesPage() {
 const condition = (authUser) => !!authUser;
 
 export default withAuthorization(condition)(ResourcesPage);
-export { CategoryPage, ResourcePage };
+export { CategoryPage, ResourcePage, NewResourcePage };
