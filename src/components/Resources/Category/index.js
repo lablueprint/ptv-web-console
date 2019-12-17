@@ -5,6 +5,7 @@ import { useCollectionSnapshot, useDocumentOnce } from '../../../hooks';
 import { NewResourceForm, ResourcesList } from '../Resource';
 import CategoriesList from './CategoriesList';
 import NewCategoryForm from './NewCategoryForm';
+import DeleteCategoryButton from './DeleteCategoryButton';
 
 function CategoryPage() {
   const { category } = useParams();
@@ -25,4 +26,4 @@ function CategoryPage() {
 const condition = (authUser) => !!authUser;
 
 export default withAuthorization(condition)(CategoryPage);
-export { CategoriesList, NewCategoryForm };
+export { CategoriesList, NewCategoryForm, DeleteCategoryButton };

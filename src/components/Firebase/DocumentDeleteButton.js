@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 
 export default function DocumentDeleteButton({ path }) {
   const onClick = (event) => {
+    event.preventDefault();
     if (window.confirm('Are you sure you wish to delete this item?')) {
-      event.preventDefault();
       firebase
         .firestore()
         .doc(path)

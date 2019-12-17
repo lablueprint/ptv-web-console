@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import dashify from 'dashify';
+import DeleteCategoryButton from './DeleteCategoryButton';
 
 export default function CategoriesList({ categories }) {
   const categoryItems = categories.map((category) => (
@@ -10,6 +11,7 @@ export default function CategoriesList({ categories }) {
       <td>{category.title}</td>
       <td>{category.description}</td>
       <td><Link to={`resources/${encodeURI(dashify(category.title))}`}>View resources</Link></td>
+      <td><DeleteCategoryButton categoryId={category.id} /></td>
     </tr>
   ));
   return (
