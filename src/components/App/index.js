@@ -8,13 +8,11 @@ import HomePage from '../Home';
 import LandingPage from '../Landing';
 import Navigation from '../Navigation';
 import PasswordForgetPage from '../PasswordForget';
-import ResourceCategoriesPage from '../ResourceCategories';
-import ResourcesPage from '../Resources';
+import ResourcesPage, { CategoryPage, ResourcePage } from '../Resources';
 import { withAuthentication } from '../Session';
 import SignInPage from '../SignIn';
 import SignUpPage from '../SignUp';
 import UsersPage from '../Users';
-import ResourcePage from '../Resource';
 
 
 function App() {
@@ -38,10 +36,10 @@ function App() {
 
           {/* Resources */}
           <Route exact path={ROUTES.RESOURCE_CATEGORIES}>
-            <ResourceCategoriesPage />
+            <ResourcesPage />
           </Route>
           <Route exact path="/resources/:category">
-            <ResourcesPage />
+            <CategoryPage />
           </Route>
           <Route exact path="/resources/:category/:resourceId">
             <ResourcePage />

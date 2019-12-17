@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useNewDocumentForm } from '../../hooks';
+import { useNewDocumentForm } from '../../../hooks';
 
 const INITIAL_STATE = {
   title: '',
