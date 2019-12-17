@@ -1,11 +1,11 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { withAuthorization } from '../../Session';
+import { useParams, Link } from 'react-router-dom';
 import { useCollectionSnapshot, useDocumentOnce } from '../../../hooks';
-import { NewResourceForm, ResourcesList } from '../Resource';
+import { withAuthorization } from '../../Session';
+import { ResourcesList } from '../Resource';
 import CategoriesList from './CategoriesList';
-import NewCategoryForm from './NewCategoryForm';
 import DeleteCategoryButton from './DeleteCategoryButton';
+import NewCategoryForm from './NewCategoryForm';
 
 function CategoryPage() {
   const { category } = useParams();
@@ -17,7 +17,7 @@ function CategoryPage() {
       <h1>{!categoryData.loading && `Resources in ${categoryData.data.title} category`}</h1>
       {loading && <p>loading...</p>}
       {error && <p>{error.message}</p>}
-      <NewResourceForm />
+      <Link to={`/resources/${category}/new`}>New resource</Link>
       <ResourcesList resources={data} category={category} />
     </div>
   );
