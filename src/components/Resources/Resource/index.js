@@ -1,7 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { withAuthorization } from '../Session';
-import { useDocumentSnapshot } from '../../hooks';
+import { withAuthorization } from '../../Session';
+import { useDocumentSnapshot } from '../../../hooks';
+import NewResourceForm from './NewResourceForm';
+import ResourcesList from './ResourcesList';
 
 function ResourcePage() {
   const { category, resourceId } = useParams();
@@ -12,9 +14,13 @@ function ResourcePage() {
       {error && <p>{error.message}</p>}
       <h1>{data.title}</h1>
       <p>{data.description}</p>
+      <hr />
+      <div>{data.body}</div>
     </div>
   );
 }
 
 const condition = (authUser) => !!authUser;
+
 export default withAuthorization(condition)(ResourcePage);
+export { NewResourceForm, ResourcesList };

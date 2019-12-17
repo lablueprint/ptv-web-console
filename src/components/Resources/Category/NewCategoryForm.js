@@ -1,12 +1,12 @@
 import React from 'react';
-import { useNewDocumentForm } from '../../hooks';
+import { useNewDocumentForm } from '../../../hooks';
 
 const INITIAL_STATE = {
   title: '',
   description: '',
 };
 
-export default function NewResourceCategoryForm() {
+export default function NewCategoryForm() {
   const {
     onChange, onSubmit, error, title, description,
   } = useNewDocumentForm('resource_categories', INITIAL_STATE);

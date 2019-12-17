@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import dashify from 'dashify';
 
-export default function ResourceCategoriesList({ categories }) {
+export default function CategoriesList({ categories }) {
   const categoryItems = categories.map((category) => (
     <tr key={category.id}>
       <td>{category.id}</td>
@@ -26,7 +26,7 @@ export default function ResourceCategoriesList({ categories }) {
   );
 }
 
-ResourceCategoriesList.propTypes = {
+CategoriesList.propTypes = {
   categories: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
