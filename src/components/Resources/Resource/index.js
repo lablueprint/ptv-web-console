@@ -12,9 +12,11 @@ import ResourcesList from './ResourcesList';
 function ResourcePage() {
   const { categoryURLId, resourceURLId } = useParams();
 
-  const [categoryDoc, setCategoryDoc] = useState({});
-  const [categoryLoading, setCategoryLoading] = useState(true);
-  const [categoryError, setCategoryError] = useState(null);
+  const [categoryTitle, setCategoryTitle] = useState('');
+
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     firebase
@@ -22,53 +24,47 @@ function ResourcePage() {
       .collection('resource_categories')
       .where('urlId', '==', categoryURLId)
       .get()
-      .then((snapshot) => {
-        setCategoryLoading(false);
-        snapshot.docs.forEach((doc) => {
-          setCategoryDoc({ ...doc.data(), id: doc.id });
+      .then((categorySnapshot) => {
+        categorySnapshot.docs.forEach((categoryDoc) => {
+          setCategoryTitle(categoryDoc.data().title);
+          firebase
+            .firestore()
+            .collection(`resource_categories/${categoryDoc.id}/resources`)
+            .where('urlId', '==', resourceURLId)
+            .get()
+            .then((resourceSnapshot) => {
+              setLoading(false);
+              resourceSnapshot.docs.forEach((resourceDoc) => {
+                setData({ ...resourceDoc.data(), id: resourceDoc.id });
+              });
+            })
+            .catch((err) => {
+              setError(err);
+            });
         });
       })
       .catch((err) => {
-        setCategoryError(err);
+        setError(err);
       });
-  }, [categoryURLId]);
-
-  const [resourceDoc, setResourceDoc] = useState({});
-  const [resourceLoading, setResourceLoading] = useState(true);
-  const [resourceError, setResourceError] = useState(null);
-
-  useEffect(() => {
-    firebase
-      .firestore()
-      .collection(`resource_categories/${categoryDoc.id}/resources`)
-      .where('urlId', '==', resourceURLId || '')
-      .get()
-      .then((snapshot) => {
-        setResourceLoading(false);
-        snapshot.docs.forEach((doc) => {
-          setResourceDoc({ ...doc.data(), id: doc.id });
-        });
-      })
-      .catch((err) => {
-        setResourceError(err);
-      });
-  }, [categoryDoc.id, resourceURLId]);
+  }, [categoryURLId, resourceURLId]);
 
   return (
     <div>
-
-      {!categoryLoading && <h1>{categoryDoc.title}</h1>}
-      {categoryError && <p>{categoryError.message}</p>}
-      <h1>{resourceDoc.title}</h1>
-      <p>{resourceDoc.description}</p>
-      {resourceLoading && <p>loading...</p>}
-      {resourceError && <p>{resourceError.message}</p>}
+      <h1>{`Category: ${categoryTitle}`}</h1>
 
       <hr />
 
+      <h1>{data.title}</h1>
+      <p>{data.description}</p>
+      {error && <p>{error.message}</p>}
+
+      <hr />
+
+      {loading && <p>loading...</p>}
+
       <div>
-        {resourceDoc.body
-        && <Editor readOnly editorState={createEditorStateFromRaw(JSON.parse(resourceDoc.body))} />}
+        {data.body
+        && <Editor readOnly editorState={createEditorStateFromRaw(JSON.parse(data.body))} />}
       </div>
     </div>
   );
