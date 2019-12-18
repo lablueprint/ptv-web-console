@@ -16,7 +16,6 @@ export default function DeleteCategoryButton({ categoryFirestoreId }) {
         .collection('resources')
         .get()
         .then((snapshot) => {
-          // The category must have no resources.
           if (snapshot.docs.length > 0) {
             setError({ message: 'Cannot delete this category. You must delete all the resources first.' });
           } else {
