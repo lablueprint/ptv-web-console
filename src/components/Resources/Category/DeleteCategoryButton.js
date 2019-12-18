@@ -3,13 +3,13 @@ import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import PropTypes from 'prop-types';
 
-export default function DeleteCategoryButton({ categoryId }) {
+export default function DeleteCategoryButton({ categoryFirestoreId }) {
   const [error, setError] = useState(null);
 
   const onClick = (event) => {
     event.preventDefault();
     if (window.confirm('Are you sure you wish to delete this item?')) {
-      const path = `resource_categories/${categoryId}`;
+      const path = `resource_categories/${categoryFirestoreId}`;
       firebase
         .firestore()
         .doc(path)
@@ -43,5 +43,5 @@ export default function DeleteCategoryButton({ categoryId }) {
 }
 
 DeleteCategoryButton.propTypes = {
-  categoryId: PropTypes.string.isRequired,
+  categoryFirestoreId: PropTypes.string.isRequired,
 };

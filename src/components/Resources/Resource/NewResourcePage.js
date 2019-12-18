@@ -1,19 +1,40 @@
 import 'firebase/firestore';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import * as firebase from 'firebase/app';
 import { withAuthorization } from '../../Session';
 import NewResourceForm from './NewResourceForm';
-import { useDocumentOnce } from '../../../hooks';
 
 function NewResourcePage() {
-  const { category } = useParams();
+  const { categoryURLId } = useParams();
 
-  const categoryData = useDocumentOnce(`resource_categories/${category}`);
+  const [categoryDoc, setCategoryDoc] = useState({});
+  const [categoryLoading, setCategoryLoading] = React.useState(true);
+  const [categoryError, setCategoryError] = useState(null);
+
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection('resource_categories')
+      .where('urlId', '==', categoryURLId)
+      .get()
+      .then((snapshot) => {
+        setCategoryLoading(false);
+        snapshot.docs.forEach((doc) => {
+          setCategoryDoc({ ...doc.data(), id: doc.id });
+        });
+      })
+      .catch((err) => {
+        setCategoryError(err);
+      });
+  }, [categoryURLId]);
+
 
   return (
     <div>
-      <h1>{!categoryData.loading && `Create a new resource in ${categoryData.data.title} category`}</h1>
-      <NewResourceForm category={category} />
+      <h1>{!categoryLoading && `Create a new resource in ${categoryDoc.title} category`}</h1>
+      {categoryError && <p>{categoryError.message}</p>}
+      <NewResourceForm categoryURLId={categoryURLId} categoryFirestoreId={categoryDoc.id} />
     </div>
   );
 }

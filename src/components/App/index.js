@@ -38,13 +38,13 @@ function App() {
           <Route exact path={ROUTES.RESOURCE_CATEGORIES}>
             <ResourcesPage />
           </Route>
-          <Route exact path="/resources/:category">
+          <Route exact path="/resources/:categoryURLId">
             <CategoryPage />
           </Route>
-          <Route exact path="/resources/:category/new">
+          <Route exact path="/resources/:categoryURLId/new">
             <NewResourcePage />
           </Route>
-          <Route exact path="/resources/:category/:resourceId">
+          <Route exact path="/resources/:categoryURLId/:resourceURLId">
             <ResourcePage />
           </Route>
         </Switch>

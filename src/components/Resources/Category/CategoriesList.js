@@ -11,7 +11,7 @@ export default function CategoriesList({ categories }) {
       <td>{category.title}</td>
       <td>{category.description}</td>
       <td><Link to={`resources/${encodeURI(dashify(category.title))}`}>View resources</Link></td>
-      <td><DeleteCategoryButton categoryId={category.id} /></td>
+      <td><DeleteCategoryButton categoryFirestoreId={category.id} /></td>
     </tr>
   ));
   return (

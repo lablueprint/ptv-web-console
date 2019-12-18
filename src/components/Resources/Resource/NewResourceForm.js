@@ -7,6 +7,7 @@ import 'draftail/dist/draftail.css';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import dashify from 'dashify';
 import { useNewDocumentForm } from '../../../hooks';
 
 const INITIAL_STATE = {
@@ -15,12 +16,12 @@ const INITIAL_STATE = {
   body: '',
 };
 
-export default function NewResourceForm({ category }) {
+export default function NewResourceForm({ categoryURLId, categoryFirestoreId }) {
   const history = useHistory();
 
   const {
-    onChange, onSubmit, setCustomField, error, title, description, docId,
-  } = useNewDocumentForm(`resource_categories/${category}/resources`, INITIAL_STATE);
+    onChange, onSubmit, setCustomField, error, title, description,
+  } = useNewDocumentForm(`resource_categories/${categoryFirestoreId}/resources`, INITIAL_STATE);
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
@@ -28,7 +29,7 @@ export default function NewResourceForm({ category }) {
     onSubmit(event).then((success) => {
       if (success) {
         setEditorState(EditorState.createEmpty());
-        history.push(`/resources/${category}/${docId}`);
+        history.push(`/resources/${categoryURLId}/${encodeURI(dashify(title))}`);
       }
     });
   };
@@ -96,5 +97,10 @@ export default function NewResourceForm({ category }) {
 }
 
 NewResourceForm.propTypes = {
-  category: PropTypes.string.isRequired,
+  categoryURLId: PropTypes.string.isRequired,
+  categoryFirestoreId: PropTypes.string,
+};
+
+NewResourceForm.defaultProps = {
+  categoryFirestoreId: null,
 };
