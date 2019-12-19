@@ -4,6 +4,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import ClipLoader from 'react-spinners/ClipLoader';
 import { withAuthorization } from '../../Session';
 import NewResourceForm from './NewResourceForm';
 import NewResourcePage from './NewResourcePage';
@@ -60,7 +61,7 @@ function ResourcePage() {
 
   return (
     <div>
-      {loading && <p>loading...</p>}
+      <ClipLoader loading={loading} />
       {!loading && (
         <>
           <h1>{`Category: ${categoryTitle}`}</h1>

@@ -5,7 +5,7 @@ import { withAuthorization, AuthUserContext } from '../Session';
 function ForumPage() {
   return (
     <AuthUserContext.Consumer>
-      {(authUser) => (
+      {({ authUser }) => (
         <div>
           <h1>
             Account:&nbsp;
