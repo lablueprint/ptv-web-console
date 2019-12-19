@@ -5,14 +5,16 @@ import { withAuthorization, AuthUserContext } from '../Session';
 function AccountPage() {
   return (
     <AuthUserContext.Consumer>
-      {(authUser) => (
-        <div>
-          <h1>
-            Account:&nbsp;
-            {authUser.email}
-          </h1>
-          <PasswordChangeForm />
-        </div>
+      {({ authUser, authLoading }) => (
+        !authLoading && (
+          <div>
+            <h1>
+              Account:&nbsp;
+              {authUser.email}
+            </h1>
+            <PasswordChangeForm />
+          </div>
+        )
       )}
     </AuthUserContext.Consumer>
   );

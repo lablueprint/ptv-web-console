@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import ClipLoader from 'react-spinners/ClipLoader';
 import * as ROUTES from '../../constants/routes';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
@@ -9,17 +10,21 @@ import LandingPage from '../Landing';
 import Navigation from '../Navigation';
 import PasswordForgetPage from '../PasswordForget';
 import ResourcesPage, { CategoryPage, ResourcePage, NewResourcePage } from '../Resources';
-import { withAuthentication } from '../Session';
+import { withAuthentication, AuthUserContext } from '../Session';
 import SignInPage from '../SignIn';
 import SignUpPage from '../SignUp';
 import UsersPage from '../Users';
 
 
 function App() {
+  const { authLoading } = useContext(AuthUserContext);
   return (
     <Router>
       <div>
-        <Navigation />
+        <ClipLoader loading={authLoading} />
+        {!authLoading && (
+          <Navigation />
+        )}
 
         <hr />
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import ClipLoader from 'react-spinners/ClipLoader';
 import { useCollectionSnapshot } from '../../hooks';
 import { withAuthorization } from '../Session';
 import CategoryPage, { CategoriesList, NewCategoryForm } from './Category';
@@ -10,7 +11,7 @@ function ResourcesPage() {
   return (
     <div>
       <h1>Resource Categories</h1>
-      {loading && <p>loading...</p>}
+      <ClipLoader loading={loading} />
       {error && <p>{error.message}</p>}
       <NewCategoryForm />
       <CategoriesList categories={data} />

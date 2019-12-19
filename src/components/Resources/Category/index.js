@@ -2,6 +2,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import ClipLoader from 'react-spinners/ClipLoader';
 import { withAuthorization } from '../../Session';
 import { ResourcesList } from '../Resource';
 import CategoriesList from './CategoriesList';
@@ -57,7 +58,7 @@ function CategoryPage() {
 
   return (
     <div>
-      {loading && <p>loading...</p>}
+      <ClipLoader loading={loading} />
       {!loading && (
         <>
           <h1>{`Resources in ${categoryTitle} category`}</h1>
