@@ -1,6 +1,6 @@
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { withAuthorization } from '../../Session';
 import { ResourcesList } from '../Resource';
@@ -8,17 +8,14 @@ import CategoriesList from './CategoriesList';
 import DeleteCategoryButton from './DeleteCategoryButton';
 import NewCategoryForm from './NewCategoryForm';
 
-
-function CategoryPage() {
-  const { categoryURLId } = useParams();
+function useResources(categoryURLId) {
   const [categoryTitle, setCategoryTitle] = useState('');
   const [categoryFirestoreId, setCategoryFirestoreId] = useState('');
-  const [data, setData] = useState([]);
+  const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    let unsubscribe = () => {};
     firebase
       .firestore()
       .collection('resource_categories')
@@ -28,13 +25,15 @@ function CategoryPage() {
         categorySnapshot.docs.forEach((categoryDoc) => {
           setCategoryTitle(categoryDoc.data().title);
           setCategoryFirestoreId(categoryDoc.id);
-          unsubscribe = firebase
+          firebase
             .firestore()
             .collection(`resource_categories/${categoryDoc.id}/resources`)
-            .onSnapshot((resourcesSnapshot) => {
+            .get()
+            .then((resourcesSnapshot) => {
               setLoading(false);
-              setData(resourcesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-            }, (err) => {
+              setResources(resourcesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+            })
+            .catch((err) => {
               setError(err);
             });
         });
@@ -42,22 +41,37 @@ function CategoryPage() {
       .catch((err) => {
         setError(err);
       });
-    return () => {
-      unsubscribe();
-    };
   }, [categoryURLId]);
+
+  return {
+    categoryTitle, categoryFirestoreId, resources, loading, error,
+  };
+}
+
+
+function CategoryPage() {
+  const { categoryURLId } = useParams();
+  const {
+    categoryTitle, categoryFirestoreId, resources, loading, error,
+  } = useResources(categoryURLId);
 
   return (
     <div>
-      <h1>{`Resources in ${categoryTitle} category`}</h1>
-      <Link to={`/resources/${categoryURLId}/new`}>New resource</Link>
       {loading && <p>loading...</p>}
-      {error && <p>{error.message}</p>}
-      <ResourcesList
-        resources={data}
-        categoryURLId={categoryURLId}
-        categoryFirestoreId={categoryFirestoreId}
-      />
+      {!loading && (
+        <>
+          <h1>{`Resources in ${categoryTitle} category`}</h1>
+          <Link to={`/resources/${categoryURLId}/new`}>New resource</Link>
+
+          {error && <p>{error.message}</p>}
+
+          <ResourcesList
+            resources={resources}
+            categoryURLId={categoryURLId}
+            categoryFirestoreId={categoryFirestoreId}
+          />
+        </>
+      )}
     </div>
   );
 }
