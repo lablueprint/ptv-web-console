@@ -8,8 +8,9 @@ import { ResourcesList } from '../Resource';
 import CategoriesList from './CategoriesList';
 import DeleteCategoryButton from './DeleteCategoryButton';
 import NewCategoryForm from './NewCategoryForm';
+import NewCategoryPage from './NewCategoryPage';
 
-function useResources(categoryURLId) {
+function useResources(categoryURLId, isMounted) {
   const [categoryTitle, setCategoryTitle] = useState('');
   const [categoryFirestoreId, setCategoryFirestoreId] = useState('');
   const [resources, setResources] = useState([]);
@@ -31,18 +32,24 @@ function useResources(categoryURLId) {
             .collection(`resource_categories/${categoryDoc.id}/resources`)
             .get()
             .then((resourcesSnapshot) => {
-              setLoading(false);
-              setResources(resourcesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+              if (isMounted) {
+                setLoading(false);
+                setResources(resourcesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+              }
             })
             .catch((err) => {
-              setError(err);
+              if (isMounted) {
+                setError(err);
+              }
             });
         });
       })
       .catch((err) => {
-        setError(err);
+        if (isMounted) {
+          setError(err);
+        }
       });
-  }, [categoryURLId]);
+  }, [categoryURLId, isMounted]);
 
   return {
     categoryTitle, categoryFirestoreId, resources, loading, error,
@@ -51,10 +58,18 @@ function useResources(categoryURLId) {
 
 
 function CategoryPage() {
+  const [isMounted, setIsMounted] = useState(false);
   const { categoryURLId } = useParams();
   const {
     categoryTitle, categoryFirestoreId, resources, loading, error,
-  } = useResources(categoryURLId);
+  } = useResources(categoryURLId, isMounted);
+
+  useEffect(() => {
+    setIsMounted(true);
+    return () => {
+      setIsMounted(false);
+    };
+  }, []);
 
   return (
     <div>
@@ -80,4 +95,6 @@ function CategoryPage() {
 const condition = (authUser) => !!authUser;
 
 export default withAuthorization(condition)(CategoryPage);
-export { CategoriesList, NewCategoryForm, DeleteCategoryButton };
+export {
+  CategoriesList, NewCategoryForm, DeleteCategoryButton, NewCategoryPage,
+};

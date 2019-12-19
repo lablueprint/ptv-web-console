@@ -31,7 +31,7 @@ export default function useNewDocumentForm(collection, initialState) {
       .get();
 
     if (!querySnapshot.empty) {
-      setError({ message: 'A resource with almost the same title already exists in this category. Choose a different title.' });
+      setError({ message: 'The same or similar title already exists. Choose a different title.' });
       return false;
     }
 

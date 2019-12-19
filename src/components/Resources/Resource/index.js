@@ -10,7 +10,7 @@ import NewResourceForm from './NewResourceForm';
 import NewResourcePage from './NewResourcePage';
 import ResourcesList from './ResourcesList';
 
-function useResource(categoryURLId, resourceURLId) {
+function useResource(categoryURLId, resourceURLId, isMounted) {
   const [categoryTitle, setCategoryTitle] = useState('');
 
   const [resource, setResource] = useState({});
@@ -32,20 +32,26 @@ function useResource(categoryURLId, resourceURLId) {
             .where('urlId', '==', resourceURLId)
             .get()
             .then((resourceSnapshot) => {
-              setLoading(false);
-              resourceSnapshot.docs.forEach((resourceDoc) => {
-                setResource({ ...resourceDoc.data(), id: resourceDoc.id });
-              });
+              if (isMounted) {
+                setLoading(false);
+                resourceSnapshot.docs.forEach((resourceDoc) => {
+                  setResource({ ...resourceDoc.data(), id: resourceDoc.id });
+                });
+              }
             })
             .catch((err) => {
-              setError(err);
+              if (isMounted) {
+                setError(err);
+              }
             });
         });
       })
       .catch((err) => {
-        setError(err);
+        if (isMounted) {
+          setError(err);
+        }
       });
-  }, [categoryURLId, resourceURLId]);
+  }, [categoryURLId, isMounted, resourceURLId]);
 
   return {
     categoryTitle, resource, loading, error,
@@ -54,10 +60,18 @@ function useResource(categoryURLId, resourceURLId) {
 
 function ResourcePage() {
   const { categoryURLId, resourceURLId } = useParams();
+  const [isMounted, setIsMounted] = useState(false);
 
   const {
     categoryTitle, resource, loading, error,
-  } = useResource(categoryURLId, resourceURLId);
+  } = useResource(categoryURLId, resourceURLId, isMounted);
+
+  useEffect(() => {
+    setIsMounted(true);
+    return () => {
+      setIsMounted(false);
+    };
+  }, []);
 
   return (
     <div>

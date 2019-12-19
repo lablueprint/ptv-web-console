@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { useNewDocumentForm } from '../../../hooks';
 
 const INITIAL_STATE = {
@@ -7,11 +8,22 @@ const INITIAL_STATE = {
 };
 
 export default function NewCategoryForm() {
+  const history = useHistory();
+
   const {
-    onChange, onSubmit, error, title, description,
+    onChange, onSubmit, error, title, description, urlId,
   } = useNewDocumentForm('resource_categories', INITIAL_STATE);
+
+  const myOnSubmit = (event) => {
+    onSubmit(event).then((success) => {
+      if (success) {
+        history.push(`/resources/${urlId}`);
+      }
+    });
+  };
+
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={myOnSubmit}>
       <input
         name="title"
         type="text"

@@ -9,7 +9,9 @@ import HomePage from '../Home';
 import LandingPage from '../Landing';
 import Navigation from '../Navigation';
 import PasswordForgetPage from '../PasswordForget';
-import ResourcesPage, { CategoryPage, ResourcePage, NewResourcePage } from '../Resources';
+import ResourcesPage, {
+  CategoryPage, ResourcePage, NewResourcePage, NewCategoryPage,
+} from '../Resources';
 import { withAuthentication, AuthUserContext } from '../Session';
 import SignInPage from '../SignIn';
 import SignUpPage from '../SignUp';
@@ -42,6 +44,9 @@ function App() {
           {/* Resources */}
           <Route exact path={ROUTES.RESOURCE_CATEGORIES}>
             <ResourcesPage />
+          </Route>
+          <Route exact path="/resources/new">
+            <NewCategoryPage />
           </Route>
           <Route exact path="/resources/:categoryURLId">
             <CategoryPage />
