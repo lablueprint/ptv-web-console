@@ -2,19 +2,17 @@ import { Editor } from 'draft-js';
 import { createEditorStateFromRaw } from 'draftail';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { withAuthorization } from '../../Session';
 import NewResourceForm from './NewResourceForm';
 import NewResourcePage from './NewResourcePage';
 import ResourcesList from './ResourcesList';
 
-function ResourcePage() {
-  const { categoryURLId, resourceURLId } = useParams();
-
+function useResource(categoryURLId, resourceURLId) {
   const [categoryTitle, setCategoryTitle] = useState('');
 
-  const [data, setData] = useState({});
+  const [resource, setResource] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,7 +33,7 @@ function ResourcePage() {
             .then((resourceSnapshot) => {
               setLoading(false);
               resourceSnapshot.docs.forEach((resourceDoc) => {
-                setData({ ...resourceDoc.data(), id: resourceDoc.id });
+                setResource({ ...resourceDoc.data(), id: resourceDoc.id });
               });
             })
             .catch((err) => {
@@ -48,24 +46,39 @@ function ResourcePage() {
       });
   }, [categoryURLId, resourceURLId]);
 
+  return {
+    categoryTitle, resource, loading, error,
+  };
+}
+
+function ResourcePage() {
+  const { categoryURLId, resourceURLId } = useParams();
+
+  const {
+    categoryTitle, resource, loading, error,
+  } = useResource(categoryURLId, resourceURLId);
+
   return (
     <div>
-      <h1>{`Category: ${categoryTitle}`}</h1>
-
-      <hr />
-
-      <h1>{data.title}</h1>
-      <p>{data.description}</p>
-      {error && <p>{error.message}</p>}
-
-      <hr />
-
       {loading && <p>loading...</p>}
+      {!loading && (
+        <>
+          <h1>{`Category: ${categoryTitle}`}</h1>
 
-      <div>
-        {data.body
-        && <Editor readOnly editorState={createEditorStateFromRaw(JSON.parse(data.body))} />}
-      </div>
+          <hr />
+
+          <h1>{resource.title}</h1>
+          <p>{resource.description}</p>
+          {error && <p>{error.message}</p>}
+
+          <hr />
+
+          <div>
+            {resource.body
+          && <Editor readOnly editorState={createEditorStateFromRaw(JSON.parse(resource.body))} />}
+          </div>
+        </>
+      )}
     </div>
   );
 }
