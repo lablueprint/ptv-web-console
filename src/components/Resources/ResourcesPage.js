@@ -2,10 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { useCollectionSnapshot } from '../../hooks';
-import { withAuthorization } from '../Session';
 import { CategoriesList } from './Category';
 
-function ResourcesPage() {
+export default function ResourcesPage() {
   const { data, loading, error } = useCollectionSnapshot('resource_categories');
 
   return (
@@ -18,7 +17,3 @@ function ResourcesPage() {
     </div>
   );
 }
-
-const condition = (authUser) => !!authUser;
-
-export default withAuthorization(condition)(ResourcesPage);

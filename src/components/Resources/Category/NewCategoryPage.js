@@ -1,9 +1,8 @@
 import 'firebase/firestore';
 import React from 'react';
-import { withAuthorization } from '../../Session';
 import NewCategoryForm from './NewCategoryForm';
 
-function NewCategoryPage() {
+export default function NewCategoryPage() {
   return (
     <div>
       <h1>Create a new category</h1>
@@ -11,7 +10,3 @@ function NewCategoryPage() {
     </div>
   );
 }
-
-const condition = (authUser) => !!authUser;
-
-export default withAuthorization(condition)(NewCategoryPage);

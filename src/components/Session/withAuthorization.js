@@ -2,8 +2,8 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Firebase, { withFirebase } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
 import AuthUserContext from './context';
+import * as ROUTES from '../../constants/routes';
 
 const withAuthorization = (condition) => (Component) => {
   class WithAuthorization extends React.Component {
@@ -11,7 +11,8 @@ const withAuthorization = (condition) => (Component) => {
       const { firebase, history } = this.props;
       this.listener = firebase.auth.onAuthStateChanged((authUser) => {
         if (!condition(authUser)) {
-          history.push(ROUTES.SIGN_IN);
+          history.push(ROUTES.LANDING);
+          alert('You are not authorized to view this page.');
         }
       });
     }

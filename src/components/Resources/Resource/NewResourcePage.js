@@ -2,12 +2,11 @@ import 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
-import { withAuthorization } from '../../Session';
 import NewResourceForm from './NewResourceForm';
 import useCategoryFromURLId from './useCategoryFromURLId';
 
 
-function NewResourcePage() {
+export default function NewResourcePage() {
   const { categoryURLId } = useParams();
   const [isMounted, setIsMounted] = useState(false);
   const { data, loading, error } = useCategoryFromURLId(categoryURLId, isMounted);
@@ -32,7 +31,3 @@ function NewResourcePage() {
     </div>
   );
 }
-
-const condition = (authUser) => !!authUser;
-
-export default withAuthorization(condition)(NewResourcePage);

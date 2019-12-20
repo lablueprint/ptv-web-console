@@ -4,11 +4,9 @@ import 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
-import { withAuthorization } from '../../Session';
 import useResource from './useResource';
 
-
-function ResourcePage() {
+export default function ResourcePage() {
   const { categoryURLId, resourceURLId } = useParams();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -47,7 +45,3 @@ function ResourcePage() {
     </div>
   );
 }
-
-const condition = (authUser) => !!authUser;
-
-export default withAuthorization(condition)(ResourcePage);

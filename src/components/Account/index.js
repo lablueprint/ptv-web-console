@@ -1,8 +1,8 @@
 import React from 'react';
 import { PasswordChangeForm } from '../PasswordChange';
-import { withAuthorization, AuthUserContext } from '../Session';
+import { AuthUserContext } from '../Session';
 
-function AccountPage() {
+export default function AccountPage() {
   return (
     <AuthUserContext.Consumer>
       {({ authUser, authLoading }) => (
@@ -19,7 +19,3 @@ function AccountPage() {
     </AuthUserContext.Consumer>
   );
 }
-
-const condition = (authUser) => !!authUser;
-
-export default withAuthorization(condition)(AccountPage);

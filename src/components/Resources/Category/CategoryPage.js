@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
-import useResources from './useResources';
 import { ResourcesList } from '../Resource';
-import { withAuthorization } from '../../Session';
+import useResources from './useResources';
 
-function CategoryPage() {
+export default function CategoryPage() {
   const [isMounted, setIsMounted] = useState(false);
   const { categoryURLId } = useParams();
   const {
@@ -39,7 +38,3 @@ function CategoryPage() {
     </div>
   );
 }
-
-const condition = (authUser) => !!authUser;
-
-export default withAuthorization(condition)(CategoryPage);
