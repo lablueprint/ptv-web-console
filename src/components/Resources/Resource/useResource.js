@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 export default function useResource(categoryURLId, resourceURLId, isMounted) {
   const [categoryTitle, setCategoryTitle] = useState('');
-
+  const [categoryFirestoreId, setCategoryFirestoreId] = useState('');
   const [resource, setResource] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,6 +19,7 @@ export default function useResource(categoryURLId, resourceURLId, isMounted) {
         categorySnapshot.docs.forEach((categoryDoc) => {
           if (isMounted) {
             setCategoryTitle(categoryDoc.data().title);
+            setCategoryFirestoreId(categoryDoc.id);
           }
           firebase
             .firestore()
@@ -51,6 +52,6 @@ export default function useResource(categoryURLId, resourceURLId, isMounted) {
   }, [categoryURLId, isMounted, resourceURLId]);
 
   return {
-    categoryTitle, resource, loading, error,
+    categoryTitle, categoryFirestoreId, resource, loading, error,
   };
 }
