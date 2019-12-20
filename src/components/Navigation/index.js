@@ -6,7 +6,7 @@ import { AuthUserContext } from '../Session';
 export default function Navigation() {
   return (
     <AuthUserContext.Consumer>
-      {(authUser) => (authUser ? <NavigationAuth /> : <NavigationNonAuth />)}
+      {({ authUser }) => (authUser ? <NavigationAuth /> : <NavigationNonAuth />)}
     </AuthUserContext.Consumer>
   );
 }

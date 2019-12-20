@@ -10,7 +10,7 @@ import LandingPage from '../Landing';
 import Navigation from '../Navigation';
 import PasswordForgetPage from '../PasswordForget';
 import ResourcesPage, {
-  CategoryPage, ResourcePage, NewResourcePage, NewCategoryPage,
+  CategoryPage, NewCategoryPage, NewResourcePage, ResourcePage,
 } from '../Resources';
 import { withAuthentication, AuthUserContext } from '../Session';
 import SignInPage from '../SignIn';
@@ -24,9 +24,7 @@ function App() {
     <Router>
       <div>
         <ClipLoader loading={authLoading} />
-        {!authLoading && (
-          <Navigation />
-        )}
+        {!authLoading && <Navigation />}
 
         <hr />
 
