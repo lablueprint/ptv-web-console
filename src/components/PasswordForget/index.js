@@ -1,14 +1,6 @@
-import React from 'react';
 import PasswordForgetForm from './PasswordForgetForm';
 import PasswordForgetLink from './PasswordForgetLink';
+import PasswordForgetPage from './PasswordForgetPage';
 
-export default function PasswordForget() {
-  return (
-    <div>
-      <h1>PasswordForget</h1>
-      <PasswordForgetForm />
-    </div>
-  );
-}
-
+export default PasswordForgetPage;
 export { PasswordForgetForm, PasswordForgetLink };

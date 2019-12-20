@@ -33,6 +33,8 @@ function App() {
 
           {/* Public */}
           <Route exact path={ROUTES.LANDING} component={LandingPage} />
+
+          {/* Signed out */}
           <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
           <Route exact path={ROUTES.SIGN_IN} component={SignInPage} />
           <Route exact path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />

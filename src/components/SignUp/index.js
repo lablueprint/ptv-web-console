@@ -1,14 +1,6 @@
-import React from 'react';
 import SignUpForm from './SignUpForm';
 import SignUpLink from './SignUpLink';
+import SignUpPage from './SignUpPage';
 
-export default function SignUpPage() {
-  return (
-    <div>
-      <h1>SignUp</h1>
-      <SignUpForm />
-    </div>
-  );
-}
-
+export default SignUpPage;
 export { SignUpForm, SignUpLink };
