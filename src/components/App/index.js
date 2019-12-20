@@ -12,7 +12,7 @@ import PasswordForgetPage from '../PasswordForget';
 import ResourcesPage, {
   CategoryPage, NewCategoryPage, NewResourcePage, ResourcePage,
 } from '../Resources';
-import { withAuthentication, AuthUserContext } from '../Session';
+import { AuthUserContext, withAuthentication } from '../Session';
 import SignInPage from '../SignIn';
 import SignUpPage from '../SignUp';
 import UsersPage from '../Users';
@@ -29,15 +29,36 @@ function App() {
         <hr />
 
         <Switch>
-          <Route exact path={ROUTES.LANDING} component={LandingPage} />
-          <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
-          <Route exact path={ROUTES.SIGN_IN} component={SignInPage} />
-          <Route exact path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
-          <Route exact path={ROUTES.HOME} component={HomePage} />
-          <Route exact path={ROUTES.ACCOUNT} component={AccountPage} />
-          <Route exact path={ROUTES.ADMIN} component={AdminPage} />
-          <Route exact path={ROUTES.FORUM} component={ForumPage} />
-          <Route exact path={ROUTES.USERS} component={UsersPage} />
+
+          {/* Public */}
+          <Route exact path={ROUTES.LANDING}>
+            <LandingPage />
+          </Route>
+          <Route exact path={ROUTES.SIGN_UP}>
+            <SignUpPage />
+          </Route>
+          <Route exact path={ROUTES.SIGN_IN}>
+            <SignInPage />
+          </Route>
+          <Route exact path={ROUTES.PASSWORD_FORGET}>
+            <PasswordForgetPage />
+          </Route>
+
+          {/* Signed in */}
+          <Route exact path={ROUTES.HOME}>
+            <HomePage />
+          </Route>
+          <Route exact path={ROUTES.ACCOUNT}>
+            <AccountPage />
+          </Route>
+
+          {/* Admin */}
+          <Route exact path={ROUTES.ADMIN}>
+            <AdminPage />
+          </Route>
+          <Route exact path={ROUTES.USERS}>
+            <UsersPage />
+          </Route>
 
           {/* Resources */}
           <Route exact path={ROUTES.RESOURCE_CATEGORIES}>
@@ -55,6 +76,12 @@ function App() {
           <Route exact path="/resources/:categoryURLId/:resourceURLId">
             <ResourcePage />
           </Route>
+
+          {/* Forum */}
+          <Route exact path={ROUTES.FORUM}>
+            <ForumPage />
+          </Route>
+
         </Switch>
       </div>
     </Router>
