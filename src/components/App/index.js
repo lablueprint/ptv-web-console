@@ -9,8 +9,8 @@ import HomePage from '../Home';
 import LandingPage from '../Landing';
 import Navigation from '../Navigation';
 import PasswordForgetPage from '../PasswordForget';
-import ResourcesPage, {
-  CategoryPage, NewCategoryPage, NewResourcePage, ResourcePage,
+import {
+  ResourcesPage, CategoryPage, NewCategoryPage, NewResourcePage, ResourcePage,
 } from '../Resources';
 import { AuthUserContext, withAuthentication } from '../Session';
 import SignInPage from '../SignIn';

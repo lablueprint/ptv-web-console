@@ -1,39 +1,11 @@
 import 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import * as firebase from 'firebase/app';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { withAuthorization } from '../../Session';
 import NewResourceForm from './NewResourceForm';
+import useCategoryFromURLId from './useCategoryFromURLId';
 
-function useCategoryFromURLId(categoryURLId, isMounted) {
-  const [data, setCategoryDoc] = useState({});
-  const [loading, setCategoryLoading] = React.useState(true);
-  const [error, setCategoryError] = useState(null);
-
-  useEffect(() => {
-    firebase
-      .firestore()
-      .collection('resource_categories')
-      .where('urlId', '==', categoryURLId)
-      .get()
-      .then((snapshot) => {
-        if (isMounted) {
-          setCategoryLoading(false);
-          snapshot.docs.forEach((doc) => {
-            setCategoryDoc({ ...doc.data(), id: doc.id });
-          });
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setCategoryError(err);
-        }
-      });
-  }, [categoryURLId, isMounted]);
-
-  return { data, loading, error };
-}
 
 function NewResourcePage() {
   const { categoryURLId } = useParams();
