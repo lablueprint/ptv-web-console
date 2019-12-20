@@ -1,7 +1,7 @@
+import dashify from 'dashify';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import dashify from 'dashify';
 import DeleteCategoryButton from './DeleteCategoryButton';
 
 export default function CategoriesList({ categories }) {

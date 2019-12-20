@@ -3,12 +3,13 @@ import { Link, useParams } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { ResourcesList } from '../Resource';
 import useResources from './useResources';
+import EditCategoryForm from './EditCategoryForm';
 
 export default function CategoryPage() {
   const [isMounted, setIsMounted] = useState(false);
   const { categoryURLId } = useParams();
   const {
-    categoryTitle, categoryFirestoreId, resources, loading, error,
+    category, resources, loading, error,
   } = useResources(categoryURLId, isMounted);
 
   useEffect(() => {
@@ -23,15 +24,18 @@ export default function CategoryPage() {
       <ClipLoader loading={loading} />
       {!loading && (
         <>
-          <h1>{`Resources in ${categoryTitle} category`}</h1>
-          <Link to={`/resources/${categoryURLId}/new`}>New resource</Link>
+          <h1>{`Resources in ${category.title} category`}</h1>
 
           {error && <p>{error.message}</p>}
 
+          <EditCategoryForm currentState={category} />
+
+          <Link to={`/resources/${category.urlId}/new`}>New resource</Link>
+
           <ResourcesList
             resources={resources}
-            categoryURLId={categoryURLId}
-            categoryFirestoreId={categoryFirestoreId}
+            categoryURLId={category.urlId}
+            categoryFirestoreId={category.id}
           />
         </>
       )}

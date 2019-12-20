@@ -3,8 +3,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 
 export default function useResources(categoryURLId, isMounted) {
-  const [categoryTitle, setCategoryTitle] = useState('');
-  const [categoryFirestoreId, setCategoryFirestoreId] = useState('');
+  const [category, setCategory] = useState(null);
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -18,8 +17,7 @@ export default function useResources(categoryURLId, isMounted) {
       .then((categorySnapshot) => {
         categorySnapshot.docs.forEach((categoryDoc) => {
           if (isMounted) {
-            setCategoryTitle(categoryDoc.data().title);
-            setCategoryFirestoreId(categoryDoc.id);
+            setCategory({ ...categoryDoc.data(), id: categoryDoc.id });
           }
           firebase
             .firestore()
@@ -46,6 +44,6 @@ export default function useResources(categoryURLId, isMounted) {
   }, [categoryURLId, isMounted]);
 
   return {
-    categoryTitle, categoryFirestoreId, resources, loading, error,
+    category, resources, loading, error,
   };
 }

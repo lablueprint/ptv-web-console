@@ -83,33 +83,35 @@ export default function EditResourceForm({ readOnly, currentState, categoryFires
     <form onSubmit={onSubmit}>
 
       <table>
-        <tr>
-          <td>
+        <tbody>
+          <tr>
+            <td>
             Title
-          </td>
-          <td>
-            <input
-              name="title"
-              type="text"
-              value={formState.title}
-              onChange={onChange}
-              disabled={readOnly}
-            />
-          </td>
-        </tr>
-        <tr>
-          <td>
+            </td>
+            <td>
+              <input
+                name="title"
+                type="text"
+                value={formState.title}
+                onChange={onChange}
+                disabled={readOnly}
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
             Description
-          </td>
-          <td>
-            <textarea
-              name="description"
-              value={formState.description}
-              onChange={onChange}
-              disabled={readOnly}
-            />
-          </td>
-        </tr>
+            </td>
+            <td>
+              <textarea
+                name="description"
+                value={formState.description}
+                onChange={onChange}
+                disabled={readOnly}
+              />
+            </td>
+          </tr>
+        </tbody>
       </table>
 
       {formState.body && (
