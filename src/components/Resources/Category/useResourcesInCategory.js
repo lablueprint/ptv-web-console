@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 
-export default function useResources(categoryURLId, isMounted) {
+export default function useResourcesInCategory(categoryURLId, isMounted) {
   const [category, setCategory] = useState(null);
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,21 +19,6 @@ export default function useResources(categoryURLId, isMounted) {
           if (isMounted) {
             setCategory({ ...categoryDoc.data(), id: categoryDoc.id });
           }
-          firebase
-            .firestore()
-            .collection(`resource_categories/${categoryDoc.id}/resources`)
-            .get()
-            .then((resourcesSnapshot) => {
-              if (isMounted) {
-                setLoading(false);
-                setResources(resourcesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-              }
-            })
-            .catch((err) => {
-              if (isMounted) {
-                setError(err);
-              }
-            });
         });
       })
       .catch((err) => {
@@ -42,6 +27,26 @@ export default function useResources(categoryURLId, isMounted) {
         }
       });
   }, [categoryURLId, isMounted]);
+
+  useEffect(() => {
+    if (category) {
+      const unsubscribe = firebase
+        .firestore()
+        .collection(`resource_categories/${category.id}/resources`)
+        .onSnapshot((resourcesSnapshot) => {
+          if (isMounted) {
+            setLoading(false);
+            setResources(resourcesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+          }
+        }, (err) => {
+          if (isMounted) {
+            setError(err);
+          }
+        });
+      return unsubscribe;
+    }
+    return () => {};
+  }, [category, isMounted]);
 
   return {
     category, resources, loading, error,

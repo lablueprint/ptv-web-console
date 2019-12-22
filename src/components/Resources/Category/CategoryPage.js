@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { ResourcesList } from '../Resource';
-import useResources from './useResources';
+import useResourcesInCategory from './useResourcesInCategory';
 import EditCategoryForm from './EditCategoryForm';
 
 export default function CategoryPage() {
@@ -10,7 +10,7 @@ export default function CategoryPage() {
   const { categoryURLId } = useParams();
   const {
     category, resources, loading, error,
-  } = useResources(categoryURLId, isMounted);
+  } = useResourcesInCategory(categoryURLId, isMounted);
 
   useEffect(() => {
     setIsMounted(true);

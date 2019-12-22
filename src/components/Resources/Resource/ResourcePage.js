@@ -11,7 +11,7 @@ export default function ResourcePage() {
   const [readOnly, setReadOnly] = useState(true);
 
   const {
-    categoryTitle, categoryFirestoreId, resource, loading, error,
+    category, resource, loading, error,
   } = useResource(categoryURLId, resourceURLId, isMounted);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function ResourcePage() {
       <ClipLoader loading={loading} />
       {!loading && (
         <>
-          <h1>{`Category: ${categoryTitle}`}</h1>
+          <h1>{`Category: ${category.title}`}</h1>
 
           <hr />
 
@@ -42,7 +42,7 @@ export default function ResourcePage() {
             <EditResourceForm
               readOnly={readOnly}
               currentState={resource}
-              categoryFirestoreId={categoryFirestoreId}
+              categoryFirestoreId={category.id}
             />
           </div>
         </>
