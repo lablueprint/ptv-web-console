@@ -1,6 +1,7 @@
 import dashify from 'dashify';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
+import 'firebase/auth';
 import { useState } from 'react';
 
 export default function useNewDocumentForm(collection, initialState) {
@@ -42,7 +43,12 @@ export default function useNewDocumentForm(collection, initialState) {
       .firestore()
       .collection(collection)
       .doc()
-      .set(formState)
+      .set({
+        ...formState,
+        author: firebase.auth().currentUser.uid,
+        created: firebase.firestore.FieldValue.serverTimestamp(),
+        updated: firebase.firestore.FieldValue.serverTimestamp(),
+      })
       .catch((err) => {
         setError(err);
       });

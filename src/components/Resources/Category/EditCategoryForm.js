@@ -21,25 +21,25 @@ export default function EditCategoryForm({ currentState }) {
   };
 
 
-  const urlIdCollision = async (urlId) => {
-    let collided = false;
-
-    const querySnapshot = await firebase.firestore()
-      .collection('resource_categories/')
-      .where('urlId', '==', urlId)
-      .get();
-
-    querySnapshot.docs.forEach((doc) => {
-      if (doc.id !== formState.id) {
-        collided = true;
-      }
-    });
-
-    return collided;
-  };
-
-  const onSubmit = async (event) => {
+  const onSubmit = (event) => {
     event.preventDefault();
+
+    const urlIdCollision = async (urlId) => {
+      let collided = false;
+
+      const querySnapshot = await firebase.firestore()
+        .collection('resource_categories/')
+        .where('urlId', '==', urlId)
+        .get();
+
+      querySnapshot.docs.forEach((doc) => {
+        if (doc.id !== formState.id) {
+          collided = true;
+        }
+      });
+
+      return collided;
+    };
 
     const urlId = encodeURI(dashify(formState.title));
 
@@ -49,7 +49,10 @@ export default function EditCategoryForm({ currentState }) {
           firebase.firestore()
             .collection('resource_categories/')
             .doc(formState.id)
-            .update(formState)
+            .update({
+              ...formState,
+              updated: firebase.firestore.FieldValue.serverTimestamp(),
+            })
             .then(() => {
               history.push(`/resources/${formState.urlId}`);
             })
