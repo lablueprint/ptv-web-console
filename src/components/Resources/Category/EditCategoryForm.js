@@ -28,7 +28,7 @@ export default function EditCategoryForm({ currentState }) {
       let collided = false;
 
       const querySnapshot = await firebase.firestore()
-        .collection('resource_categories/')
+        .collection('resource_categories')
         .where('urlId', '==', urlId)
         .get();
 
@@ -41,13 +41,11 @@ export default function EditCategoryForm({ currentState }) {
       return collided;
     };
 
-    const urlId = encodeURI(dashify(formState.title));
-
-    urlIdCollision(urlId)
+    urlIdCollision(formState.urlId)
       .then((collision) => {
         if (!collision) {
           firebase.firestore()
-            .collection('resource_categories/')
+            .collection('resource_categories')
             .doc(formState.id)
             .update({
               ...formState,

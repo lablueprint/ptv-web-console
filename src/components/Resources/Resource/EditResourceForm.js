@@ -33,37 +33,39 @@ export default function EditResourceForm({ readOnly, currentState, categoryFires
     });
   };
 
-  const urlIdCollision = async (urlId) => {
-    let collided = false;
-
-    const querySnapshot = await firebase.firestore()
-      .collection(`resource_categories/${categoryFirestoreId}/resources`)
-      .where('urlId', '==', urlId)
-      .get();
-
-    querySnapshot.docs.forEach((doc) => {
-      if (doc.id !== formState.id) {
-        collided = true;
-      }
-    });
-
-    return collided;
-  };
-
-  const onSubmit = async (event) => {
+  const onSubmit = (event) => {
     event.preventDefault();
 
-    const urlId = encodeURI(dashify(formState.title));
+    const urlIdCollision = async (urlId) => {
+      let collided = false;
 
-    urlIdCollision(urlId)
+      const querySnapshot = await firebase.firestore()
+        .collection(`resource_categories/${categoryFirestoreId}/resources`)
+        .where('urlId', '==', urlId)
+        .get();
+
+      querySnapshot.docs.forEach((doc) => {
+        if (doc.id !== formState.id) {
+          collided = true;
+        }
+      });
+
+      return collided;
+    };
+
+    urlIdCollision(formState.urlId)
       .then((collision) => {
         if (!collision) {
           firebase.firestore()
-            .collection(`resource_categories/${categoryFirestoreId}/resources`).doc(formState.id)
-            .update(formState)
+            .collection(`resource_categories/${categoryFirestoreId}/resources`)
+            .doc(formState.id)
+            .update({
+              ...formState,
+              updated: firebase.firestore.FieldValue.serverTimestamp(),
+            })
             .then(() => {
               setEditorState(EditorState.createEmpty());
-              history.push(`/resources/${categoryURLId}/${encodeURI(dashify(formState.title))}`);
+              history.push(`/resources/${categoryURLId}/${formState.urlId}`);
             })
             .catch((err) => {
               setError(err);
