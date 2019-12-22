@@ -1,7 +1,6 @@
-import { CategoryPage, NewCategoryPage } from './Category';
-import { NewResourcePage, ResourcePage } from './Resource';
-import ResourcesPage from './ResourcesPage';
+import { CategoryList, CategoryCreate, CategoryEdit } from './Category';
+import { ResourceEdit, ResourceCreate } from './Resource';
 
 export {
-  ResourcesPage, CategoryPage, ResourcePage, NewResourcePage, NewCategoryPage,
+  CategoryList, CategoryCreate, CategoryEdit, ResourceCreate, ResourceEdit,
 };
