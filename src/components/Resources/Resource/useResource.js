@@ -36,12 +36,10 @@ export default function useResource(categoryURLId, resourceURLId, isMounted) {
         .where('urlId', '==', resourceURLId)
         .get()
         .then((snapshot) => {
-          if (isMounted) {
-            setLoading(false);
-          }
           snapshot.docs.forEach((doc) => {
             if (isMounted) {
               setResource({ ...doc.data(), id: doc.id });
+              setLoading(false);
             }
           });
         })

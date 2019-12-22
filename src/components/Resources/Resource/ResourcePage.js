@@ -33,6 +33,25 @@ export default function ResourcePage() {
           {error && <p>{error.message}</p>}
 
           <div>
+            <table>
+              <tbody>
+                <tr>
+                  <td>Author</td>
+                  <td>{resource.author}</td>
+                </tr>
+                <tr>
+                  <td>Created</td>
+                  <td>{resource.created.toDate().toString()}</td>
+                </tr>
+                <tr>
+                  <td>Updated</td>
+                  <td>{resource.updated.toDate().toString()}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
             <button disabled={!readOnly} type="button" onClick={() => { setReadOnly(false); }}>
               Edit
             </button>
