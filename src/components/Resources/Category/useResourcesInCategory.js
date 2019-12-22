@@ -34,9 +34,9 @@ export default function useResourcesInCategory(categoryURLId, isMounted) {
         .firestore()
         .collection(`resource_categories/${category.id}/resources`)
         .onSnapshot((resourcesSnapshot) => {
-          if (isMounted) {
+          if (isMounted && category) {
+            setResources(resourcesSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
             setLoading(false);
-            setResources(resourcesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
           }
         }, (err) => {
           if (isMounted) {
