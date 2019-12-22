@@ -8,18 +8,92 @@ import {
   EditButton,
   SimpleForm,
   TextInput,
-  ImageInput,
-  ImageField,
+  Show,
+  SimpleShowLayout,
+  ReferenceManyField,
+  FunctionField,
+  ShowButton,
+  ReferenceField,
 } from 'react-admin';
+
+export function UserShow(props) {
+  return (
+    <Show {...props}>
+      <SimpleShowLayout>
+        <TextField source="name" />
+        <TextField source="email" />
+        <FunctionField
+          source="createdAt"
+          render={(record) => (
+            record.createdAt
+              ? new Date(record.createdAt.seconds * 1000).toLocaleString()
+              : null
+          )}
+        />
+        <FunctionField
+          source="updatedAt"
+          render={(record) => (
+            record.updatedAt
+              ? new Date(record.updatedAt.seconds * 1000).toLocaleString()
+              : null
+          )}
+        />
+
+        <ReferenceManyField label="Resources" reference="resources" target="author">
+          <Datagrid>
+            <TextField source="title" />
+            <TextField source="description" />
+            <FunctionField
+              source="createdAt"
+              render={(record) => (
+                record.createdAt
+                  ? new Date(record.createdAt.seconds * 1000).toLocaleString()
+                  : null
+              )}
+            />
+            <FunctionField
+              source="updatedAt"
+              render={(record) => (
+                record.updatedAt
+                  ? new Date(record.updatedAt.seconds * 1000).toLocaleString()
+                  : null
+              )}
+            />
+            <ReferenceField label="Category" source="category_id" reference="resource_categories" link="show">
+              <TextField source="title" />
+            </ReferenceField>
+            <ShowButton />
+            <EditButton />
+          </Datagrid>
+        </ReferenceManyField>
+      </SimpleShowLayout>
+    </Show>
+  );
+}
 
 export function UserList(props) {
   return (
     <List title="All users" {...props}>
       <Datagrid>
-        <TextField source="id" />
         <TextField source="name" />
-        <TextField source="username" />
         <TextField source="email" />
+        <FunctionField
+          source="createdAt"
+          render={(record) => (
+            record.createdAt
+              ? new Date(record.createdAt.seconds * 1000).toLocaleString()
+              : null
+          )}
+        />
+        <FunctionField
+          source="updatedAt"
+          render={(record) => (
+            record.updatedAt
+              ? new Date(record.updatedAt.seconds * 1000).toLocaleString()
+              : null
+          )}
+        />
+        <ShowButton />
         <EditButton />
       </Datagrid>
     </List>
@@ -30,16 +104,8 @@ export function UserCreate(props) {
   return (
     <Create {...props}>
       <SimpleForm>
-        <TextInput source="id" />
         <TextInput source="name" />
-        <TextInput source="username" />
         <TextInput source="email" />
-        <ImageInput source="avatar" label="User avatar" accept="image/*">
-          <ImageField source="src" title="title" />
-        </ImageInput>
-        <ImageInput source="images" label="Other images" accept="image/*" multiple>
-          <ImageField source="src" title="title" />
-        </ImageInput>
       </SimpleForm>
     </Create>
   );
@@ -49,16 +115,24 @@ export function UserEdit(props) {
   return (
     <Edit {...props}>
       <SimpleForm>
-        <TextInput source="id" />
-        <TextInput source="name" />
-        <TextInput source="username" />
-        <TextInput source="email" />
-        <ImageInput source="avatar" label="User avatar" accept="image/*">
-          <ImageField source="src" title="title" />
-        </ImageInput>
-        <ImageInput source="images" label="Other images" accept="image/*" multiple>
-          <ImageField source="src" title="title" />
-        </ImageInput>
+        <TextField source="name" />
+        <TextField source="email" />
+        <FunctionField
+          source="createdAt"
+          render={(record) => (
+            record.createdAt
+              ? new Date(record.createdAt.seconds * 1000).toLocaleString()
+              : null
+          )}
+        />
+        <FunctionField
+          source="updatedAt"
+          render={(record) => (
+            record.updatedAt
+              ? new Date(record.updatedAt.seconds * 1000).toLocaleString()
+              : null
+          )}
+        />
       </SimpleForm>
     </Edit>
   );
