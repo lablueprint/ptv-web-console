@@ -1,10 +1,14 @@
 import React from 'react';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 import { Admin, Resource } from 'react-admin';
 import { RestProvider, AuthProvider } from 'ra-data-firestore-client/';
-import { UserList, UserEdit, UserCreate } from '../Users';
 import {
-  CategoryList, CategoryEdit, CategoryCreate, ResourceEdit, ResourceCreate,
+  UserList, UserEdit, UserCreate, UserShow,
+} from '../Users';
+import {
+  CategoryList, CategoryEdit, CategoryCreate, CategoryShow, ResourceEdit, ResourceCreate,
+  ResourceShow, ResourceList,
 } from '../Resources';
 
 const config = {
@@ -35,11 +39,12 @@ const authConfig = {
 const dataProvider = RestProvider(config, { trackedResources });
 
 export default function App() {
+  firebase.auth();
   return (
     <Admin dataProvider={dataProvider} authProvider={AuthProvider(authConfig)}>
-      <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} />
-      <Resource name="resource_categories" list={CategoryList} edit={CategoryEdit} create={CategoryCreate} />
-      <Resource name="resources" edit={ResourceEdit} create={ResourceCreate} />
+      <Resource name="users" show={UserShow} list={UserList} edit={UserEdit} create={UserCreate} />
+      <Resource name="resource_categories" show={CategoryShow} list={CategoryList} edit={CategoryEdit} create={CategoryCreate} options={{ label: 'Categories' }} />
+      <Resource name="resources" show={ResourceShow} list={ResourceList} edit={ResourceEdit} create={ResourceCreate} />
     </Admin>
   );
 }

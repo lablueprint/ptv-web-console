@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useForm } from 'react-final-form';
 import {
-  Create, Edit, SimpleForm, TextInput, ReferenceInput, SelectInput,
+  Create, Edit, SimpleForm, TextInput, ReferenceInput, SelectInput, Toolbar,
+  useAuthState, SaveButton, SimpleShowLayout, TextField, ReferenceField, RichTextField,
+  Show, FunctionField, List, Datagrid, ShowButton, EditButton,
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/storage';
+import PropTypes from 'prop-types';
 
 const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'], // toggled buttons
@@ -63,26 +67,49 @@ const configureQuill = (quill) => {
   quill.on('text-change', (delta, oldDelta) => {
     const currrentContents = quill.getContents();
     const diff = currrentContents.diff(oldDelta);
-    try {
-      const insertOps = diff.ops.filter((op) => !!op.insert);
-      insertOps.forEach((insertOp) => {
+    const insertOps = diff.ops.filter((op) => !!op.insert);
+    insertOps.forEach((insertOp) => {
+      if (insertOp.insert.image) {
         firebase.storage()
           .refFromURL(insertOp.insert.image)
           .delete()
           .catch((error) => {
             console.error(error);
           });
-      });
-    } catch (error) {
-      console.error(error);
-    }
+      }
+    });
   });
 };
+
+function CreateResourceWithAuthor({ handleSubmitWithRedirect, ...props }) {
+  const { loaded } = useAuthState();
+  const form = useForm();
+  const handleClick = useCallback(() => {
+    if (loaded) {
+      form.change('author', firebase.auth().currentUser.uid);
+      handleSubmitWithRedirect('show');
+    }
+  }, [form, handleSubmitWithRedirect, loaded]);
+
+  return <SaveButton {...props} label="Create" handleSubmitWithRedirect={handleClick} />;
+}
+
+CreateResourceWithAuthor.propTypes = {
+  handleSubmitWithRedirect: PropTypes.func.isRequired,
+};
+
+function ResourceCreateToolbar(props) {
+  return (
+    <Toolbar {...props}>
+      <CreateResourceWithAuthor />
+    </Toolbar>
+  );
+}
 
 export function ResourceCreate(props) {
   return (
     <Create {...props}>
-      <SimpleForm>
+      <SimpleForm toolbar={<ResourceCreateToolbar />} redirect="show">
         <TextInput source="title" />
         <TextInput source="description" />
         <ReferenceInput label="Category" source="category_id" reference="resource_categories">
@@ -100,11 +127,87 @@ export function ResourceEdit(props) {
       <SimpleForm>
         <TextInput source="title" />
         <TextInput source="description" />
-        <RichTextInput source="body" toolbar={toolbarOptions} configureQuill={configureQuill} />
+        <ReferenceField label="Author" source="author" reference="users" link="show">
+          <TextField source="name" />
+        </ReferenceField>
+        <FunctionField
+          source="createdAt"
+          render={(record) => (
+            record.createdAt ? new Date(record.createdAt.seconds * 1000).toLocaleString() : null
+          )}
+        />
+        <FunctionField
+          source="updatedAt"
+          render={(record) => (
+            record.updatedAt ? new Date(record.updatedAt.seconds * 1000).toLocaleString() : null
+          )}
+        />
         <ReferenceInput label="Category" source="category_id" reference="resource_categories">
           <SelectInput optionText="title" />
         </ReferenceInput>
+        <RichTextInput source="body" toolbar={toolbarOptions} configureQuill={configureQuill} />
       </SimpleForm>
     </Edit>
+  );
+}
+
+export function ResourceShow(props) {
+  return (
+    <Show {...props}>
+      <SimpleShowLayout>
+        <TextField source="title" />
+        <TextField source="description" />
+        <ReferenceField label="Author" source="author" reference="users" link="show">
+          <TextField source="name" />
+        </ReferenceField>
+        <FunctionField
+          source="createdAt"
+          render={(record) => (
+            record.createdAt ? new Date(record.createdAt.seconds * 1000).toLocaleString() : null
+          )}
+        />
+        <FunctionField
+          source="updatedAt"
+          render={(record) => (
+            record.updatedAt ? new Date(record.updatedAt.seconds * 1000).toLocaleString() : null
+          )}
+        />
+        <ReferenceField label="Category" source="category_id" reference="resource_categories" link="show">
+          <TextField source="title" />
+        </ReferenceField>
+        <RichTextField source="body" />
+      </SimpleShowLayout>
+    </Show>
+  );
+}
+
+export function ResourceList(props) {
+  return (
+    <List title="All resources" {...props}>
+      <Datagrid>
+        <TextField source="title" />
+        <TextField source="description" />
+        <ReferenceField label="Author" source="author" reference="users" link="show">
+          <TextField source="name" />
+        </ReferenceField>
+        <FunctionField
+          source="createdAt"
+          render={(record) => (
+            record.createdAt ? new Date(record.createdAt.seconds * 1000).toLocaleString() : null
+          )}
+        />
+        <FunctionField
+          source="updatedAt"
+          render={(record) => (
+            record.updatedAt ? new Date(record.updatedAt.seconds * 1000).toLocaleString() : null
+          )}
+        />
+        <ReferenceField label="Category" source="category_id" reference="resource_categories" link="show">
+          <TextField source="title" />
+        </ReferenceField>
+        <ShowButton />
+        <EditButton />
+      </Datagrid>
+    </List>
   );
 }
