@@ -1,21 +1,26 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "PTV Web Console",
+  "name": "Web Console - PTV Mobile App",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "src": "https://ptvla.org/wp-content/uploads/2018/01/cropped-icon-32x32.jpg",
+      "sizes": "32x32",
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
+      "src": "https://ptvla.org/wp-content/uploads/2018/01/cropped-icon-192x192.jpg",
+      "sizes": "192x192",
+      "type": "image/x-icon"
     },
     {
-      "src": "logo512.png",
+      "src": "https://ptvla.org/wp-content/uploads/2018/01/cropped-icon-180x180.jpg",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "180x180"
+    },
+    {
+      "src": "https://ptvla.org/wp-content/uploads/2018/01/cropped-icon-270x270.jpg",
+      "type": "image/png",
+      "sizes": "270x270"
     }
   ],
   "start_url": ".",

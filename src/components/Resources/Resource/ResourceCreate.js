@@ -1,9 +1,7 @@
 import React, { useCallback } from 'react';
 import { useForm } from 'react-final-form';
 import {
-  Create, Edit, SimpleForm, TextInput, ReferenceInput, SelectInput, Toolbar,
-  useAuthState, SaveButton, SimpleShowLayout, TextField, ReferenceField, RichTextField,
-  Show, FunctionField, List, Datagrid, ShowButton, EditButton,
+  useAuthState, Toolbar, Create, SimpleForm, TextInput, ReferenceInput, SelectInput, SaveButton,
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 import firebase from 'firebase/app';
@@ -106,7 +104,7 @@ function ResourceCreateToolbar(props) {
   );
 }
 
-export function ResourceCreate(props) {
+export default function ResourceCreate(props) {
   return (
     <Create {...props}>
       <SimpleForm toolbar={<ResourceCreateToolbar />} redirect="show">
@@ -118,96 +116,5 @@ export function ResourceCreate(props) {
         <RichTextInput source="body" toolbar={toolbarOptions} configureQuill={configureQuill} />
       </SimpleForm>
     </Create>
-  );
-}
-
-export function ResourceEdit(props) {
-  return (
-    <Edit {...props}>
-      <SimpleForm>
-        <TextInput source="title" />
-        <TextInput source="description" />
-        <ReferenceField label="Author" source="author" reference="users" link="show">
-          <TextField source="name" />
-        </ReferenceField>
-        <FunctionField
-          source="createdAt"
-          render={(record) => (
-            record.createdAt ? new Date(record.createdAt.seconds * 1000).toLocaleString() : null
-          )}
-        />
-        <FunctionField
-          source="updatedAt"
-          render={(record) => (
-            record.updatedAt ? new Date(record.updatedAt.seconds * 1000).toLocaleString() : null
-          )}
-        />
-        <ReferenceInput label="Category" source="category_id" reference="resource_categories">
-          <SelectInput optionText="title" />
-        </ReferenceInput>
-        <RichTextInput source="body" toolbar={toolbarOptions} configureQuill={configureQuill} />
-      </SimpleForm>
-    </Edit>
-  );
-}
-
-export function ResourceShow(props) {
-  return (
-    <Show {...props}>
-      <SimpleShowLayout>
-        <TextField source="title" />
-        <TextField source="description" />
-        <ReferenceField label="Author" source="author" reference="users" link="show">
-          <TextField source="name" />
-        </ReferenceField>
-        <FunctionField
-          source="createdAt"
-          render={(record) => (
-            record.createdAt ? new Date(record.createdAt.seconds * 1000).toLocaleString() : null
-          )}
-        />
-        <FunctionField
-          source="updatedAt"
-          render={(record) => (
-            record.updatedAt ? new Date(record.updatedAt.seconds * 1000).toLocaleString() : null
-          )}
-        />
-        <ReferenceField label="Category" source="category_id" reference="resource_categories" link="show">
-          <TextField source="title" />
-        </ReferenceField>
-        <RichTextField source="body" />
-      </SimpleShowLayout>
-    </Show>
-  );
-}
-
-export function ResourceList(props) {
-  return (
-    <List title="All resources" {...props}>
-      <Datagrid>
-        <TextField source="title" />
-        <TextField source="description" />
-        <ReferenceField label="Author" source="author" reference="users" link="show">
-          <TextField source="name" />
-        </ReferenceField>
-        <FunctionField
-          source="createdAt"
-          render={(record) => (
-            record.createdAt ? new Date(record.createdAt.seconds * 1000).toLocaleString() : null
-          )}
-        />
-        <FunctionField
-          source="updatedAt"
-          render={(record) => (
-            record.updatedAt ? new Date(record.updatedAt.seconds * 1000).toLocaleString() : null
-          )}
-        />
-        <ReferenceField label="Category" source="category_id" reference="resource_categories" link="show">
-          <TextField source="title" />
-        </ReferenceField>
-        <ShowButton />
-        <EditButton />
-      </Datagrid>
-    </List>
   );
 }

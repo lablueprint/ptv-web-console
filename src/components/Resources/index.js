@@ -1,11 +1,11 @@
 import {
-  CategoryList, CategoryCreate, CategoryEdit, CategoryShow,
+  CategoryCreate, CategoryEdit, CategoryList, CategoryShow,
 } from './Category';
 import {
-  ResourceEdit, ResourceCreate, ResourceShow, ResourceList,
+  ResourceCreate, ResourceEdit, ResourceList, ResourceShow,
 } from './Resource';
 
 export {
-  CategoryList, CategoryCreate, CategoryEdit, CategoryShow, ResourceCreate, ResourceEdit,
-  ResourceShow, ResourceList,
+  CategoryCreate, CategoryEdit, CategoryList, CategoryShow,
+  ResourceCreate, ResourceEdit, ResourceList, ResourceShow,
 };

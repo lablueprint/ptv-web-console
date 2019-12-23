@@ -1,17 +1,16 @@
 import React from 'react';
 import firebase from 'firebase/app';
-import 'firebase/auth';
 import { Admin, Resource } from 'react-admin';
 import { RestProvider, AuthProvider } from 'ra-data-firestore-client/';
 import {
   UserList, UserEdit, UserCreate, UserShow,
 } from '../Users';
 import {
-  CategoryList, CategoryEdit, CategoryCreate, CategoryShow, ResourceEdit, ResourceCreate,
-  ResourceShow, ResourceList,
+  CategoryCreate, CategoryEdit, CategoryList, CategoryShow,
+  ResourceCreate, ResourceEdit, ResourceList, ResourceShow,
 } from '../Resources';
 
-const config = {
+const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
   databaseURL: process.env.REACT_APP_DATABASE_URL,
@@ -22,26 +21,26 @@ const config = {
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
-firebase.initializeApp(config);
+firebase.initializeApp(firebaseConfig);
 
 const trackedResources = [
   { name: 'resource_categories' },
   { name: 'users' },
-  { name: 'test_items' },
   { name: 'resources' },
 ];
+
+const dataProvider = RestProvider(firebaseConfig, { trackedResources });
 
 const authConfig = {
   userProfilePath: '/users/',
   userAdminProp: 'isAdmin',
 };
 
-const dataProvider = RestProvider(config, { trackedResources });
+const authProvider = AuthProvider(authConfig);
 
 export default function App() {
-  firebase.auth();
   return (
-    <Admin dataProvider={dataProvider} authProvider={AuthProvider(authConfig)}>
+    <Admin dataProvider={dataProvider} authProvider={authProvider}>
       <Resource name="users" show={UserShow} list={UserList} edit={UserEdit} create={UserCreate} />
       <Resource name="resource_categories" show={CategoryShow} list={CategoryList} edit={CategoryEdit} create={CategoryCreate} options={{ label: 'Categories' }} />
       <Resource name="resources" show={ResourceShow} list={ResourceList} edit={ResourceEdit} create={ResourceCreate} />
