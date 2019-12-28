@@ -3,7 +3,7 @@ import firebase from 'firebase/app';
 import { Admin, Resource } from 'react-admin';
 import { RestProvider, AuthProvider } from 'ra-data-firestore-client/';
 import {
-  UserList, UserEdit, UserCreate, UserShow,
+  UserCreate, UserEdit, UserList, UserShow,
 } from '../Users';
 import {
   CategoryCreate, CategoryEdit, CategoryList, CategoryShow,
