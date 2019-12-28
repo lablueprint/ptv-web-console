@@ -10,24 +10,8 @@ import 'firebase/storage';
 /*
  * TODO: handle memory leaks when uploading to storage.
  *
- * Proposed solution:
- *    When user adds an image to the editor:
- *      - show a temporary view of the image in the editor
- *      - add the filename to a list in this component's state
- *    When the user backspaces an image in the editor:
- *      - remove the filename from the list in the component state
- *    On submit:
- *      - add the list of filenames to this resource's doc in the database
- *      - upload all the images in the list
- *      - replace the embedded images in the editor with the links to the uploaded images in storage
- *    On resource delete:
- *      - delete all the images in the list first
+ * See ResourceCreate.js for details.
  *
- *  We can also have a cloud function that acts as a
- *    garbage collector in case any of the deletions fail.
- *      - scan the database for the images that are referenced
- *      - scan the storage bucket
- *      - if any images are not referenced, delete them
  */
 
 const toolbarOptions = [
