@@ -42,14 +42,16 @@ export default function CreateResourceButton({
         const urlCountMap = {}; // map from url to count }
         await asyncForEach(Object.entries(imagesToUpload),
           async ([imageHash, { count, file }]) => {
-            const snapshot = await firebase
-              .storage()
-              .ref()
-              .child(`resources/${resourceId}/images/${imageHash}.jpg`)
-              .put(file);
-            const imageUrl = await snapshot.ref.getDownloadURL();
-            imageUrlMap[imageHash] = imageUrl;
-            urlCountMap[imageUrl] = count;
+            if (count > 0) {
+              const snapshot = await firebase
+                .storage()
+                .ref()
+                .child(`resources/${resourceId}/images/${imageHash}.jpg`)
+                .put(file);
+              const imageUrl = await snapshot.ref.getDownloadURL();
+              imageUrlMap[imageHash] = imageUrl;
+              urlCountMap[imageUrl] = count;
+            }
           });
 
         const replacedWithUrls = (await formBodyDelta).ops.map((op) => {

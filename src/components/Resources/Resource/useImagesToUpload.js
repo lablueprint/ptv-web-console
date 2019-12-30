@@ -19,7 +19,7 @@ import { useReducer } from 'react';
    */
 export default function useImagesToUpload() {
   const [imagesToUpload, dispatch] = useReducer((state, action) => {
-    const newState = state;
+    let newState;
     switch (action.type) {
       /*
        * Receive a singleton object action.data:
@@ -28,30 +28,30 @@ export default function useImagesToUpload() {
        *  }
        */
       case useImagesToUpload.types.insert:
-        Object.entries(action.data).forEach(([encodedImageHash, file]) => {
-          if (newState[encodedImageHash]) {
-            newState[encodedImageHash].count += 1;
+        newState = state;
+        action.data.forEach(({ imageHash, file }) => {
+          if (newState[imageHash]) {
+            newState[imageHash].count += 1;
           } else {
-            newState[encodedImageHash] = {
+            newState[imageHash] = {
               count: 1,
               file,
             };
           }
         });
+        console.log('state after inserting:', newState);
         return newState;
 
-      /*
-       * Receive a singleton object action.data:
-       *  {
-       *    deletedImageHash: hash of the 64-bit encoded image,
-       *  }
-       */
-      case useImagesToUpload.types.delete:
-        if (newState[action.data.deletedImageHash].count === 1) {
-          delete newState[action.data.deletedImageHash];
-        } else {
-          newState[action.data.deletedImageHash].count -= 1;
-        }
+      case useImagesToUpload.types.refresh:
+        newState = Object.fromEntries(
+          Object.entries(state).map(
+            ([imageHash, { file }]) => [imageHash, { count: 0, file }],
+          ),
+        );
+        action.data.currImageHashes.forEach((imageHash) => {
+          newState[imageHash].count += 1;
+        });
+        console.log('state after refreshing:', newState);
         return newState;
       default:
         throw new Error();
@@ -62,5 +62,5 @@ export default function useImagesToUpload() {
 
 useImagesToUpload.types = {
   insert: 'INSERT',
-  delete: 'DELETE',
+  refresh: 'REFRESH',
 };
