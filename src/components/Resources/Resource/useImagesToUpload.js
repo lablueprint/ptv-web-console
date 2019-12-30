@@ -39,7 +39,6 @@ export default function useImagesToUpload() {
             };
           }
         });
-        console.log('state after inserting:', newState);
         return newState;
 
       case useImagesToUpload.types.refresh:
@@ -51,7 +50,6 @@ export default function useImagesToUpload() {
         action.data.currImageHashes.forEach((imageHash) => {
           newState[imageHash].count += 1;
         });
-        console.log('state after refreshing:', newState);
         return newState;
       default:
         throw new Error();

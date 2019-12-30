@@ -11,10 +11,10 @@ import PropTypes from 'prop-types';
 import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
 import { asyncForEach, hashCode } from './utils';
 
-export default function CreateResourceButton({
+export default function ResourceEditSaveButton({
   // eslint-disable-next-line react/prop-types
   handleSubmitWithRedirect, // cannot be validated
-  imagesToUpload, formBodyDelta, ...props
+  imagesToUpload, formBodyDelta, record, ...props
 }) {
   const { loaded } = useAuthState();
   const form = useForm();
@@ -32,14 +32,10 @@ export default function CreateResourceButton({
     if (loaded) {
       form.change('author', authUser.uid);
 
-      const resourceId = firebase
-        .firestore()
-        .collection('resources')
-        .doc().id;
+      const resourceId = form.getState().values.id;
 
       const uploadAndReplaceImages = async () => {
-        const imageUrlMap = {}; // map from imageHash to url in storage
-        const urlCountMap = {}; // map from url to count }
+        const imageHashToUrlMap = {}; // map from imageHash to url in storage
         await asyncForEach(Object.entries(imagesToUpload),
           async ([imageHash, { count, file }]) => {
             if (count > 0) {
@@ -49,39 +45,51 @@ export default function CreateResourceButton({
                 .child(`resources/${resourceId}/images/${imageHash}.jpg`)
                 .put(file);
               const imageUrl = await snapshot.ref.getDownloadURL();
-              imageUrlMap[imageHash] = imageUrl;
-              urlCountMap[imageUrl] = count;
+              imageHashToUrlMap[imageHash] = imageUrl;
             }
           });
 
-        const replacedWithUrls = (await formBodyDelta).ops.map((op) => {
-          // replace image with url of the image in the storage bucket
-          if (op.insert && op.insert.image) {
-            const insertImageOp = op;
-            const imageHash = hashCode(insertImageOp.insert.image);
-            insertImageOp.insert.image = imageUrlMap[imageHash];
-            return insertImageOp;
-          }
-          // not an image, so don't map this op to anything
-          return op;
-        });
+        const awaitedFormBodyDelta = await formBodyDelta;
+        if (awaitedFormBodyDelta && awaitedFormBodyDelta.ops) {
+          const replacedWithUrls = awaitedFormBodyDelta.ops.map((op) => {
+            // replace image with url of the image in the storage bucket
+            if (op.insert && op.insert.image && op.insert.image.startsWith('data:image/')) {
+              const insertImageOp = op;
+              const imageHash = hashCode(insertImageOp.insert.image);
+              insertImageOp.insert.image = imageHashToUrlMap[imageHash];
+              return insertImageOp;
+            }
+            // not an image, so don't map this op to anything
+            return op;
+          });
 
-        const converter = new QuillDeltaToHtmlConverter(replacedWithUrls, {});
-        const html = converter.convert();
-        form.change('body', html);
-        form.change('images', urlCountMap);
+          const urlSanitizer = (url) => {
+            // Do not sanitize our own image urls, but do sanitize any other urls
+            if (url.startsWith('https://firebasestorage.googleapis.com/v0/b/la-blueprint-ptv.appspot.com/o/resources%2F')) {
+              return url;
+            }
+            return undefined;
+          };
+
+          const converter = new QuillDeltaToHtmlConverter(replacedWithUrls, { urlSanitizer });
+          const html = converter.convert();
+          form.change('body', html);
+        }
+
+        form.change('updatedAt', firebase.firestore.Timestamp());
 
         const formContents = form.getState().values;
 
         dataProvider
-          .create('resources', {
+          .update('resources', {
             id: resourceId,
             data: formContents,
+            previousData: record,
           }).then(() => {
             redirect(`/resources/${resourceId}/show`);
-            notify('Resource created');
+            notify('Resource updated');
           }).catch((err) => {
-            notify(`Error creating resource: ${err.message}`, 'warning');
+            notify(`Error updating resource: ${err.message}`, 'warning');
           });
       };
 
@@ -91,10 +99,10 @@ export default function CreateResourceButton({
     }
   };
 
-  return <SaveButton {...props} label="Create" handleSubmitWithRedirect={handleClick} />;
+  return <SaveButton {...props} label="Save" handleSubmitWithRedirect={handleClick} />;
 }
 
-CreateResourceButton.propTypes = {
+ResourceEditSaveButton.propTypes = {
   imagesToUpload: PropTypes.objectOf(PropTypes.shape({
     count: PropTypes.number.isRequired,
     file: PropTypes.instanceOf(File).isRequired,
@@ -107,8 +115,14 @@ CreateResourceButton.propTypes = {
       ]),
     })),
   }),
+  record: PropTypes.shape({
+    images: PropTypes.objectOf(
+      PropTypes.number,
+    ),
+  }),
 };
 
-CreateResourceButton.defaultProps = {
+ResourceEditSaveButton.defaultProps = {
   formBodyDelta: null,
+  record: null,
 };

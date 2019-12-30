@@ -1,20 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Toolbar } from 'react-admin';
-import ResourceCreateSaveButton from './ResourceCreateSaveButton';
+import { Toolbar, DeleteButton } from 'react-admin';
+import ResourceEditSaveButton from './ResourceEditSaveButton';
 
-export default function ResourceCreateToolbar({ imagesToUpload, formBodyDelta, ...props }) {
+export default function ResourceEditToolbar({
+  imagesToUpload, formBodyDelta, ...props
+}) {
   return (
     <Toolbar {...props}>
-      <ResourceCreateSaveButton
+      <ResourceEditSaveButton
         imagesToUpload={imagesToUpload}
         formBodyDelta={formBodyDelta}
       />
+      <DeleteButton {...props} />
     </Toolbar>
   );
 }
 
-ResourceCreateToolbar.propTypes = {
+ResourceEditToolbar.propTypes = {
   imagesToUpload: PropTypes.objectOf(PropTypes.shape({
     count: PropTypes.number.isRequired,
     file: PropTypes.instanceOf(File).isRequired,
@@ -29,6 +32,6 @@ ResourceCreateToolbar.propTypes = {
   }),
 };
 
-ResourceCreateToolbar.defaultProps = {
+ResourceEditToolbar.defaultProps = {
   formBodyDelta: null,
 };

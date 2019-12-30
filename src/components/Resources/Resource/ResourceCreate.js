@@ -13,21 +13,22 @@ import toolbarOptions from './toolbarOptions';
  * TODO: handle memory leaks when uploading to storage.
  *
  * Proposed solution:
- *    (DONE) When user adds an image to the editor from the toolbar:
+ *    When user adds an image to the editor from the toolbar:
  *      - (DONE) show a temporary view of the image in the editor
  *      - (DONE) add the filename to a list in this component's state with count
  *    On editor text change:
- *      - (DONE) if not uploaded, decrement the file's count from the list of files to upload
- *      - if uploaded, decrement the file's count from the list of uploaded files
- *    (DONE) On submit:
- *      - (DONE) upload all the images in the list of files to upload (if count > 0)
+ *      - (DONE) update the file's count in the list of files to upload
+ *    On submit:
+ *      - (DONE) upload the images in the list of files to upload (if count > 0)
  *      - (DONE) replace the embedded images in the editor with the links to the uploaded images
- *      - (DONE) add the list of urls to this resource's doc in the database
- *      - from the list of uploaded images, delete images from storage (if count <= 0)
- *    On resource delete:
- *      - delete all the images of this resource
  *
- *  We can also have a cloud function that acts as a
+ *    Cloud functions:
+ *      On resource delete:
+ *        - delete all the images of this resource
+ *      On resource update:
+ *        - find which items are no longer referenced and delete them
+ *
+ *  Stretch goal: We can also have a cloud function that acts as a
  *    garbage collector in case any of the deletions fail.
  *      - scan the database for the images that are referenced
  *      - scan the storage bucket

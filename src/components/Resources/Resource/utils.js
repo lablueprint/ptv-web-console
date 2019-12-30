@@ -16,7 +16,7 @@ export function hashCode(s) {
  *  Convert a delta to a list of hashed images.
  */
 export function getImageHashesFromDelta(del) {
-  return del.filter((op) => !!op.insert.image)
+  return del.filter((op) => !!op.insert.image && op.insert.image.startsWith('data:image/'))
     .map((op) => hashCode(op.insert.image));
 }
 
