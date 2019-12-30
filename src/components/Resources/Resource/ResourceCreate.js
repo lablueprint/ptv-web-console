@@ -13,20 +13,19 @@ import toolbarOptions from './toolbarOptions';
  * TODO: handle memory leaks when uploading to storage.
  *
  * Proposed solution:
- *    (DONE) When user adds an image to the editor:
+ *    (DONE) When user adds an image to the editor from the toolbar:
  *      - (DONE) show a temporary view of the image in the editor
- *      - (DONE) add the filename to a list in this component's state
- *    When the user backspaces an image in the editor:
+ *      - (DONE) add the filename to a list in this component's state with count
+ *    On editor text change:
  *      - (DONE) if not uploaded, decrement the file's count from the list of files to upload
- *          (DONE) if the count is 0, remove the file from the list
  *      - if uploaded, decrement the file's count from the list of uploaded files
- *          if the count is 0, add the file to a list of images to delete from storage
  *    (DONE) On submit:
- *      - (DONE) upload all the images in the list of files to upload
+ *      - (DONE) upload all the images in the list of files to upload (if count > 0)
  *      - (DONE) replace the embedded images in the editor with the links to the uploaded images
  *      - (DONE) add the list of urls to this resource's doc in the database
+ *      - from the list of uploaded images, delete images from storage (if count <= 0)
  *    On resource delete:
- *      - delete all the images in the list first
+ *      - delete all the images of this resource
  *
  *  We can also have a cloud function that acts as a
  *    garbage collector in case any of the deletions fail.
@@ -51,10 +50,15 @@ export default function ResourceCreate(props) {
             const range = quill.getSelection(true); // Save current cursor state
             quill.insertEmbed(range.index, 'image', res);
             quill.setSelection(range.index + 1); // Move cursor to right side of image
-            const encodedImageHash = hashCode(res);
+            const imageHash = hashCode(res);
             dispatch({
               type: useImagesToUpload.types.insert,
-              data: { [encodedImageHash]: file },
+              data: [
+                {
+                  imageHash,
+                  file,
+                },
+              ],
             });
           });
       };
@@ -67,11 +71,11 @@ export default function ResourceCreate(props) {
       if (source === 'user') {
         const currImageHashes = getImageHashesFromDelta(currentContents);
         const prevImageHashes = getImageHashesFromDelta(oldDelta);
-        const deletedImageHash = difference(prevImageHashes, currImageHashes);
-        if (deletedImageHash.length) {
+        const diff = difference(prevImageHashes, currImageHashes);
+        if (diff.length) {
           dispatch({
-            type: useImagesToUpload.types.delete,
-            data: { deletedImageHash },
+            type: useImagesToUpload.types.refresh,
+            data: { currImageHashes },
           });
         }
       }
