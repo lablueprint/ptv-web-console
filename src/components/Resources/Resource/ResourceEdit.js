@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Edit, SimpleForm, TextInput, ReferenceField, TextField,
   FunctionField, ReferenceInput, SelectInput,
 } from 'react-admin';
+import { RAFirebaseMethods } from 'ra-data-firestore-client';
 import RichTextInput from 'ra-input-rich-text';
-import firebase from 'firebase/app';
-import 'firebase/storage';
+import {
+  hashCode, getImageHashesFromDelta, difference,
+} from './utils';
+import toolbarOptions from './toolbarOptions';
+import useImagesToUpload from './useImagesToUpload';
+import ResourceEditToolbar from './ResourceEditToolbar';
 
 /*
  * TODO: handle memory leaks when uploading to storage.
@@ -14,79 +19,63 @@ import 'firebase/storage';
  *
  */
 
-const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-  ['blockquote', 'code-block'],
+export default function ResourceEdit(props) {
+  const [imagesToUpload, dispatch] = useImagesToUpload();
+  const [formBodyDelta, setFormBodyDelta] = useState(null);
 
-  [{ header: 1 }, { header: 2 }], // custom button values
-  [{ list: 'ordered' }, { list: 'bullet' }],
-  [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
-  [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
-  [{ direction: 'rtl' }], // text direction
-
-  [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
-  [{ header: [1, 2, 3, 4, 5, 6, false] }],
-  ['link', 'image', 'video', 'formula'], // add's image support
-  [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-  [{ font: [] }],
-  [{ align: [] }],
-
-  ['clean'], // remove formatting button
-];
-
-const configureQuill = (quill) => {
-  quill.getModule('toolbar').addHandler('image', () => {
-    const input = document.createElement('input');
-
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
-
-    input.onchange = () => {
-      const file = input.files[0];
-      // Save current cursor state
-      const range = quill.getSelection(true);
-
-      // Move cursor to right side of image (easier to continue typing)
-      quill.setSelection(range.index + 1);
-
-      // Upload to storage and embed in the editor
-      firebase
-        .storage()
-        .ref()
-        .child(`${Date.now()}.jpg`)
-        .put(file)
-        .then((snapshot) => {
-          snapshot.ref
-            .getDownloadURL()
-            .then((url) => {
-              quill.insertEmbed(range.index, 'image', url);
+  const configureQuill = (quill) => {
+    quill.getModule('toolbar').addHandler('image', () => {
+      const input = document.createElement('input');
+      input.setAttribute('type', 'file');
+      input.setAttribute('accept', 'image/*');
+      input.onchange = () => {
+        const file = input.files[0];
+        RAFirebaseMethods.default.convertFileToBase64({ rawFile: file })
+          .then((res) => {
+            const range = quill.getSelection(true); // Save current cursor state
+            quill.insertEmbed(range.index, 'image', res);
+            quill.setSelection(range.index + 1); // Move cursor to right side of image
+            const imageHash = hashCode(res);
+            dispatch({
+              type: useImagesToUpload.types.insert,
+              data: [
+                {
+                  imageHash,
+                  file,
+                },
+              ],
             });
-        });
-    };
-  });
-
-  quill.on('text-change', (delta, oldDelta) => {
-    const currrentContents = quill.getContents();
-    const diff = currrentContents.diff(oldDelta);
-    const insertOps = diff.ops.filter((op) => !!op.insert);
-    insertOps.forEach((insertOp) => {
-      if (insertOp.insert.image) {
-        firebase.storage()
-          .refFromURL(insertOp.insert.image)
-          .delete()
-          .catch((error) => {
-            console.error(error);
           });
+      };
+      input.click();
+    });
+
+    quill.on('text-change', (delta, oldDelta, source) => {
+      const currentContents = quill.getContents();
+      setFormBodyDelta(currentContents);
+      if (source === 'user') {
+        const currImageHashes = getImageHashesFromDelta(currentContents);
+        const prevImageHashes = getImageHashesFromDelta(oldDelta);
+        const diffImageHashes = difference(prevImageHashes, currImageHashes);
+        if (diffImageHashes.length) {
+          dispatch({
+            type: useImagesToUpload.types.refresh,
+            data: { currImageHashes },
+          });
+        }
       }
     });
-  });
-};
+  };
 
-export default function ResourceEdit(props) {
   return (
     <Edit {...props}>
-      <SimpleForm>
+      <SimpleForm toolbar={(
+        <ResourceEditToolbar
+          imagesToUpload={imagesToUpload}
+          formBodyDelta={formBodyDelta}
+        />
+        )}
+      >
         <TextInput source="title" />
         <TextInput source="description" />
         <ReferenceField label="Author" source="author" reference="users" link="show">
