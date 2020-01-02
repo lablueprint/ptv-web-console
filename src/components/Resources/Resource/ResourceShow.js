@@ -1,9 +1,14 @@
 import React from 'react';
 import {
-  Show, SimpleShowLayout, TextField, ReferenceField, FunctionField, RichTextField,
+  Show, SimpleShowLayout, TextField, ReferenceField, FunctionField, SimpleForm,
 } from 'react-admin';
+import RichTextInput from 'ra-input-rich-text';
 
 export default function ResourceShow(props) {
+  const configureQuill = (quill) => {
+    quill.disable();
+  };
+
   return (
     <Show {...props}>
       <SimpleShowLayout>
@@ -27,7 +32,9 @@ export default function ResourceShow(props) {
         <ReferenceField label="Category" source="category_id" reference="resource_categories" link="show">
           <TextField source="title" />
         </ReferenceField>
-        <RichTextField source="body" />
+        <SimpleForm>
+          <RichTextInput source="body" toolbar={[]} configureQuill={configureQuill} />
+        </SimpleForm>
       </SimpleShowLayout>
     </Show>
   );
