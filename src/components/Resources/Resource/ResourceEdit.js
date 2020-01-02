@@ -12,13 +12,6 @@ import toolbarOptions from './toolbarOptions';
 import useImagesToUpload from './useImagesToUpload';
 import ResourceEditToolbar from './ResourceEditToolbar';
 
-/*
- * TODO: handle memory leaks when uploading to storage.
- *
- * See ResourceCreate.js for details.
- *
- */
-
 export default function ResourceEdit(props) {
   const [imagesToUpload, dispatch] = useImagesToUpload();
   const [formBodyDelta, setFormBodyDelta] = useState(null);
