@@ -1,36 +1,8 @@
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import PropTypes from 'prop-types';
-import React, { useCallback } from 'react';
+import React from 'react';
 import {
-  Create, SaveButton, SimpleForm, TextInput, Toolbar, useAuthState,
+  Create, SimpleForm, TextInput,
 } from 'react-admin';
-import { useForm } from 'react-final-form';
-
-function CreateCategoryWithAuthor({ handleSubmitWithRedirect, ...props }) {
-  const { loaded } = useAuthState();
-  const form = useForm();
-  const handleClick = useCallback(() => {
-    if (loaded) {
-      form.change('author', firebase.auth().currentUser.uid);
-      handleSubmitWithRedirect('show');
-    }
-  }, [form, handleSubmitWithRedirect, loaded]);
-
-  return <SaveButton {...props} label="Create" handleSubmitWithRedirect={handleClick} />;
-}
-
-CreateCategoryWithAuthor.propTypes = {
-  handleSubmitWithRedirect: PropTypes.func.isRequired,
-};
-
-function CategoryCreateToolbar(props) {
-  return (
-    <Toolbar {...props}>
-      <CreateCategoryWithAuthor />
-    </Toolbar>
-  );
-}
+import CategoryCreateToolbar from './CategoryCreateToolbar';
 
 export default function CategoryCreate(props) {
   return (
