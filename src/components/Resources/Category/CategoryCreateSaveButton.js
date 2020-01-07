@@ -21,6 +21,31 @@ export default function CategoryCreateSaveButton({
   const handleClick = async () => {
     if (loaded) {
       form.change('author', authUser.uid);
+
+      const categoryId = firebase
+        .firestore()
+        .collection('categories')
+        .doc().id;
+
+      const { thumbnail } = form.getState().values;
+
+      if (thumbnail && thumbnail.rawFile) {
+        const snapshot = await firebase
+          .storage()
+          .ref()
+          .child(`resource_categories/${categoryId}/thumbnail.jpg`)
+          .put(thumbnail.rawFile);
+        const imageUrl = await snapshot.ref.getDownloadURL();
+
+        // Put him in an object to get rid of a warning when
+        // trying to display the image in CategoryShow.
+        const thumbnailObject = {
+          src: imageUrl,
+        };
+
+        form.change('thumbnail', thumbnailObject);
+      }
+
       handleSubmitWithRedirect('show');
     }
   };

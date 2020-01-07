@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Datagrid, EditButton, FunctionField, ReferenceField,
   ReferenceManyField, Show, ShowButton, SimpleShowLayout, TextField,
+  ImageField,
 } from 'react-admin';
 import { Link } from 'react-router-dom';
 
@@ -10,6 +11,7 @@ export default function CategoryShow(props) {
     <>
       <Show {...props}>
         <SimpleShowLayout>
+          <ImageField source="thumbnail.src" label="Thumbnail" />
           <TextField source="title" />
           <TextField source="description" />
           <ReferenceField label="Author" source="author" reference="users" link="show">
