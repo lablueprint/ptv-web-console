@@ -1,12 +1,16 @@
 import React from 'react';
 import {
-  Edit, SimpleForm, TextInput, ReferenceField, TextField, FunctionField,
+  Edit, SimpleForm, TextInput, ReferenceField, TextField, FunctionField, ImageInput, ImageField,
 } from 'react-admin';
+import CategoryEditToolbar from './CategoryEditToolbar';
 
 export default function CategoryEdit(props) {
   return (
     <Edit {...props}>
-      <SimpleForm>
+      <SimpleForm toolbar={<CategoryEditToolbar />}>
+        <ImageInput source="thumbnail" accept="image/*">
+          <ImageField source="src" title="title" />
+        </ImageInput>
         <TextInput source="title" />
         <TextInput source="description" />
         <ReferenceField label="Author" source="author" reference="users" link="show">
