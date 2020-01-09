@@ -1,7 +1,9 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import React, { useEffect, useState } from 'react';
-import { SaveButton, useAuthState } from 'react-admin';
+import {
+  SaveButton, useAuthState, useDataProvider, useNotify, useRedirect,
+} from 'react-admin';
 import { useForm } from 'react-final-form';
 
 export default function CategoryCreateSaveButton({
@@ -11,6 +13,9 @@ export default function CategoryCreateSaveButton({
 }) {
   const { loaded } = useAuthState();
   const [authUser, setAuthUser] = useState(null);
+  const dataProvider = useDataProvider();
+  const notify = useNotify();
+  const redirect = useRedirect();
 
   useEffect(() => firebase.auth().onAuthStateChanged((user) => {
     setAuthUser(user || null);
@@ -24,7 +29,7 @@ export default function CategoryCreateSaveButton({
 
       const categoryId = firebase
         .firestore()
-        .collection('categories')
+        .collection('resource_categories')
         .doc().id;
 
       const { thumbnail } = form.getState().values;
@@ -44,9 +49,22 @@ export default function CategoryCreateSaveButton({
         };
 
         form.change('thumbnail', thumbnailObject);
-      }
 
-      handleSubmitWithRedirect('show');
+        const formContents = form.getState().values;
+
+        dataProvider
+          .create('resource_categories', {
+            id: categoryId,
+            data: formContents,
+          }).then(() => {
+            redirect(`/resource_categories/${categoryId}/show`);
+            notify('Category created');
+          }).catch((err) => {
+            notify(`Error creating category: ${err.message}`, 'warning');
+          });
+      }
+    } else {
+      throw new Error('User is not logged in');
     }
   };
 
