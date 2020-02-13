@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import { Admin, Resource } from 'react-admin';
-import { RestProvider, AuthProvider } from 'ra-data-firestore-client/';
+import { RestProvider, AuthProvider } from 'ra-data-firestore-client';
 import {
   UserCreate, UserEdit, UserList, UserShow,
 } from '../Users';
