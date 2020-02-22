@@ -1,8 +1,5 @@
-import UserCreate from './UserCreate';
-import UserEdit from './UserEdit';
-import UserList from './UserList';
-import UserShow from './UserShow';
+import UsersList from './UsersList';
+import UsersPage from './UsersPage';
 
-export {
-  UserCreate, UserEdit, UserList, UserShow,
-};
+export default UsersPage;
+export { UsersList };

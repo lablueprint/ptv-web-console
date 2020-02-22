@@ -1,49 +1,132 @@
-import React from 'react';
-import firebase from 'firebase/app';
-import { Admin, Resource } from 'react-admin';
-import { RestProvider, AuthProvider } from 'ra-data-firestore-client';
+import React, { useContext } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import ClipLoader from 'react-spinners/ClipLoader';
+import PropTypes from 'prop-types';
+import * as ROUTES from '../../constants/routes';
+import AccountPage from '../Account';
+import AdminPage from '../Admin';
+import ForumPage from '../Forum';
+import HomePage from '../Home';
+import LandingPage from '../Landing';
+import Navigation from '../Navigation';
+import PasswordForgetPage from '../PasswordForget';
 import {
-  UserCreate, UserEdit, UserList, UserShow,
-} from '../Users';
-import {
-  CategoryCreate, CategoryEdit, CategoryList, CategoryShow,
-  ResourceCreate, ResourceEdit, ResourceList, ResourceShow,
+  ResourcesPage, CategoryPage, NewCategoryPage, NewResourcePage, ResourcePage,
 } from '../Resources';
+import { AuthUserContext, withAuthentication, withAuthorization } from '../Session';
+import SignInPage from '../SignIn';
+import SignUpPage from '../SignUp';
+import UsersPage from '../Users';
 
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-  databaseURL: process.env.REACT_APP_DATABASE_URL,
-  projectId: process.env.REACT_APP_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const trackedResources = [
-  { name: 'resource_categories' },
-  { name: 'users' },
-  { name: 'resources' },
-];
-
-const dataProvider = RestProvider(firebaseConfig, { trackedResources });
-
-const authConfig = {
-  userProfilePath: '/users/',
-  userAdminProp: 'isAdmin',
-};
-
-const authProvider = AuthProvider(authConfig);
-
-export default function App() {
+function App() {
+  const { authLoading } = useContext(AuthUserContext);
+  const isAuthenticated = (authUser) => !!authUser;
   return (
-    <Admin dataProvider={dataProvider} authProvider={authProvider}>
-      <Resource name="users" show={UserShow} list={UserList} edit={UserEdit} create={UserCreate} />
-      <Resource name="resource_categories" show={CategoryShow} list={CategoryList} edit={CategoryEdit} create={CategoryCreate} options={{ label: 'Categories' }} />
-      <Resource name="resources" show={ResourceShow} list={ResourceList} edit={ResourceEdit} create={ResourceCreate} />
-    </Admin>
+    <Router>
+      <div>
+        <ClipLoader loading={authLoading} />
+        {!authLoading && <Navigation />}
+
+        <hr />
+
+        <Switch>
+
+          {/* Public */}
+          <Route exact path={ROUTES.LANDING} component={LandingPage} />
+
+          {/* Signed out */}
+          <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
+          <Route exact path={ROUTES.SIGN_IN} component={SignInPage} />
+          <Route exact path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
+
+          {/* Signed in */}
+          <AuthorizedRoute
+            condition={isAuthenticated}
+            exact
+            path={ROUTES.HOME}
+            component={HomePage}
+          />
+          <AuthorizedRoute
+            condition={isAuthenticated}
+            exact
+            path={ROUTES.ACCOUNT}
+            component={AccountPage}
+          />
+
+          {/* Admin */}
+          <AuthorizedRoute
+            condition={isAuthenticated}
+            exact
+            path={ROUTES.ADMIN}
+            component={AdminPage}
+          />
+          <AuthorizedRoute
+            condition={isAuthenticated}
+            exact
+            path={ROUTES.USERS}
+            component={UsersPage}
+          />
+
+          {/* Resources */}
+          <AuthorizedRoute
+            condition={isAuthenticated}
+            exact
+            path={ROUTES.RESOURCE_CATEGORIES}
+            component={ResourcesPage}
+          />
+          <AuthorizedRoute
+            condition={isAuthenticated}
+            exact
+            path="/resources/new"
+            component={NewCategoryPage}
+          />
+          <AuthorizedRoute
+            condition={isAuthenticated}
+            exact
+            path="/resources/:categoryURLId"
+            component={CategoryPage}
+          />
+          <AuthorizedRoute
+            condition={isAuthenticated}
+            exact
+            path="/resources/:categoryURLId/new"
+            component={NewResourcePage}
+          />
+          <AuthorizedRoute
+            condition={isAuthenticated}
+            exact
+            path="/resources/:categoryURLId/:resourceURLId"
+            component={ResourcePage}
+          />
+
+          {/* Forum */}
+          <AuthorizedRoute
+            condition={isAuthenticated}
+            exact
+            path={ROUTES.FORUM}
+            component={ForumPage}
+          />
+
+        </Switch>
+      </div>
+    </Router>
   );
 }
+
+function AuthorizedRoute({ condition, component, ...rest }) {
+  const AuthorizedComponent = withAuthorization(condition)(component);
+  return (
+    <Route {...rest} component={AuthorizedComponent} />
+  );
+}
+
+AuthorizedRoute.propTypes = {
+  condition: PropTypes.func.isRequired,
+  component: PropTypes.func,
+};
+
+AuthorizedRoute.defaultProps = {
+  component: null,
+};
+
+export default withAuthentication(App);

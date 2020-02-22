@@ -1,8 +1,12 @@
-import CategoryCreate from './CategoryCreate';
-import CategoryEdit from './CategoryEdit';
-import CategoryList from './CategoryList';
-import CategoryShow from './CategoryShow';
+import CategoriesList from './CategoriesList';
+import CategoryPage from './CategoryPage';
+import DeleteCategoryButton from './DeleteCategoryButton';
+import NewCategoryForm from './NewCategoryForm';
+import NewCategoryPage from './NewCategoryPage';
+import EditCategoryForm from './EditCategoryForm';
+
 
 export {
-  CategoryCreate, CategoryEdit, CategoryList, CategoryShow,
+  CategoryPage,
+  CategoriesList, NewCategoryForm, DeleteCategoryButton, NewCategoryPage, EditCategoryForm,
 };

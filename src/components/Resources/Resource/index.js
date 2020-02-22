@@ -1,8 +1,8 @@
-import ResourceCreate from './ResourceCreate';
-import ResourceEdit from './ResourceEdit';
-import ResourceList from './ResourceList';
-import ResourceShow from './ResourceShow';
+import NewResourceForm from './NewResourceForm';
+import NewResourcePage from './NewResourcePage';
+import ResourcePage from './ResourcePage';
+import ResourcesList from './ResourcesList';
 
 export {
-  ResourceCreate, ResourceEdit, ResourceList, ResourceShow,
+  ResourcePage, NewResourceForm, ResourcesList, NewResourcePage,
 };
