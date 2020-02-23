@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -6,16 +6,15 @@ import {
   DraftailEditor, INLINE_STYLE, BLOCK_TYPE, createEditorStateFromRaw, serialiseEditorStateToRaw,
 } from 'draftail';
 import { EditorState } from 'draft-js';
-import dashify from 'dashify';
 import { useParams, useHistory } from 'react-router-dom';
 
 
-export default function EditResourceForm({ readOnly, currentState, categoryFirestoreId }) {
-  const { categoryURLId } = useParams();
+export default function EditResourceForm({ readOnly, currentState }) {
+  const { categoryId, resourceId } = useParams();
   const history = useHistory();
   const [formState, setFormState] = useState(currentState);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [error, setError] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     setFormState(currentState);
@@ -24,62 +23,31 @@ export default function EditResourceForm({ readOnly, currentState, categoryFires
     }
   }, [currentState]);
 
-  const onChange = (event) => {
+  const onChange = useCallback((event) => {
     event.preventDefault();
     setFormState({
       ...formState,
       [event.target.name]: event.target.value,
-      urlId: event.target.name === 'title' ? encodeURI(dashify(event.target.value)) : formState.urlId,
     });
-  };
+  }, [formState]);
 
-  const onSubmit = (event) => {
+  const onSubmit = useCallback((event) => {
     event.preventDefault();
-
-    const urlIdCollision = async (urlId) => {
-      let collided = false;
-
-      const querySnapshot = await firebase.firestore()
-        .collection(`resource_categories/${categoryFirestoreId}/resources`)
-        .where('urlId', '==', urlId)
-        .get();
-
-      querySnapshot.docs.forEach((doc) => {
-        if (doc.id !== formState.id) {
-          collided = true;
-        }
+    firebase.firestore().collection('resources').doc(resourceId)
+      .update(formState)
+      .then(() => {
+        setEditorState(EditorState.createEmpty());
+        history.push(`/resources/${categoryId}/${resourceId}`);
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
       });
+  }, [categoryId, formState, history, resourceId]);
 
-      return collided;
-    };
-
-    urlIdCollision(formState.urlId)
-      .then((collision) => {
-        if (!collision) {
-          firebase.firestore()
-            .collection(`resource_categories/${categoryFirestoreId}/resources`)
-            .doc(formState.id)
-            .update({
-              ...formState,
-              updated: firebase.firestore.FieldValue.serverTimestamp(),
-            })
-            .then(() => {
-              setEditorState(EditorState.createEmpty());
-              history.push(`/resources/${categoryURLId}/${formState.urlId}`);
-            })
-            .catch((err) => {
-              setError(err);
-            });
-        } else {
-          setError({ message: 'A resource with the same title already exists in this category. Choose a different title.' });
-        }
-      });
-  };
-
-  const onEditorChange = (newEditorState) => {
+  const onEditorChange = useCallback((newEditorState) => {
     setEditorState(newEditorState);
     setFormState({ ...formState, body: JSON.stringify(serialiseEditorStateToRaw(editorState)) });
-  };
+  }, [editorState, formState]);
 
   return (
     <form onSubmit={onSubmit}>
@@ -155,7 +123,7 @@ export default function EditResourceForm({ readOnly, currentState, categoryFires
       )}
 
       <button type="submit">Save</button>
-      {error && <p>{error.message}</p>}
+      {errorMessage && <p>{errorMessage}</p>}
     </form>
 
   );
@@ -163,12 +131,10 @@ export default function EditResourceForm({ readOnly, currentState, categoryFires
 
 EditResourceForm.propTypes = {
   readOnly: PropTypes.bool.isRequired,
-  categoryFirestoreId: PropTypes.string.isRequired,
   currentState: PropTypes.shape({
     id: PropTypes.string,
     title: PropTypes.string,
     description: PropTypes.string,
     body: PropTypes.string,
-    urlId: PropTypes.string,
   }).isRequired,
 };

@@ -1,4 +1,3 @@
-import dashify from 'dashify';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -10,7 +9,7 @@ export default function CategoriesList({ categories }) {
       <td>{category.id}</td>
       <td>{category.title}</td>
       <td>{category.description}</td>
-      <td><Link to={`resources/${encodeURI(dashify(category.title))}`}>View resources</Link></td>
+      <td><Link to={`resources/${category.id}`}>View resources</Link></td>
       <td><DeleteCategoryButton categoryFirestoreId={category.id} /></td>
     </tr>
   ));

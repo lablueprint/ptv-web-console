@@ -5,7 +5,6 @@ import NewCategoryForm from './NewCategoryForm';
 import NewCategoryPage from './NewCategoryPage';
 import EditCategoryForm from './EditCategoryForm';
 
-
 export {
   CategoryPage,
   CategoriesList, NewCategoryForm, DeleteCategoryButton, NewCategoryPage, EditCategoryForm,

@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
-import PropTypes from 'prop-types';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import firebase from 'firebase/app';
 import * as ROUTES from '../../constants/routes';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
@@ -13,19 +14,34 @@ import PasswordForgetPage from '../PasswordForget';
 import {
   ResourcesPage, CategoryPage, NewCategoryPage, NewResourcePage, ResourcePage,
 } from '../Resources';
-import { AuthUserContext, withAuthentication, withAuthorization } from '../Session';
 import SignInPage from '../SignIn';
 import SignUpPage from '../SignUp';
 import UsersPage from '../Users';
 
-function App() {
-  const { authLoading } = useContext(AuthUserContext);
+import 'firebase/auth';
+
+const firebaseConfig = {
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_DATABASE_URL,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
+};
+
+firebase.initializeApp(firebaseConfig);
+
+export default function App() {
+  const [user, initialising] = useAuthState(firebase.auth());
   const isAuthenticated = (authUser) => !!authUser;
+
   return (
     <Router>
       <div>
-        <ClipLoader loading={authLoading} />
-        {!authLoading && <Navigation />}
+        <ClipLoader loading={initialising} />
+        {!initialising && <Navigation authenticated={!!user} />}
 
         <hr />
 
@@ -40,13 +56,13 @@ function App() {
           <Route exact path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
 
           {/* Signed in */}
-          <AuthorizedRoute
+          <Route
             condition={isAuthenticated}
             exact
             path={ROUTES.HOME}
             component={HomePage}
           />
-          <AuthorizedRoute
+          <Route
             condition={isAuthenticated}
             exact
             path={ROUTES.ACCOUNT}
@@ -54,13 +70,13 @@ function App() {
           />
 
           {/* Admin */}
-          <AuthorizedRoute
+          <Route
             condition={isAuthenticated}
             exact
             path={ROUTES.ADMIN}
             component={AdminPage}
           />
-          <AuthorizedRoute
+          <Route
             condition={isAuthenticated}
             exact
             path={ROUTES.USERS}
@@ -68,39 +84,39 @@ function App() {
           />
 
           {/* Resources */}
-          <AuthorizedRoute
+          <Route
             condition={isAuthenticated}
             exact
             path={ROUTES.RESOURCE_CATEGORIES}
             component={ResourcesPage}
           />
-          <AuthorizedRoute
+          <Route
             condition={isAuthenticated}
             exact
             path="/resources/new"
             component={NewCategoryPage}
           />
-          <AuthorizedRoute
+          <Route
             condition={isAuthenticated}
             exact
-            path="/resources/:categoryURLId"
+            path="/resources/:categoryId"
             component={CategoryPage}
           />
-          <AuthorizedRoute
+          <Route
             condition={isAuthenticated}
             exact
-            path="/resources/:categoryURLId/new"
+            path="/resources/:categoryId/new"
             component={NewResourcePage}
           />
-          <AuthorizedRoute
+          <Route
             condition={isAuthenticated}
             exact
-            path="/resources/:categoryURLId/:resourceURLId"
+            path="/resources/:categoryId/:resourceId"
             component={ResourcePage}
           />
 
           {/* Forum */}
-          <AuthorizedRoute
+          <Route
             condition={isAuthenticated}
             exact
             path={ROUTES.FORUM}
@@ -113,20 +129,18 @@ function App() {
   );
 }
 
-function AuthorizedRoute({ condition, component, ...rest }) {
-  const AuthorizedComponent = withAuthorization(condition)(component);
-  return (
-    <Route {...rest} component={AuthorizedComponent} />
-  );
-}
+// function AuthorizedRoute({ condition, component, ...rest }) {
+//   const AuthorizedComponent = withAuthorization(condition)(component);
+//   return (
+//     <Route {...rest} component={AuthorizedComponent} />
+//   );
+// }
 
-AuthorizedRoute.propTypes = {
-  condition: PropTypes.func.isRequired,
-  component: PropTypes.func,
-};
+// AuthorizedRoute.propTypes = {
+//   condition: PropTypes.func.isRequired,
+//   component: PropTypes.func,
+// };
 
-AuthorizedRoute.defaultProps = {
-  component: null,
-};
-
-export default withAuthentication(App);
+// AuthorizedRoute.defaultProps = {
+//   component: null,
+// };

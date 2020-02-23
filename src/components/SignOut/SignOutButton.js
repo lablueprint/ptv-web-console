@@ -1,36 +1,20 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { withRouter } from 'react-router';
-import Firebase, { withFirebase } from '../Firebase';
+import React, { useCallback } from 'react';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import { useHistory } from 'react-router';
 import * as ROUTES from '../../constants/routes';
 
-class SignOutButton extends Component {
-  constructor(props) {
-    super(props);
-    this.onClick = this.onClick.bind(this);
-  }
+export default function SignOutButton() {
+  const history = useHistory();
 
-  onClick() {
-    const { firebase, history } = this.props;
-    firebase.doSignOut();
+  const onClick = useCallback(() => {
+    firebase.auth().signOut();
     history.push(ROUTES.LANDING);
-  }
+  }, [history]);
 
-  render() {
-    return (
-      <button type="button" onClick={this.onClick}>
-        Sign Out
-      </button>
-    );
-  }
+  return (
+    <button type="button" onClick={onClick}>
+      Sign Out
+    </button>
+  );
 }
-
-SignOutButton.propTypes = {
-  firebase: PropTypes.instanceOf(Firebase).isRequired,
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
-};
-
-export default withRouter(withFirebase(SignOutButton));

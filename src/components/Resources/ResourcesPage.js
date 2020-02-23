@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
-import { useCollectionSnapshot } from '../../hooks';
+import { useCollectionOnce } from 'react-firebase-hooks/firestore';
+import firebase from 'firebase/app';
 import { CategoriesList } from './Category';
+import 'firebase/firestore';
 
 export default function ResourcesPage() {
-  const { data, loading, error } = useCollectionSnapshot('resource_categories');
+  const [snapshot, loading, error] = useCollectionOnce(
+    firebase.firestore().collection('resource_categories'),
+  );
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    if (snapshot) {
+      setCategories(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    }
+  }, [snapshot]);
 
   return (
     <div>
@@ -13,7 +24,7 @@ export default function ResourcesPage() {
       <ClipLoader loading={loading} />
       {error && <p>{error.message}</p>}
       <Link to="/resources/new">Create a new category</Link>
-      <CategoriesList categories={data} />
+      <CategoriesList categories={categories} />
     </div>
   );
 }

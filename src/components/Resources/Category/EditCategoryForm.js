@@ -1,67 +1,39 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/firestore';
-import dashify from 'dashify';
 import PropTypes from 'prop-types';
+import React, { useCallback, useState } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
 
 export default function EditCategoryForm({ currentState }) {
+  const { categoryId } = useParams();
   const history = useHistory();
   const [formState, setFormState] = useState(currentState);
-  const [error, setError] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [readOnly, setReadOnly] = useState(true);
 
-  const onChange = (event) => {
+  const onChange = useCallback((event) => {
     event.preventDefault();
-    setFormState({
-      ...formState,
-      [event.target.name]: event.target.value,
-      urlId: event.target.name === 'title' ? encodeURI(dashify(event.target.value)) : formState.urlId,
-    });
-  };
+    setFormState(
+      {
+        ...formState,
+        [event.target.name]: event.target.value,
+      },
+    );
+  }, [formState]);
 
 
-  const onSubmit = (event) => {
+  const onSubmit = useCallback((event) => {
     event.preventDefault();
-
-    const urlIdCollision = async (urlId) => {
-      let collided = false;
-
-      const querySnapshot = await firebase.firestore()
-        .collection('resource_categories')
-        .where('urlId', '==', urlId)
-        .get();
-
-      querySnapshot.docs.forEach((doc) => {
-        if (doc.id !== formState.id) {
-          collided = true;
-        }
+    firebase.firestore().collection('resource_categories').doc(categoryId)
+      .set(formState)
+      .then(() => {
+        setReadOnly(true);
+        history.push(`/resources/${categoryId}`);
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
       });
-
-      return collided;
-    };
-
-    urlIdCollision(formState.urlId)
-      .then((collision) => {
-        if (!collision) {
-          firebase.firestore()
-            .collection('resource_categories')
-            .doc(formState.id)
-            .update({
-              ...formState,
-              updated: firebase.firestore.FieldValue.serverTimestamp(),
-            })
-            .then(() => {
-              history.push(`/resources/${formState.urlId}`);
-            })
-            .catch((err) => {
-              setError(err);
-            });
-        } else {
-          setError({ message: 'A category with the same title already exists. Choose a different title.' });
-        }
-      });
-  };
+  }, [categoryId, formState, history]);
 
 
   return (
@@ -101,7 +73,7 @@ export default function EditCategoryForm({ currentState }) {
       <button type="button" onClick={() => { setReadOnly(false); }}>Edit</button>
       <button disabled={readOnly} type="submit">Save</button>
 
-      {error && <p>{error.message}</p>}
+      {errorMessage && <p>{errorMessage.message}</p>}
     </form>
   );
 }
@@ -111,6 +83,5 @@ EditCategoryForm.propTypes = {
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    urlId: PropTypes.string.isRequired,
   }).isRequired,
 };

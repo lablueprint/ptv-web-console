@@ -1,20 +1,21 @@
 import React from 'react';
-import { AuthUserContext } from '../Session';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import firebase from 'firebase/app';
 import { CreateForumPostForm, DisplayForumPostPage } from './Post';
+import 'firebase/auth';
 
 export default function ForumPage() {
+  const [user] = useAuthState(firebase.auth());
+
   return (
-    <AuthUserContext.Consumer>
-      {({ authUser }) => (
-        <div>
-          <h1>
-            Account:&nbsp;
-            {authUser.email}
-          </h1>
-          <CreateForumPostForm uid={authUser.uid} />
-          <DisplayForumPostPage />
-        </div>
-      )}
-    </AuthUserContext.Consumer>
+    <div>
+      <h1>
+        Account:&nbsp;
+        {user && user.email}
+        {user && user.uid}
+      </h1>
+      <CreateForumPostForm uid={user ? user.uid : null} />
+      <DisplayForumPostPage />
+    </div>
   );
 }
