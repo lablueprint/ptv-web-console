@@ -1,70 +1,62 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Firebase, { withFirebase } from '../Firebase';
+import React, { useState, useCallback, useMemo } from 'react';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
-const INITIAL_STATE = {
-  passwordOne: '',
-  passwordTwo: '',
-  error: null,
+const INITIAL_FORM_STATE = {
+  password: '',
+  confirmPassword: '',
 };
 
-class PasswordChangeForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = INITIAL_STATE;
-    this.onSubmit = this.onSubmit.bind(this);
-    this.onChange = this.onChange.bind(this);
-  }
+export default function PasswordChangeForm() {
+  const [formState, setFormState] = useState(INITIAL_FORM_STATE);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  onSubmit(event) {
-    const { passwordOne } = this.state;
-    const { firebase } = this.props;
+  const onSubmit = useCallback((event) => {
+    event.preventDefault();
     firebase
-      .doPasswordUpdate(passwordOne)
+      .auth()
+      .passwordUpdate(formState.password)
       .then(() => {
-        this.setState(INITIAL_STATE);
+        setFormState(INITIAL_FORM_STATE);
       })
       .catch((error) => {
-        this.setState({ error });
+        setErrorMessage(error.message);
       });
-    event.preventDefault();
-  }
+  }, [formState.password]);
 
-  onChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
-  }
-
-  render() {
-    const { passwordOne, passwordTwo, error } = this.state;
-    const isInvalid = passwordOne !== passwordTwo || passwordOne === '';
-    return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="passwordOne"
-          value={passwordOne}
-          onChange={this.onChange}
-          type="password"
-          placeholder="New Password"
-        />
-        <input
-          name="passwordTwo"
-          value={passwordTwo}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Confirm New Password"
-        />
-        <button disabled={isInvalid} type="submit">
-          Reset My Password
-        </button>
-
-        {error && <p>{error.message}</p>}
-      </form>
+  const onChange = useCallback((event) => {
+    setFormState(
+      {
+        ...formState,
+        [event.target.name]: event.target.value,
+      },
     );
-  }
+  }, [formState]);
+
+  const isInvalid = useMemo(() => formState.password !== formState.confirmPassword || formState.password === '',
+    [formState.confirmPassword, formState.password]);
+
+  return (
+    <form onSubmit={onSubmit}>
+      <input
+        name="password"
+        value={formState.password}
+        onChange={onChange}
+        type="password"
+        placeholder="New Password"
+      />
+      <input
+        name="confirmPassword"
+        value={formState.confirmPassword}
+        onChange={onChange}
+        type="password"
+        placeholder="Confirm New Password"
+      />
+      <button disabled={isInvalid} type="submit">
+        Reset My Password
+      </button>
+
+      {errorMessage && <p>{errorMessage}</p>}
+    </form>
+  );
 }
-
-PasswordChangeForm.propTypes = {
-  firebase: PropTypes.instanceOf(Firebase).isRequired,
-};
-
-export default withFirebase(PasswordChangeForm);

@@ -1,25 +1,37 @@
 import 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { useDocumentOnce } from 'react-firebase-hooks/firestore';
+import firebase from 'firebase/app';
 import EditResourceForm from './EditResourceForm';
-import useResource from './useResource';
+
 
 export default function ResourcePage() {
-  const { categoryURLId, resourceURLId } = useParams();
-  const [isMounted, setIsMounted] = useState(false);
+  const { categoryId, resourceId } = useParams();
   const [readOnly, setReadOnly] = useState(true);
-
-  const {
-    category, resource, loading, error,
-  } = useResource(categoryURLId, resourceURLId, isMounted);
+  const [categorySnapshot, categoryLoading, categoryError] = useDocumentOnce(
+    firebase.firestore().collection('resource_categories').doc(categoryId),
+  );
+  const [resourceSnapshot, resourceLoading, resourceError] = useDocumentOnce(
+    firebase.firestore().collection('resources').doc(resourceId),
+  );
+  const [category, setCategory] = useState({});
+  const [resource, setResource] = useState([]);
 
   useEffect(() => {
-    setIsMounted(true);
-    return () => {
-      setIsMounted(false);
-    };
-  }, []);
+    if (categorySnapshot) {
+      setCategory({ ...categorySnapshot.data(), id: categorySnapshot.id });
+    }
+  }, [categorySnapshot]);
+
+  useEffect(() => {
+    if (resourceSnapshot) {
+      setResource({ ...resourceSnapshot.data(), id: resourceSnapshot.id });
+    }
+  }, [resourceSnapshot]);
+
+  const loading = categoryLoading && resourceLoading;
 
   return (
     <div>
@@ -30,7 +42,8 @@ export default function ResourcePage() {
 
           <hr />
 
-          {error && <p>{error.message}</p>}
+          {categoryError && <p>{categoryError.message}</p>}
+          {resourceError && <p>{resourceError.message}</p>}
 
           <div>
             <table>
@@ -41,11 +54,11 @@ export default function ResourcePage() {
                 </tr>
                 <tr>
                   <td>Created</td>
-                  <td>{resource.created.toDate().toString()}</td>
+                  <td>{resource.createdAt ? resource.createdAt.toDate().toString() : null}</td>
                 </tr>
                 <tr>
                   <td>Updated</td>
-                  <td>{resource.updated.toDate().toString()}</td>
+                  <td>{resource.updatedAt ? resource.updatedAt.toDate().toString() : null}</td>
                 </tr>
               </tbody>
             </table>
@@ -61,7 +74,6 @@ export default function ResourcePage() {
             <EditResourceForm
               readOnly={readOnly}
               currentState={resource}
-              categoryFirestoreId={category.id}
             />
           </div>
         </>

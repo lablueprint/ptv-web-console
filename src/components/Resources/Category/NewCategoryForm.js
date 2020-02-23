@@ -1,46 +1,59 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useNewDocumentForm } from '../../../hooks';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
-const INITIAL_STATE = {
+const INITIAL_FORM_STATE = {
   title: '',
   description: '',
 };
 
 export default function NewCategoryForm() {
   const history = useHistory();
+  const [formState, setFormState] = useState(INITIAL_FORM_STATE);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  const {
-    onChange, onSubmit, error, title, description, urlId,
-  } = useNewDocumentForm('resource_categories', INITIAL_STATE);
+  const onSubmit = useCallback((event) => {
+    event.preventDefault();
+    const docRef = firebase.firestore().collection('resource_categories').doc();
+    docRef.set(formState)
+      .then(() => {
+        history.push(`/resources/${docRef.id}`);
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
+      });
+  }, [formState, history]);
 
-  const myOnSubmit = (event) => {
-    onSubmit(event).then((success) => {
-      if (success) {
-        history.push(`/resources/${urlId}`);
-      }
-    });
-  };
+  const onChange = useCallback((event) => {
+    event.preventDefault();
+    setFormState(
+      {
+        ...formState,
+        [event.target.name]: event.target.value,
+      },
+    );
+  }, [formState]);
 
   return (
-    <form onSubmit={myOnSubmit}>
+    <form onSubmit={onSubmit}>
       <input
         name="title"
         type="text"
-        value={title}
+        value={formState.title}
         onChange={onChange}
         placeholder="Title"
       />
       <input
         name="description"
         type="text"
-        value={description}
+        value={formState.description}
         onChange={onChange}
         placeholder="Description"
       />
       <button type="submit">Create category</button>
 
-      {error && <p>{error.message}</p>}
+      {errorMessage && <p>{errorMessage}</p>}
     </form>
   );
 }

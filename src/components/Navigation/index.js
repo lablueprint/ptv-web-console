@@ -1,12 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import NavigationAuth from './NavigationAuth';
 import NavigationNonAuth from './NavigationNonAuth';
-import { AuthUserContext } from '../Session';
 
-export default function Navigation() {
-  return (
-    <AuthUserContext.Consumer>
-      {({ authUser }) => (authUser ? <NavigationAuth /> : <NavigationNonAuth />)}
-    </AuthUserContext.Consumer>
-  );
+export default function Navigation({ authenticated }) {
+  return authenticated ? <NavigationAuth /> : <NavigationNonAuth />;
 }
+
+Navigation.propTypes = {
+  authenticated: PropTypes.bool.isRequired,
+};

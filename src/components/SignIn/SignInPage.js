@@ -1,22 +1,24 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import * as firebase from 'firebase/app';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import * as ROUTES from '../../constants/routes';
 import { PasswordForgetLink } from '../PasswordForget';
-import { AuthUserContext } from '../Session';
 import { SignUpLink } from '../SignUp';
 import SignInForm from './SignInForm';
+import 'firebase/auth';
 
 export default function SignInPage() {
-  const { authUser, authLoading } = useContext(AuthUserContext);
+  const [user, initialising] = useAuthState(firebase.auth());
   const history = useHistory();
 
   useEffect(() => {
-    if (!authLoading && !!authUser) {
+    if (!initialising && !!user) {
       history.push(ROUTES.LANDING);
     }
-  }, [authLoading, authUser, history]);
+  }, [initialising, user, history]);
 
-  return authLoading ? null : (
+  return initialising ? null : (
     <div>
       <h1>SignIn</h1>
       <SignInForm />

@@ -4,54 +4,77 @@ import {
   BLOCK_TYPE, DraftailEditor, INLINE_STYLE, serialiseEditorStateToRaw,
 } from 'draftail';
 import 'draftail/dist/draftail.css';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import dashify from 'dashify';
-import { useNewDocumentForm } from '../../../hooks';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import React, { useCallback, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 
-const INITIAL_STATE = {
+const INITIAL_FORM_STATE = {
   title: '',
   description: '',
   body: '',
 };
 
-export default function NewResourceForm({ categoryURLId, categoryFirestoreId }) {
+export default function NewResourceForm() {
+  const { categoryId } = useParams();
   const history = useHistory();
-
-  const {
-    onChange, onSubmit, setCustomField, error, title, description,
-  } = useNewDocumentForm(`resource_categories/${categoryFirestoreId}/resources`, INITIAL_STATE);
-
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [formState, setFormState] = useState(INITIAL_FORM_STATE);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  const onSubmitWithEditor = (event) => {
-    onSubmit(event).then((success) => {
-      if (success) {
+  const onSubmit = useCallback((event) => {
+    event.preventDefault();
+
+    const record = {
+      ...formState,
+      categoryId,
+    };
+
+    const docRef = firebase.firestore().collection('resources').doc();
+    docRef.set(record)
+      .then(() => {
+        setFormState(INITIAL_FORM_STATE);
         setEditorState(EditorState.createEmpty());
-        history.push(`/resources/${categoryURLId}/${encodeURI(dashify(title))}`);
-      }
-    });
-  };
+        history.push(`/resources/${categoryId}/${docRef.id}`);
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
+      });
+  }, [categoryId, formState, history]);
 
-  const onEditorChange = (newEditorState) => {
+  const onEditorChange = useCallback((newEditorState) => {
     setEditorState(newEditorState);
-    setCustomField('body', JSON.stringify(serialiseEditorStateToRaw(editorState)));
-  };
+    setFormState(
+      {
+        ...formState,
+        body: JSON.stringify(serialiseEditorStateToRaw(editorState)),
+      },
+    );
+  }, [editorState, formState]);
+
+  const onChange = useCallback((event) => {
+    event.preventDefault();
+    setFormState(
+      {
+        ...formState,
+        [event.target.name]: event.target.value,
+      },
+    );
+  }, [formState]);
 
   return (
-    <form onSubmit={onSubmitWithEditor}>
+    <form onSubmit={onSubmit}>
       <input
         name="title"
         type="text"
-        value={title}
+        value={formState.title}
         onChange={onChange}
         placeholder="Title"
       />
       <input
         name="description"
         type="text"
-        value={description}
+        value={formState.description}
         onChange={onChange}
         placeholder="Description"
       />
@@ -91,16 +114,7 @@ export default function NewResourceForm({ categoryURLId, categoryFirestoreId }) 
       />
       <button type="submit">Create resource</button>
 
-      {error && <p>{error.message}</p>}
+      {errorMessage && <p>{errorMessage}</p>}
     </form>
   );
 }
-
-NewResourceForm.propTypes = {
-  categoryURLId: PropTypes.string.isRequired,
-  categoryFirestoreId: PropTypes.string,
-};
-
-NewResourceForm.defaultProps = {
-  categoryFirestoreId: null,
-};
