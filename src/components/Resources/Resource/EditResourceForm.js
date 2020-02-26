@@ -6,18 +6,26 @@ import {
   DraftailEditor, INLINE_STYLE, BLOCK_TYPE, createEditorStateFromRaw, serialiseEditorStateToRaw,
 } from 'draftail';
 import { EditorState } from 'draft-js';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
+const INITIAL_FORM_STATE = {
+  title: '',
+  description: '',
+  body: '',
+};
 
-export default function EditResourceForm({ readOnly, currentState }) {
-  const { categoryId, resourceId } = useParams();
-  const history = useHistory();
-  const [formState, setFormState] = useState(currentState);
+export default function EditResourceForm({ currentState }) {
+  const { resourceId } = useParams();
+  const [formState, setFormState] = useState(INITIAL_FORM_STATE);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [errorMessage, setErrorMessage] = useState(null);
+  const [readOnly, setReadOnly] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setFormState(currentState);
+    if (!(Object.entries(currentState).length === 0)) {
+      setFormState(currentState);
+    }
     if (currentState.body) {
       setEditorState(createEditorStateFromRaw(JSON.parse(currentState.body)));
     }
@@ -33,16 +41,19 @@ export default function EditResourceForm({ readOnly, currentState }) {
 
   const onSubmit = useCallback((event) => {
     event.preventDefault();
+    setLoading(true);
     firebase.firestore().collection('resources').doc(resourceId)
       .update(formState)
       .then(() => {
-        setEditorState(EditorState.createEmpty());
-        history.push(`/resources/${categoryId}/${resourceId}`);
+        setLoading(false);
+        setReadOnly(true);
       })
       .catch((error) => {
         setErrorMessage(error.message);
+        setLoading(false);
+        setReadOnly(true);
       });
-  }, [categoryId, formState, history, resourceId]);
+  }, [formState, resourceId]);
 
   const onEditorChange = useCallback((newEditorState) => {
     setEditorState(newEditorState);
@@ -50,41 +61,44 @@ export default function EditResourceForm({ readOnly, currentState }) {
   }, [editorState, formState]);
 
   return (
-    <form onSubmit={onSubmit}>
+    <div>
+      <button disabled={!readOnly} type="button" onClick={() => setReadOnly(false)}>
+        Edit
+      </button>
+      <form onSubmit={onSubmit}>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                Title
+              </td>
+              <td>
+                <input
+                  name="title"
+                  type="text"
+                  value={formState.title}
+                  onChange={onChange}
+                  disabled={readOnly || loading}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Description
+              </td>
+              <td>
+                <textarea
+                  name="description"
+                  value={formState.description}
+                  onChange={onChange}
+                  disabled={readOnly || loading}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              Title
-            </td>
-            <td>
-              <input
-                name="title"
-                type="text"
-                value={formState.title}
-                onChange={onChange}
-                disabled={readOnly}
-              />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Description
-            </td>
-            <td>
-              <textarea
-                name="description"
-                value={formState.description}
-                onChange={onChange}
-                disabled={readOnly}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      {formState.body && (
+        {formState.body && (
         <DraftailEditor
           readOnly={readOnly}
           editorState={editorState}
@@ -120,17 +134,17 @@ export default function EditResourceForm({ readOnly, currentState }) {
             { type: INLINE_STYLE.SUBSCRIPT },
           ]}
         />
-      )}
+        )}
 
-      <button type="submit">Save</button>
-      {errorMessage && <p>{errorMessage}</p>}
-    </form>
-
+        <button type="submit" disabled={readOnly || loading} onSubmit={onSubmit}>Save</button>
+        {loading && <p>Loading...</p>}
+        {errorMessage && <p>{errorMessage}</p>}
+      </form>
+    </div>
   );
 }
 
 EditResourceForm.propTypes = {
-  readOnly: PropTypes.bool.isRequired,
   currentState: PropTypes.shape({
     id: PropTypes.string,
     title: PropTypes.string,
