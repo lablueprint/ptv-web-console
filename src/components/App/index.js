@@ -19,6 +19,7 @@ import SignUpPage from '../SignUp';
 import UsersPage from '../Users';
 
 import 'firebase/auth';
+import EditCategoryPage from '../Resources/Category/EditCategoryPage';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -107,6 +108,12 @@ export default function App() {
             exact
             path="/resources/:categoryId/new"
             component={NewResourcePage}
+          />
+          <Route
+            condition={isAuthenticated}
+            exact
+            path="/resources/:categoryId/edit"
+            component={EditCategoryPage}
           />
           <Route
             condition={isAuthenticated}

@@ -2,34 +2,49 @@ import 'firebase/firestore';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
-import { useDocumentOnce } from 'react-firebase-hooks/firestore';
 import firebase from 'firebase/app';
 import EditResourceForm from './EditResourceForm';
 
 
 export default function ResourcePage() {
   const { categoryId, resourceId } = useParams();
-  const [readOnly, setReadOnly] = useState(true);
-  const [categorySnapshot, categoryLoading, categoryError] = useDocumentOnce(
-    firebase.firestore().collection('resource_categories').doc(categoryId),
-  );
-  const [resourceSnapshot, resourceLoading, resourceError] = useDocumentOnce(
-    firebase.firestore().collection('resources').doc(resourceId),
-  );
+
   const [category, setCategory] = useState({});
-  const [resource, setResource] = useState([]);
+  const [categoryLoading, setCategoryLoading] = useState(true);
+  const [categoryErrorMessage, setCategoryErrorMessage] = useState(null);
 
   useEffect(() => {
-    if (categorySnapshot) {
-      setCategory({ ...categorySnapshot.data(), id: categorySnapshot.id });
-    }
-  }, [categorySnapshot]);
+    setCategoryLoading(true);
+    firebase.firestore().collection('resource_categories').doc(categoryId)
+      .get()
+      .then((snapshot) => {
+        setCategory({ ...snapshot.data(), id: snapshot.id });
+        setCategoryLoading(false);
+      })
+      .catch((error) => {
+        setCategoryErrorMessage(error.message);
+        setCategoryLoading(false);
+      });
+  }, [categoryId]);
+
+  const [resource, setResource] = useState({});
+  const [resourceLoading, setResourceLoading] = useState(true);
+  const [resourceErrorMessage, setResourceErrorMessage] = useState(null);
 
   useEffect(() => {
-    if (resourceSnapshot) {
-      setResource({ ...resourceSnapshot.data(), id: resourceSnapshot.id });
-    }
-  }, [resourceSnapshot]);
+    setResourceLoading(true);
+    firebase.firestore().collection('resources').doc(resourceId)
+      .get()
+      .then((snapshot) => {
+        setResource({ ...snapshot.data(), id: snapshot.id });
+        setResourceLoading(false);
+      })
+      .catch((error) => {
+        setResourceErrorMessage(error.message);
+        setResourceLoading(false);
+      });
+  }, [resourceId]);
+
 
   const loading = categoryLoading && resourceLoading;
 
@@ -42,8 +57,8 @@ export default function ResourcePage() {
 
           <hr />
 
-          {categoryError && <p>{categoryError.message}</p>}
-          {resourceError && <p>{resourceError.message}</p>}
+          {categoryErrorMessage && <p>{categoryErrorMessage}</p>}
+          {resourceErrorMessage && <p>{resourceErrorMessage}</p>}
 
           <div>
             <table>
@@ -65,16 +80,7 @@ export default function ResourcePage() {
           </div>
 
           <div>
-            <button disabled={!readOnly} type="button" onClick={() => { setReadOnly(false); }}>
-              Edit
-            </button>
-          </div>
-
-          <div>
-            <EditResourceForm
-              readOnly={readOnly}
-              currentState={resource}
-            />
+            <EditResourceForm currentState={resource} />
           </div>
         </>
       )}

@@ -2,29 +2,47 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
 import firebase from 'firebase/app';
-import { useDocumentOnce, useCollectionOnce } from 'react-firebase-hooks/firestore';
 import { ResourcesList } from '../Resource';
-import EditCategoryForm from './EditCategoryForm';
 import 'firebase/firestore';
 
 export default function CategoryPage() {
   const { categoryId } = useParams();
-  const [resources, setResources] = useState([]);
+
   const [category, setCategory] = useState({});
-  const [categorySnapshot, categoryLoading, categoryError] = useDocumentOnce(firebase.firestore().collection('resource_categories').doc(categoryId));
-  const [resourcesSnapshot, resourcesLoading, resourcesError] = useCollectionOnce(firebase.firestore().collection('resources').where('categoryId', '==', categoryId));
+  const [categoryLoading, setCategoryLoading] = useState(true);
+  const [categoryErrorMessage, setCategoryErrorMessage] = useState(null);
 
   useEffect(() => {
-    if (categorySnapshot) {
-      setCategory({ ...categorySnapshot.data(), id: categorySnapshot.id });
-    }
-  }, [categorySnapshot]);
+    setCategoryLoading(true);
+    firebase.firestore().collection('resource_categories').doc(categoryId)
+      .get()
+      .then((snapshot) => {
+        setCategory({ ...snapshot.data(), id: snapshot.id });
+        setCategoryLoading(false);
+      })
+      .catch((error) => {
+        setCategoryErrorMessage(error.message);
+        setCategoryLoading(false);
+      });
+  }, [categoryId]);
+
+  const [resources, setResources] = useState([]);
+  const [resourcesLoading, setResourcesLoading] = useState(true);
+  const [resourcesErrorMessage, setResourcesErrorMessage] = useState(null);
 
   useEffect(() => {
-    if (resourcesSnapshot) {
-      setResources(resourcesSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    }
-  }, [resourcesSnapshot]);
+    setResourcesLoading(true);
+    firebase.firestore().collection('resources')
+      .get()
+      .then((snapshot) => {
+        setResources(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setResourcesLoading(false);
+      })
+      .catch((error) => {
+        setResourcesErrorMessage(error.message);
+        setResourcesLoading(false);
+      });
+  }, []);
 
   const loading = categoryLoading && resourcesLoading;
 
@@ -35,8 +53,8 @@ export default function CategoryPage() {
         <>
           <h1>{`Resources in ${category.title}`}</h1>
 
-          {categoryError && <p>{categoryError.message}</p>}
-          {resourcesError && <p>{resourcesError.message}</p>}
+          {categoryErrorMessage && <p>{categoryErrorMessage}</p>}
+          {resourcesErrorMessage && <p>{resourcesErrorMessage}</p>}
 
           <div>
             <table>
@@ -57,10 +75,8 @@ export default function CategoryPage() {
             </table>
           </div>
 
-          <EditCategoryForm currentState={categorySnapshot.data()} />
-
+          <Link to={`/resources/${categoryId}/edit`}>Edit category</Link>
           <Link to={`/resources/${categoryId}/new`}>New resource</Link>
-
           <ResourcesList
             resources={resources}
             categoryId={categoryId}
