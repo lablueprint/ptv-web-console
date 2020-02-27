@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import firebase from 'firebase/app';
+import ClipLoader from 'react-spinners/ClipLoader';
 import ForumPostsList from './ForumPostsList';
 import 'firebase/firestore';
 
-export default function DisplayPostPage() {
+export default function ForumPostsPage() {
   const [forumPosts, setForumPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
     firebase.firestore().collection('forum_posts')
       .get()
       .then((snapshot) => {
@@ -24,7 +24,7 @@ export default function DisplayPostPage() {
 
   return (
     <div>
-      {loading && <p>loading...</p>}
+      {loading && <ClipLoader />}
       {errorMessage && <p>{errorMessage}</p>}
       <ForumPostsList posts={forumPosts} />
     </div>

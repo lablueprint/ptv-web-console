@@ -1,64 +1,75 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Firebase, { withFirebase } from '../../Firebase';
+import React, { useState, useCallback } from 'react';
+import ClipLoader from 'react-spinners/ClipLoader';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/auth';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-const INITIAL_STATE = {
-  uid: '',
+const INITIAL_FORM_STATE = {
   title: '',
   body: '',
-  approved: false,
-  error: null,
 };
 
-class CreateForumPostForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = INITIAL_STATE;
-    this.state.uid = props.uid;
-    this.onSubmit = this.onSubmit.bind(this);
-    this.onChange = this.onChange.bind(this);
-  }
+export default function CreateForumPostForm() {
+  const [user, initialising] = useAuthState(firebase.auth());
 
-  onSubmit(event) {
+  const [formState, setFormState] = useState(INITIAL_FORM_STATE);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const onSubmit = useCallback((event) => {
     event.preventDefault();
-    const { firebase } = this.props;
-    firebase
-      .createForumPost(this.state)
+    setLoading(true);
+
+    const record = {
+      ...formState,
+      userID: user ? user.uid : null,
+      createdAt: firebase.firestore.Timestamp.now(),
+      updatedAt: firebase.firestore.Timestamp.now(),
+    };
+
+    firebase.firestore().collection('forum_posts').add(record)
       .then(() => {
-        this.setState(INITIAL_STATE);
+        setFormState(INITIAL_FORM_STATE);
+        setLoading(false);
       })
       .catch((error) => {
-        this.setState({ error });
+        setErrorMessage(error.message);
+        setLoading(false);
       });
-  }
+  }, [formState, user]);
 
-  onChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
-  }
+  const onChange = useCallback((event) => {
+    event.preventDefault();
+    setFormState(
+      {
+        ...formState,
+        [event.target.name]: event.target.value,
+      },
+    );
+  }, [formState]);
 
-  render() {
-    const { title, body, error } = this.state;
-    return (
-      <form onSubmit={this.onSubmit}>
+  return (
+    <div>
+      {errorMessage && <p>{errorMessage}</p>}
+      {(loading || initialising) && <ClipLoader />}
+      <form onSubmit={onSubmit}>
         <input
           name="title"
           type="text"
-          value={title}
-          onChange={this.onChange}
+          value={formState.title}
+          onChange={onChange}
           placeholder="Title"
         />
-        <input name="body" type="body" value={body} onChange={this.onChange} placeholder="Body" />
-        <button type="submit">Submit Post</button>
-
-        {error && <p>{error.message}</p>}
+        <input
+          name="body"
+          type="text"
+          value={formState.body}
+          onChange={onChange}
+          placeholder="Body"
+        />
+        <button type="submit" disabled={loading || initialising}>Submit Post</button>
       </form>
-    );
-  }
+    </div>
+  );
 }
-
-CreateForumPostForm.propTypes = {
-  firebase: PropTypes.instanceOf(Firebase).isRequired,
-  uid: PropTypes.string.isRequired,
-};
-
-export default withFirebase(CreateForumPostForm);

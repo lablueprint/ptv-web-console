@@ -1,5 +1,5 @@
 import CreateForumPostForm from './CreateForumPostForm';
-import DisplayForumPostPage from './DisplayForumPostPage';
+import ForumPostsPage from './ForumPostsPage';
 
 // eslint-disable-next-line import/prefer-default-export
-export { CreateForumPostForm, DisplayForumPostPage };
+export { CreateForumPostForm, ForumPostsPage };
