@@ -3,15 +3,29 @@ import PropTypes from 'prop-types';
 
 export default function ForumPostsList({ posts }) {
   const postItems = posts.map((post) => (
-    <ul key={post.id}>
-      <li>{post.id}</li>
-      <li>{post.title}</li>
-      <li>{post.body}</li>
-      <li>{post.uid}</li>
-    </ul>
+    <tr key={post.id}>
+      <td>{post.id}</td>
+      <td>{post.title}</td>
+      <td>{post.body}</td>
+      <td>{post.userID}</td>
+    </tr>
   ));
 
-  return <div>{postItems}</div>;
+  return (
+    <table>
+      <thead>
+        <tr>
+          <td><strong>ID</strong></td>
+          <td><strong>Title</strong></td>
+          <td><strong>Body</strong></td>
+          <td><strong>User ID</strong></td>
+        </tr>
+      </thead>
+      <tbody>
+        {postItems}
+      </tbody>
+    </table>
+  );
 }
 
 ForumPostsList.propTypes = {
@@ -20,7 +34,7 @@ ForumPostsList.propTypes = {
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       body: PropTypes.string.isRequired,
-      uid: PropTypes.string.isRequired,
+      userID: PropTypes.string.isRequired,
     }),
   ).isRequired,
 };
