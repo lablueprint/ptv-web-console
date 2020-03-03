@@ -6,7 +6,7 @@ import firebase from 'firebase/app';
 import * as ROUTES from '../../constants/routes';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
-import ForumPage from '../Forum';
+import ForumHomePage from '../Forum';
 import HomePage from '../Home';
 import LandingPage from '../Landing';
 import Navigation from '../Navigation';
@@ -127,7 +127,7 @@ export default function App() {
             condition={isAuthenticated}
             exact
             path={ROUTES.FORUM}
-            component={ForumPage}
+            component={ForumHomePage}
           />
 
         </Switch>
