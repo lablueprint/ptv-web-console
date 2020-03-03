@@ -9,7 +9,7 @@ export default function ResourcesList({ resources, categoryId }) {
       <td>{resource.id}</td>
       <td>{resource.title}</td>
       <td>{resource.description}</td>
-      <td><Link to={`${categoryId}/${resource.id}`}>View resource</Link></td>
+      <td><Link to={`/resources/item/${resource.id}`}>View resource</Link></td>
       <td><DocumentDeleteButton path={`resource_categories/${categoryId}/resources/${resource.id}`} /></td>
     </tr>
   ));

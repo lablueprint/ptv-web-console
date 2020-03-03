@@ -118,7 +118,7 @@ export default function App() {
           <Route
             condition={isAuthenticated}
             exact
-            path="/resources/:categoryId/:resourceId"
+            path="/resources/item/:resourceId"
             component={ResourcePage}
           />
 

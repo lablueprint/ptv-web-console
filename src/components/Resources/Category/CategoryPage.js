@@ -32,7 +32,7 @@ export default function CategoryPage() {
 
   useEffect(() => {
     setResourcesLoading(true);
-    firebase.firestore().collection('resources')
+    firebase.firestore().collection('resources').where('categoryId', '==', categoryId)
       .get()
       .then((snapshot) => {
         setResources(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
@@ -42,7 +42,7 @@ export default function CategoryPage() {
         setResourcesErrorMessage(error.message);
         setResourcesLoading(false);
       });
-  }, []);
+  }, [categoryId]);
 
   const loading = categoryLoading && resourcesLoading;
 

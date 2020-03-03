@@ -7,25 +7,7 @@ import EditResourceForm from './EditResourceForm';
 
 
 export default function ResourcePage() {
-  const { categoryId, resourceId } = useParams();
-
-  const [category, setCategory] = useState({});
-  const [categoryLoading, setCategoryLoading] = useState(true);
-  const [categoryErrorMessage, setCategoryErrorMessage] = useState(null);
-
-  useEffect(() => {
-    setCategoryLoading(true);
-    firebase.firestore().collection('resource_categories').doc(categoryId)
-      .get()
-      .then((snapshot) => {
-        setCategory({ ...snapshot.data(), id: snapshot.id });
-        setCategoryLoading(false);
-      })
-      .catch((error) => {
-        setCategoryErrorMessage(error.message);
-        setCategoryLoading(false);
-      });
-  }, [categoryId]);
+  const { resourceId } = useParams();
 
   const [resource, setResource] = useState({});
   const [resourceLoading, setResourceLoading] = useState(true);
@@ -45,19 +27,11 @@ export default function ResourcePage() {
       });
   }, [resourceId]);
 
-
-  const loading = categoryLoading && resourceLoading;
-
   return (
     <div>
-      <ClipLoader loading={loading} />
-      {!loading && (
+      <ClipLoader loading={resourceLoading} />
+      {!resourceLoading && (
         <>
-          <h1>{`Category: ${category.title}`}</h1>
-
-          <hr />
-
-          {categoryErrorMessage && <p>{categoryErrorMessage}</p>}
           {resourceErrorMessage && <p>{resourceErrorMessage}</p>}
 
           <div>
