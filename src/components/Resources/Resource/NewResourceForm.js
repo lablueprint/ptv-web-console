@@ -7,7 +7,7 @@ import 'draftail/dist/draftail.css';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import React, { useCallback, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 const INITIAL_FORM_STATE = {
   title: '',
@@ -16,7 +16,6 @@ const INITIAL_FORM_STATE = {
 };
 
 export default function NewResourceForm() {
-  const { categoryId } = useParams();
   const history = useHistory();
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [formState, setFormState] = useState(INITIAL_FORM_STATE);
@@ -25,22 +24,19 @@ export default function NewResourceForm() {
   const onSubmit = useCallback((event) => {
     event.preventDefault();
 
-    const record = {
-      ...formState,
-      categoryId,
-    };
+    const record = formState;
 
     const docRef = firebase.firestore().collection('resources').doc();
     docRef.set(record)
       .then(() => {
         setFormState(INITIAL_FORM_STATE);
         setEditorState(EditorState.createEmpty());
-        history.push(`/resources/${categoryId}/${docRef.id}`);
+        history.push(`/resources/item/${docRef.id}`);
       })
       .catch((error) => {
         setErrorMessage(error.message);
       });
-  }, [categoryId, formState, history]);
+  }, [formState, history]);
 
   const onEditorChange = useCallback((newEditorState) => {
     setEditorState(newEditorState);
@@ -71,6 +67,22 @@ export default function NewResourceForm() {
         onChange={onChange}
         placeholder="Title"
       />
+      <input
+        name="description"
+        type="text"
+        value={formState.description}
+        onChange={onChange}
+        placeholder="Description"
+      />
+      <select
+        value={formState.categoryID}
+        onChange={onChange}
+      >
+        <option value="grapefruit">Grapefruit</option>
+        <option value="lime">Lime</option>
+        <option value="coconut">Coconut</option>
+        <option value="mango">Mango</option>
+      </select>
       <input
         name="description"
         type="text"
