@@ -4,7 +4,7 @@ import { Route } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
-import ForumHomePage from '../Forum';
+import { ForumHomePage, PendingPostsPage } from '../Forum';
 import HomePage from '../Home';
 import LandingPage from '../Landing';
 import PasswordForgetPage from '../PasswordForget';
@@ -82,6 +82,10 @@ export default function Routes() {
       {/* Forum */}
       <Route exact path={ROUTES.FORUM}>
         <ForumHomePage />
+      </Route>
+
+      <Route exact path="/forum/pending">
+        <PendingPostsPage />
       </Route>
     </>
   );
