@@ -1,3 +1,4 @@
 import ForumHomePage from './ForumHomePage';
+import PendingPostsPage from './PendingPostsPage';
 
-export default ForumHomePage;
+export { ForumHomePage, PendingPostsPage };
