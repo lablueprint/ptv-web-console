@@ -1,16 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
 import * as ROUTES from '../../constants/routes';
 
 export default function NavigationNonAuth() {
   return (
-    <ul>
-      <li>
-        <Link to={ROUTES.LANDING}>Landing</Link>
-      </li>
-      <li>
-        <Link to={ROUTES.SIGN_IN}>Sign In</Link>
-      </li>
-    </ul>
+    <div>
+      <Button color="inherit" component={Link} to={ROUTES.SIGN_IN}>Sign In</Button>
+    </div>
   );
 }

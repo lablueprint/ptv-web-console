@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import ClipLoader from 'react-spinners/ClipLoader';
 import firebase from 'firebase/app';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { CategoriesList } from './Category';
 import 'firebase/firestore';
+
 
 export default function ResourcesPage() {
   const [categories, setCategories] = useState([]);
@@ -27,7 +28,7 @@ export default function ResourcesPage() {
   return (
     <div>
       <h1>Resource Categories</h1>
-      <ClipLoader loading={loading} />
+      {loading && <CircularProgress />}
       {errorMessage && <p>{errorMessage}</p>}
       <Link to="/resources/new">Create a new category</Link>
       <CategoriesList categories={categories} />

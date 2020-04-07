@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import ClipLoader from 'react-spinners/ClipLoader';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import firebase from 'firebase/app';
 import { ResourcesList } from '../Resource';
 import 'firebase/firestore';
@@ -48,7 +48,7 @@ export default function CategoryPage() {
 
   return (
     <div>
-      <ClipLoader loading={loading} />
+      {loading && <CircularProgress />}
       {!loading && (
         <>
           <h1>{`Resources in ${category.title}`}</h1>

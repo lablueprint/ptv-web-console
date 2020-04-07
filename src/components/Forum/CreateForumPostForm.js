@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
-import ClipLoader from 'react-spinners/ClipLoader';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const INITIAL_FORM_STATE = {
   title: '',
@@ -21,11 +21,13 @@ export default function CreateForumPostForm() {
     event.preventDefault();
     setLoading(true);
 
+    const currTime = firebase.firestore.Timestamp.now();
+
     const record = {
       ...formState,
       userID: user ? user.uid : null,
-      createdAt: firebase.firestore.Timestamp.now(),
-      updatedAt: firebase.firestore.Timestamp.now(),
+      createdAt: currTime,
+      updatedAt: currTime,
     };
 
     firebase.firestore().collection('forum_posts').add(record)
@@ -52,7 +54,7 @@ export default function CreateForumPostForm() {
   return (
     <div>
       {errorMessage && <p>{errorMessage}</p>}
-      {(loading || initialising) && <ClipLoader />}
+      {(loading || initialising) && <CircularProgress />}
       <form onSubmit={onSubmit}>
         <input
           name="title"
