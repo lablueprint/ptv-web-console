@@ -1,25 +1,17 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import ClipLoader from 'react-spinners/ClipLoader';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import firebase from 'firebase/app';
-import * as ROUTES from '../../constants/routes';
-import AccountPage from '../Account';
-import AdminPage from '../Admin';
-import ForumHomePage from '../Forum';
-import HomePage from '../Home';
-import LandingPage from '../Landing';
-import Navigation from '../Navigation';
-import PasswordForgetPage from '../PasswordForget';
-import {
-  ResourcesPage, CategoryPage, NewCategoryPage, NewResourcePage, ResourcePage,
-} from '../Resources';
-import SignInPage from '../SignIn';
-import SignUpPage from '../SignUp';
-import UsersPage from '../Users';
-
 import 'firebase/auth';
-import EditCategoryPage from '../Resources/Category/EditCategoryPage';
+import React from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { BrowserRouter as Router, Link, Switch } from 'react-router-dom';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { NavigationAuth, NavigationNonAuth } from '../Navigation';
+import Routes from './Routes';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -34,120 +26,51 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+  },
+  toolbar: theme.mixins.toolbar,
+  content: {
+    width: '100%',
+  },
+}));
+
 export default function App() {
   const [user, initialising] = useAuthState(firebase.auth());
-  const isAuthenticated = (authUser) => !!authUser;
+  const classes = useStyles();
+
+  const renderNavButtons = () => {
+    if (initialising) {
+      return <CircularProgress size={24} />;
+    }
+    if (user) {
+      return <NavigationAuth />;
+    }
+    return <NavigationNonAuth />;
+  };
 
   return (
-    <Router>
-      <div>
-        <ClipLoader loading={initialising} />
-        {!initialising && <Navigation authenticated={!!user} />}
-
-        <hr />
-
-        <Switch>
-
-          {/* Public */}
-          <Route exact path={ROUTES.LANDING} component={LandingPage} />
-
-          {/* Signed out */}
-          <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
-          <Route exact path={ROUTES.SIGN_IN} component={SignInPage} />
-          <Route exact path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
-
-          {/* Signed in */}
-          <Route
-            condition={isAuthenticated}
-            exact
-            path={ROUTES.HOME}
-            component={HomePage}
-          />
-          <Route
-            condition={isAuthenticated}
-            exact
-            path={ROUTES.ACCOUNT}
-            component={AccountPage}
-          />
-
-          {/* Admin */}
-          <Route
-            condition={isAuthenticated}
-            exact
-            path={ROUTES.ADMIN}
-            component={AdminPage}
-          />
-          <Route
-            condition={isAuthenticated}
-            exact
-            path={ROUTES.USERS}
-            component={UsersPage}
-          />
-
-          {/* Resources */}
-          <Route
-            condition={isAuthenticated}
-            exact
-            path={ROUTES.RESOURCE_CATEGORIES}
-            component={ResourcesPage}
-          />
-          <Route
-            condition={isAuthenticated}
-            exact
-            path="/resources/new"
-            component={NewCategoryPage}
-          />
-          <Route
-            condition={isAuthenticated}
-            exact
-            path="/resources/:categoryId"
-            component={CategoryPage}
-          />
-          <Route
-            condition={isAuthenticated}
-            exact
-            path="/resources/:categoryId/new"
-            component={NewResourcePage}
-          />
-          <Route
-            condition={isAuthenticated}
-            exact
-            path="/resources/:categoryId/edit"
-            component={EditCategoryPage}
-          />
-          <Route
-            condition={isAuthenticated}
-            exact
-            path="/resources/item/:resourceId"
-            component={ResourcePage}
-          />
-
-          {/* Forum */}
-          <Route
-            condition={isAuthenticated}
-            exact
-            path={ROUTES.FORUM}
-            component={ForumHomePage}
-          />
-
-        </Switch>
-      </div>
-    </Router>
+    <div className={classes.root}>
+      <Router>
+        <AppBar position="fixed">
+          <Toolbar style={{ justifyContent: 'space-between' }}>
+            <Button color="inherit" component={Link} to="/">
+              <Typography className={classes.title} variant="h6" noWrap>
+                Web Console &mdash; PTV Mobile App
+              </Typography>
+            </Button>
+            {renderNavButtons()}
+          </Toolbar>
+        </AppBar>
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
+          <Switch>
+            {initialising && <LinearProgress size={24} />}
+            <Routes />
+          </Switch>
+        </main>
+      </Router>
+    </div>
   );
 }
-
-// function AuthorizedRoute({ condition, component, ...rest }) {
-//   const AuthorizedComponent = withAuthorization(condition)(component);
-//   return (
-//     <Route {...rest} component={AuthorizedComponent} />
-//   );
-// }
-
-// AuthorizedRoute.propTypes = {
-//   condition: PropTypes.func.isRequired,
-//   component: PropTypes.func,
-// };
-
-// AuthorizedRoute.defaultProps = {
-//   component: null,
-// };

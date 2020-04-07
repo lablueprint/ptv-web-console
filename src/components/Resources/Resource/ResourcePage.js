@@ -1,10 +1,9 @@
 import 'firebase/firestore';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import ClipLoader from 'react-spinners/ClipLoader';
 import firebase from 'firebase/app';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import EditResourceForm from './EditResourceForm';
-
 
 export default function ResourcePage() {
   const { resourceId } = useParams();
@@ -29,7 +28,7 @@ export default function ResourcePage() {
 
   return (
     <div>
-      <ClipLoader loading={resourceLoading} />
+      {resourceLoading && <CircularProgress />}
       {!resourceLoading && (
         <>
           {resourceErrorMessage && <p>{resourceErrorMessage}</p>}
