@@ -3,15 +3,30 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import Typography from '@material-ui/core/Typography';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core';
 import * as ROUTES from '../../constants/routes';
 
+const useStyles = makeStyles({
+  container: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+});
 
 export default function ProfileMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
+  const classes = useStyles();
+  const [name, setName] = useState(null);
+
+  useEffect(() => (
+    firebase.auth().onAuthStateChanged((userCredential) => {
+      setName(userCredential.email);
+    })), []);
 
   const handleSignOut = () => {
     handleProfileMenuClose();
@@ -50,7 +65,10 @@ export default function ProfileMenu() {
   );
 
   return (
-    <div>
+    <div className={classes.container}>
+      <Typography>
+        {`Hi, ${name}`}
+      </Typography>
       <IconButton
         edge="end"
         onClick={handleProfileMenuOpen}

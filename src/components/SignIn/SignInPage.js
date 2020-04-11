@@ -1,45 +1,35 @@
-import Avatar from '@material-ui/core/Avatar';
-import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { Paper } from '@material-ui/core';
 import * as ROUTES from '../../constants/routes';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>
-      {' '}
-      {new Date().getFullYear()}
-      .
-    </Typography>
-  );
-}
-
 const useStyles = makeStyles((theme) => ({
+  container: {
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: theme.colors.secondary,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   paper: {
-    marginTop: theme.spacing(8),
+    padding: theme.spacing(8),
+    borderRadius: theme.roundness,
+    maxHeight: '50%',
+    backgroundColor: 'white',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
   },
   form: {
     width: '100%', // Fix IE 11 issue.
@@ -48,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-  wrapper: {
+  buttonWrapper: {
     position: 'relative',
   },
   buttonProgress: {
@@ -65,7 +55,7 @@ const INITIAL_FORM_STATE = {
   password: '',
 };
 
-export default function LandingPage() {
+export default function SignInPage() {
   const classes = useStyles();
 
   const [formState, setFormState] = useState(INITIAL_FORM_STATE);
@@ -102,12 +92,9 @@ export default function LandingPage() {
     [formState.email, formState.password]);
 
   return (
-    <Container component="main" maxWidth="xs">
+    <div className={classes.container}>
       <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
+      <Paper elevation={2} className={classes.paper}>
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
@@ -140,7 +127,7 @@ export default function LandingPage() {
             onChange={handleChange}
             disabled={loading}
           />
-          <div className={classes.wrapper}>
+          <div className={classes.buttonWrapper}>
             <Button
               fullWidth
               variant="contained"
@@ -167,10 +154,7 @@ export default function LandingPage() {
             </Grid>
           </Grid>
         </form>
-      </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
-    </Container>
+      </Paper>
+    </div>
   );
 }
