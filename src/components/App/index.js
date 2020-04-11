@@ -39,21 +39,22 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
+    backgroundColor: theme.colors.primary,
   },
   toolbar: {
     display: 'flex',
     flexDirection: 'row-reverse',
   },
-  content: {
+  content: (props) => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
-  },
+    padding: props.authenticated ? theme.spacing(3) : 0,
+  }),
 }));
 
 export default function App() {
   const [user, initialising] = useAuthState(firebase.auth());
-  const classes = useStyles();
+  const classes = useStyles({ authenticated: !initialising && user });
 
   return (
     <div className={classes.root}>
