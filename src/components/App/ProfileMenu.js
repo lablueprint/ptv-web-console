@@ -1,4 +1,3 @@
-import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
@@ -11,7 +10,7 @@ import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 
 
-export default function NavigationAuth() {
+export default function ProfileMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleSignOut = () => {
@@ -52,12 +51,6 @@ export default function NavigationAuth() {
 
   return (
     <div>
-      {[
-        [ROUTES.HOME, 'Home'],
-        [ROUTES.RESOURCE_CATEGORIES, 'Resources'],
-        [ROUTES.FORUM, 'Forum'],
-        [ROUTES.USERS, 'Users'],
-      ].map(([route, buttonTitle]) => <Button key={route} color="inherit" component={Link} to={route}>{buttonTitle}</Button>)}
       <IconButton
         edge="end"
         onClick={handleProfileMenuOpen}

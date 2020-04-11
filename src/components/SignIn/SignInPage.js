@@ -79,7 +79,7 @@ export default function LandingPage() {
     const { email, password } = formState;
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(() => {
-        history.push(ROUTES.HOME);
+        history.push(ROUTES.RESOURCES);
         setLoading(false);
       })
       .catch((error) => {

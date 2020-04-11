@@ -1,17 +1,18 @@
-import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Drawer from '@material-ui/core/Drawer';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { BrowserRouter as Router, Link, Switch } from 'react-router-dom';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import { NavigationAuth, NavigationNonAuth } from '../Navigation';
+import * as ROUTES from '../../constants/routes';
 import Routes from './Routes';
+import ProfileMenu from './ProfileMenu';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -26,13 +27,27 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+const drawerWidth = 240;
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
-  toolbar: theme.mixins.toolbar,
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  toolbar: {
+    display: 'flex',
+    flexDirection: 'row-reverse',
+  },
   content: {
-    width: '100%',
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(3),
   },
 }));
 
@@ -40,31 +55,38 @@ export default function App() {
   const [user, initialising] = useAuthState(firebase.auth());
   const classes = useStyles();
 
-  const renderNavButtons = () => {
-    if (initialising) {
-      return <CircularProgress size={24} />;
-    }
-    if (user) {
-      return <NavigationAuth />;
-    }
-    return <NavigationNonAuth />;
-  };
-
   return (
     <div className={classes.root}>
+      <CssBaseline />
       <Router>
-        <AppBar position="fixed">
-          <Toolbar style={{ justifyContent: 'space-between' }}>
-            <Button color="inherit" component={Link} to="/">
-              <Typography className={classes.title} variant="h6" noWrap>
-                Web Console &mdash; PTV Mobile App
-              </Typography>
-            </Button>
-            {renderNavButtons()}
-          </Toolbar>
-        </AppBar>
+        {!initialising && user && (
+          <Drawer
+            className={classes.drawer}
+            variant="permanent"
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            anchor="left"
+          >
+            <List>
+              {[
+                [ROUTES.RESOURCES, 'Home'],
+                [ROUTES.FORUM, 'Forum'],
+                [ROUTES.USERS, 'Users'],
+              ].map(([route, buttonTitle]) => (
+                <ListItem button key={route} color="inherit" component={Link} to={route}>
+                  <ListItemText primary={buttonTitle} />
+                </ListItem>
+              ))}
+            </List>
+          </Drawer>
+        )}
         <main className={classes.content}>
-          <div className={classes.toolbar} />
+          {!initialising && user && (
+            <div className={classes.toolbar}>
+              <ProfileMenu />
+            </div>
+          )}
           <Switch>
             {initialising && <LinearProgress size={24} />}
             <Routes />

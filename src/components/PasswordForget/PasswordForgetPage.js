@@ -12,7 +12,7 @@ export default function PasswordForget() {
 
   useEffect(() => {
     if (!initialising && !!user) {
-      history.push(ROUTES.LANDING);
+      history.push(ROUTES.SIGN_IN);
     }
   }, [initialising, user, history]);
 
