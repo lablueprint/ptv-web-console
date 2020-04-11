@@ -28,7 +28,7 @@ export default function SignUpForm() {
           role: formState.role,
         }))
       .then(() => {
-        history.push(ROUTES.HOME);
+        history.push(ROUTES.RESOURCES);
       })
       .catch((error) => {
         setErrorMessage(error.message);
