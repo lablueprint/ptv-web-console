@@ -9,7 +9,9 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { BrowserRouter as Router, Link, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router, Link, Switch,
+} from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import Routes from './Routes';
 import ProfileMenu from './ProfileMenu';
