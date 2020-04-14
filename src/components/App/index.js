@@ -39,16 +39,30 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.palette.primary.main,
   },
   toolbar: {
     display: 'flex',
     flexDirection: 'row-reverse',
+    padding: theme.spacing(3),
+    paddingRight: theme.spacing(6),
+  },
+  background: (props) => ({
+    flexGrow: 1,
+    backgroundColor: theme.palette.secondary.main,
+    minHeight: '100vh',
+    height: '100%',
+    paddingLeft: props.authenticated ? theme.spacing(3) : 0,
+    paddingRight: props.authenticated ? theme.spacing(3) : 0,
+  }),
+  foreground: {
+    minHeight: '100vh',
+    backgroundColor: theme.palette.background.default,
   },
   content: (props) => ({
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: props.authenticated ? theme.spacing(3) : 0,
+    minHeight: '100%',
+    paddingLeft: props.authenticated ? theme.spacing(20) : 0,
+    paddingRight: props.authenticated ? theme.spacing(20) : 0,
   }),
 }));
 
@@ -76,23 +90,27 @@ export default function App() {
                 [ROUTES.USERS, 'Users'],
               ].map(([route, buttonTitle]) => (
                 <ListItem button key={route} color="inherit" component={Link} to={route}>
-                  <ListItemText primary={buttonTitle} />
+                  <ListItemText classes={{ primary: classes.listItemText }} primary={buttonTitle} />
                 </ListItem>
               ))}
             </List>
           </Drawer>
         )}
-        <main className={classes.content}>
-          {!initialising && user && (
+        <div className={classes.background}>
+          <div className={classes.foreground}>
+            {!initialising && user && (
             <div className={classes.toolbar}>
               <ProfileMenu />
             </div>
-          )}
-          <Switch>
-            {initialising && <LinearProgress size={24} />}
-            <Routes />
-          </Switch>
-        </main>
+            )}
+            <main className={classes.content}>
+              <Switch>
+                {initialising && <LinearProgress size={24} />}
+                <Routes />
+              </Switch>
+            </main>
+          </div>
+        </div>
       </Router>
     </div>
   );

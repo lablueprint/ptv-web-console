@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     width: '100vw',
     height: '100vh',
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: theme.palette.secondary.main,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -100,6 +100,7 @@ export default function SignInPage() {
         </Typography>
         <form className={classes.form} noValidate>
           <TextField
+            className={classes.textField}
             variant="outlined"
             margin="normal"
             required

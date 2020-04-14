@@ -8,12 +8,38 @@ import * as serviceWorker from './serviceWorker';
 
 
 const theme = createMuiTheme({
+  typography: {
+    fontFamily: [
+      'Poppins',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+  },
   roundness: 20,
-  colors: {
-    primary: '#1F7FC0',
-    accent: '#8EAEC3',
-    secondary: '#E6EFF5',
-    text: '#194261',
+  palette: {
+    primary: {
+      main: '#1F7FC0',
+    },
+    secondary: {
+      main: '#E6EFF5',
+    },
+    text: {
+      main: '#194261',
+    },
+    accent: {
+      main: '#8EAEC3',
+    },
+  },
+  fonts: {
+    primary: 'Poppins',
   },
 });
 
