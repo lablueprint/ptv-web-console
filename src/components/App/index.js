@@ -1,20 +1,14 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles } from '@material-ui/core/styles';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-  BrowserRouter as Router, Link, Switch,
-} from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
-import Routes from './Routes';
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import NavigationDrawer from './NavigationDrawer';
 import ProfileMenu from './ProfileMenu';
+import Routes from './Routes';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -29,19 +23,9 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-const drawerWidth = 240;
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-  },
-  drawerPaper: {
-    width: drawerWidth,
-    backgroundColor: theme.palette.primary.main,
   },
   toolbar: {
     display: 'flex',
@@ -77,26 +61,7 @@ export default function App() {
       <CssBaseline />
       <Router>
         {!initialising && user && (
-          <Drawer
-            className={classes.drawer}
-            variant="permanent"
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            anchor="left"
-          >
-            <List>
-              {[
-                [ROUTES.RESOURCES, 'Home'],
-                [ROUTES.FORUM, 'Forum'],
-                [ROUTES.USERS, 'Users'],
-              ].map(([route, buttonTitle]) => (
-                <ListItem button key={route} color="inherit" component={Link} to={route}>
-                  <ListItemText classes={{ primary: classes.listItemText }} primary={buttonTitle} />
-                </ListItem>
-              ))}
-            </List>
-          </Drawer>
+          <NavigationDrawer />
         )}
         <div className={classes.background}>
           <div className={classes.foreground}>
