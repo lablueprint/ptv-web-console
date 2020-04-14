@@ -6,9 +6,12 @@ import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+  useCallback, useMemo, useState, useEffect,
+} from 'react';
 import { useHistory } from 'react-router-dom';
 import { Paper } from '@material-ui/core';
 import * as ROUTES from '../../constants/routes';
@@ -56,12 +59,20 @@ const INITIAL_FORM_STATE = {
 };
 
 export default function SignInPage() {
+  const [user, initialising] = useAuthState(firebase.auth());
+  const history = useHistory();
+
+  useEffect(() => {
+    if (!initialising && user) {
+      history.push(ROUTES.RESOURCES);
+    }
+  }, [user, initialising, history]);
+
   const classes = useStyles();
 
   const [formState, setFormState] = useState(INITIAL_FORM_STATE);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  const history = useHistory();
 
   const handleSubmit = useCallback((event) => {
     event.preventDefault();
@@ -69,14 +80,13 @@ export default function SignInPage() {
     const { email, password } = formState;
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(() => {
-        history.push(ROUTES.RESOURCES);
         setLoading(false);
       })
       .catch((error) => {
         setErrorMessage(error.message);
         setLoading(false);
       });
-  }, [formState, history]);
+  }, [formState]);
 
   const handleChange = useCallback((event) => {
     event.preventDefault();

@@ -1,6 +1,9 @@
 import 'firebase/auth';
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import firebase from 'firebase/app';
+import PropTypes from 'prop-types';
 import * as ROUTES from '../../constants/routes';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
@@ -13,6 +16,29 @@ import EditCategoryPage from '../Resources/Category/EditCategoryPage';
 import SignInPage from '../SignIn';
 import SignUpPage from '../SignUp';
 import UsersPage from '../Users';
+
+function PrivateRoute({ children, ...rest }) {
+  const [user, initialising] = useAuthState(firebase.auth());
+  return (
+    <Route
+      {...rest}
+      render={({ location }) => (!initialising && user ? (
+        children
+      ) : (
+        <Redirect
+          to={{
+            pathname: ROUTES.SIGN_IN,
+            state: { from: location },
+          }}
+        />
+      ))}
+    />
+  );
+}
+
+PrivateRoute.propTypes = {
+  children: PropTypes.element.isRequired,
+};
 
 export default function Routes() {
   return (
@@ -31,51 +57,52 @@ export default function Routes() {
       </Route>
 
       {/* Signed in */}
-      <Route exact path={ROUTES.ACCOUNT}>
+      <PrivateRoute exact path={ROUTES.ACCOUNT}>
         <AccountPage />
-      </Route>
+      </PrivateRoute>
 
       {/* Admin */}
-      <Route exact path={ROUTES.ADMIN}>
+      <PrivateRoute exact path={ROUTES.ADMIN}>
         <AdminPage />
-      </Route>
-      <Route exact path={ROUTES.USERS}>
+      </PrivateRoute>
+
+      <PrivateRoute exact path={ROUTES.USERS}>
         <UsersPage />
-      </Route>
+      </PrivateRoute>
 
       {/* Resources */}
-      <Route exact path={ROUTES.RESOURCES}>
+      <PrivateRoute exact path={ROUTES.RESOURCES}>
         <ResourcesPage />
-      </Route>
+      </PrivateRoute>
 
-      <Route exact path="/resources/new">
+      <PrivateRoute exact path="/resources/new">
         <NewCategoryPage />
-      </Route>
+      </PrivateRoute>
 
-      <Route exact path="/resources/:categoryId">
+      <PrivateRoute exact path="/resources/:categoryId">
         <CategoryPage />
-      </Route>
+      </PrivateRoute>
 
-      <Route exact path="/resources/:categoryId/new">
+      <PrivateRoute exact path="/resources/:categoryId/new">
         <NewResourcePage />
-      </Route>
+      </PrivateRoute>
 
-      <Route exact path="/resources/:categoryId/edit">
+      <PrivateRoute exact path="/resources/:categoryId/edit">
         <EditCategoryPage />
-      </Route>
+      </PrivateRoute>
 
-      <Route exact path="/resources/item/:resourceId">
+      <PrivateRoute exact path="/resources/item/:resourceId">
         <ResourcePage />
-      </Route>
+      </PrivateRoute>
 
       {/* Forum */}
-      <Route exact path={ROUTES.FORUM}>
+      <PrivateRoute exact path={ROUTES.FORUM}>
         <ForumHomePage />
-      </Route>
+      </PrivateRoute>
 
-      <Route exact path="/forum/pending">
+      <PrivateRoute exact path="/forum/pending">
         <PendingPostsPage />
-      </Route>
+      </PrivateRoute>
     </>
   );
 }

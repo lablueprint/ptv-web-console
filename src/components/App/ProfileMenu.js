@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import * as ROUTES from '../../constants/routes';
 
@@ -22,6 +22,7 @@ export default function ProfileMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const [name, setName] = useState(null);
+  const history = useHistory();
 
   useEffect(() => (
     firebase.auth().onAuthStateChanged((userCredential) => {
@@ -30,7 +31,9 @@ export default function ProfileMenu() {
 
   const handleSignOut = () => {
     handleProfileMenuClose();
-    firebase.auth().signOut();
+    firebase.auth().signOut().then(() => {
+      history.push(ROUTES.SIGN_IN);
+    });
   };
 
   const isMenuOpen = Boolean(anchorEl);
@@ -58,7 +61,7 @@ export default function ProfileMenu() {
         Account
       </MenuItem>
       <Divider />
-      <MenuItem onClick={handleSignOut} component={Link} to="/">
+      <MenuItem onClick={handleSignOut}>
         Sign Out
       </MenuItem>
     </Menu>
