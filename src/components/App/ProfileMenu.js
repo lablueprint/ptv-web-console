@@ -66,7 +66,7 @@ export default function ProfileMenu() {
 
   return (
     <div className={classes.container}>
-      <Typography>
+      <Typography className={classes.text}>
         {`Hi, ${name}`}
       </Typography>
       <IconButton
