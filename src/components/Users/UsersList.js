@@ -8,6 +8,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles({
   table: {
@@ -20,9 +21,14 @@ export default function UsersList({ users }) {
   const userItems = users.map((user) => (
     <TableRow key={user.id}>
       <TableCell component="th" scope="row">{user.id}</TableCell>
-      <TableCell align="right">2020/04/30 12:05:02 GMT</TableCell>
+      <TableCell align="right">{user.updatedAt ? user.updatedAt.toDate().toUTCString() : 'N/A'}</TableCell>
       <TableCell align="right">{user.email}</TableCell>
       <TableCell align="right">{user.role}</TableCell>
+      <TableCell align="right">
+        <Button>
+          Ban
+        </Button>
+      </TableCell>
     </TableRow>
   ));
   return (
@@ -33,6 +39,7 @@ export default function UsersList({ users }) {
             <TableCell>User</TableCell>
             <TableCell align="right">Date Joined</TableCell>
             <TableCell align="right">Email</TableCell>
+            <TableCell align="right">Role</TableCell>
             <TableCell align="right">Action</TableCell>
           </TableRow>
         </TableHead>
