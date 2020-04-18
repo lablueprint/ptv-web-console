@@ -1,14 +1,14 @@
+import { makeStyles } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import Typography from '@material-ui/core/Typography';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 
 const useStyles = makeStyles({
@@ -22,7 +22,6 @@ export default function ProfileMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const [name, setName] = useState(null);
-  const history = useHistory();
 
   useEffect(() => (
     firebase.auth().onAuthStateChanged((userCredential) => {
@@ -31,9 +30,7 @@ export default function ProfileMenu() {
 
   const handleSignOut = () => {
     handleProfileMenuClose();
-    firebase.auth().signOut().then(() => {
-      history.push(ROUTES.SIGN_IN);
-    });
+    firebase.auth().signOut();
   };
 
   const isMenuOpen = Boolean(anchorEl);
