@@ -19,7 +19,7 @@ export default function UsersPage() {
 
   return (
     <div>
-      <h1>Users</h1>
+      <h1>Users List</h1>
       {loading && <p>loading...</p>}
       {error && <p>{error.message}</p>}
       <UsersList users={users} />
