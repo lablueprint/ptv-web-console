@@ -6,7 +6,7 @@ import 'firebase/auth';
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
-import NavigationDrawer from './NavigationDrawer';
+import { NavigationDrawer } from '../Navigation';
 import ProfileMenu from './ProfileMenu';
 import Routes from './Routes';
 

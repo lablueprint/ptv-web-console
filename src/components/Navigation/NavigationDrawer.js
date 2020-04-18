@@ -45,7 +45,7 @@ export default function NavigationDrawer() {
       <List className={classes.list}>
         {[
           [HomeIcon, ROUTES.RESOURCES, 'Home'],
-          [ForumIcon, ROUTES.FORUM, 'Forum'],
+          [ForumIcon, ROUTES.FORUM_HOME, 'Forum'],
           [PersonIcon, ROUTES.USERS, 'Users'],
         ].map(([Icon, route, buttonTitle]) => (
           <ListItem
