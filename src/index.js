@@ -23,7 +23,6 @@ const theme = createMuiTheme({
       '"Segoe UI Symbol"',
     ].join(','),
   },
-  roundness: 20,
   palette: {
     primary: {
       main: '#1F7FC0',
@@ -36,6 +35,9 @@ const theme = createMuiTheme({
     },
     accent: {
       main: '#8EAEC3',
+    },
+    background: {
+      default: 'white',
     },
   },
   fonts: {
