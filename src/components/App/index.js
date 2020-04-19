@@ -72,8 +72,10 @@ export default function App() {
             )}
             <main className={classes.content}>
               <Switch>
-                {initialising && <LinearProgress size={24} />}
-                <Routes />
+                <>
+                  {initialising && <LinearProgress size={24} />}
+                  <Routes />
+                </>
               </Switch>
             </main>
           </div>

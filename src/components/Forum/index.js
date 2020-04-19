@@ -1,4 +1,4 @@
 import ForumHomePage from './ForumHomePage';
-import PendingPostsPage from './PendingPostsPage';
+import ForumPostsListByApproval from './ForumPostsList/ForumPostsListByApproval';
 
-export { ForumHomePage, PendingPostsPage };
+export { ForumHomePage, ForumPostsListByApproval };
