@@ -147,11 +147,11 @@ UsersList.propTypes = {
   users: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      role: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      displayName: PropTypes.string.isRequired,
-      isAdmin: PropTypes.bool.isRequired,
+      email: PropTypes.string,
+      role: PropTypes.string,
+      name: PropTypes.string,
+      displayName: PropTypes.string,
+      isAdmin: PropTypes.bool,
     }),
   ).isRequired,
 };
@@ -160,13 +160,13 @@ GetUserItems.propTypes = {
   users: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      role: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      displayName: PropTypes.string.isRequired,
-      isAdmin: PropTypes.bool.isRequired,
+      email: PropTypes.string,
+      role: PropTypes.string,
+      name: PropTypes.string,
+      displayName: PropTypes.string,
+      isAdmin: PropTypes.bool,
     }),
   ).isRequired,
-  searchText: PropTypes.string.isRequired,
+  searchText: PropTypes.string,
   setErrorMessage: PropTypes.func.isRequired,
 };
