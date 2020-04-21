@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -37,24 +39,41 @@ const useStyles = makeStyles({
   iconButton: {
     padding: 10,
   },
+  normalRow: {
+
+  },
+  bannedRow: {
+    backgroundColor: 'LightCoral',
+  },
 });
 
-function GetUserItems({ users, searchText, adminSwitch }) {
+function GetUserItems({
+  users, searchText, adminSwitch, setErrorMessage, classes,
+}) {
   return users.filter((user) => !searchText
   || ((user.name ? user.name : '').toLowerCase().search(searchText) !== -1
   || (user.displayName ? user.displayName : '').toLowerCase().search(searchText) !== -1)
   || (user.email ? user.email : '').toLowerCase().search(searchText) !== -1)
     .filter((user) => (adminSwitch ? user.isAdmin : !user.isAdmin))
     .map((user) => (
-      <TableRow key={user.id}>
+      <TableRow key={user.id} className={user.isBanned ? classes.bannedRow : classes.normalRow}>
         <TableCell component="th" scope="row">{user.displayName}</TableCell>
         <TableCell align="center">{user.name}</TableCell>
         <TableCell align="center">{user.updatedAt ? user.updatedAt.toDate().toUTCString() : 'N/A'}</TableCell>
         <TableCell align="center">{user.email}</TableCell>
         <TableCell align="center">{user.role}</TableCell>
         <TableCell align="center">
-          <Button>
-            Ban
+          <Button onClick={() => {
+            firebase.firestore().collection('users').doc(user.id).set({
+              ...user,
+              isBanned: !user.isBanned,
+            })
+              .catch((error) => {
+                setErrorMessage(error.message);
+              });
+          }}
+          >
+            {user.isBanned ? 'Unban' : 'Ban'}
           </Button>
         </TableCell>
       </TableRow>
@@ -66,10 +85,17 @@ export default function UsersList({ users }) {
   const [userItems, setUserItems] = useState(null);
   const [searchText, setSearchText] = useState(null);
   const [adminSwitch, setAdminSwitch] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    setUserItems(<GetUserItems users={users} searchText={searchText} adminSwitch={adminSwitch} />);
-  }, [users, searchText, adminSwitch]);
+    setUserItems(<GetUserItems
+      users={users}
+      searchText={searchText}
+      adminSwitch={adminSwitch}
+      setErrorMessage={setErrorMessage}
+      classes={classes}
+    />);
+  }, [users, searchText, adminSwitch, classes]);
 
   return (
     <Typography component="div">
@@ -112,6 +138,7 @@ export default function UsersList({ users }) {
           </TableBody>
         </Table>
       </TableContainer>
+      {errorMessage && <Typography>{errorMessage}</Typography>}
     </Typography>
   );
 }
@@ -141,4 +168,5 @@ GetUserItems.propTypes = {
     }),
   ).isRequired,
   searchText: PropTypes.string.isRequired,
+  setErrorMessage: PropTypes.func.isRequired,
 };
