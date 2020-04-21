@@ -12,6 +12,9 @@ import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import Button from '@material-ui/core/Button';
+import Switch from '@material-ui/core/Switch';
+import Grid from '@material-ui/core/Grid';
+import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles({
   table: {
@@ -24,6 +27,9 @@ const useStyles = makeStyles({
     alignItems: 'center',
     width: '20%',
   },
+  switchRoot: {
+    marginBottom: 20,
+  },
   input: {
     marginLeft: 10,
     flex: 1,
@@ -33,37 +39,40 @@ const useStyles = makeStyles({
   },
 });
 
-function GetUserItems({ users, searchText }) {
+function GetUserItems({ users, searchText, adminSwitch }) {
   return users.filter((user) => !searchText
   || ((user.name ? user.name : '').toLowerCase().search(searchText) !== -1
   || (user.displayName ? user.displayName : '').toLowerCase().search(searchText) !== -1)
-  || (user.email ? user.email : '').toLowerCase().search(searchText) !== -1).map((user) => (
-    <TableRow key={user.id}>
-      <TableCell component="th" scope="row">{user.displayName}</TableCell>
-      <TableCell align="center">{user.name}</TableCell>
-      <TableCell align="center">{user.updatedAt ? user.updatedAt.toDate().toUTCString() : 'N/A'}</TableCell>
-      <TableCell align="center">{user.email}</TableCell>
-      <TableCell align="center">{user.role}</TableCell>
-      <TableCell align="center">
-        <Button>
-          Ban
-        </Button>
-      </TableCell>
-    </TableRow>
-  ));
+  || (user.email ? user.email : '').toLowerCase().search(searchText) !== -1)
+    .filter((user) => (adminSwitch ? user.isAdmin : !user.isAdmin))
+    .map((user) => (
+      <TableRow key={user.id}>
+        <TableCell component="th" scope="row">{user.displayName}</TableCell>
+        <TableCell align="center">{user.name}</TableCell>
+        <TableCell align="center">{user.updatedAt ? user.updatedAt.toDate().toUTCString() : 'N/A'}</TableCell>
+        <TableCell align="center">{user.email}</TableCell>
+        <TableCell align="center">{user.role}</TableCell>
+        <TableCell align="center">
+          <Button>
+            Ban
+          </Button>
+        </TableCell>
+      </TableRow>
+    ));
 }
 
 export default function UsersList({ users }) {
   const classes = useStyles();
   const [userItems, setUserItems] = useState(null);
   const [searchText, setSearchText] = useState(null);
+  const [adminSwitch, setAdminSwitch] = useState(false);
 
   useEffect(() => {
-    setUserItems(<GetUserItems users={users} searchText={searchText} />);
-  }, [users, searchText]);
+    setUserItems(<GetUserItems users={users} searchText={searchText} adminSwitch={adminSwitch} />);
+  }, [users, searchText, adminSwitch]);
 
   return (
-    <div>
+    <Typography component="div">
       <Paper component="form" className={classes.searchBarRoot}>
         <InputBase
           className={classes.input}
@@ -77,6 +86,15 @@ export default function UsersList({ users }) {
           <SearchIcon />
         </IconButton>
       </Paper>
+      <Typography component="div" className={classes.switchRoot}>
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>Standard Users</Grid>
+          <Grid item>
+            <Switch checked={adminSwitch} onChange={(e) => { setAdminSwitch(e.target.checked); }} />
+          </Grid>
+          <Grid item>Admin Users</Grid>
+        </Grid>
+      </Typography>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
@@ -94,7 +112,7 @@ export default function UsersList({ users }) {
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
+    </Typography>
   );
 }
 
