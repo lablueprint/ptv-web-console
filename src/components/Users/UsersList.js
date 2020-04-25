@@ -10,9 +10,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import IconButton from '@material-ui/core/IconButton';
-import SearchIcon from '@material-ui/icons/Search';
 import Button from '@material-ui/core/Button';
 import Switch from '@material-ui/core/Switch';
 import Grid from '@material-ui/core/Grid';
@@ -27,12 +24,18 @@ const useStyles = makeStyles({
   table: {
     minWidth: 650,
   },
-  searchBarRoot: {
-    marginBottom: 20,
-    padding: '2px 4px',
-    display: 'flex',
-    alignItems: 'center',
-    width: '20%',
+  roleList: {
+    display: 'inline-block',
+    padding: 0,
+    width: 'auto',
+  },
+  roleListItem: {
+    backgroundColor: 'lightBlue',
+    margin: 10,
+    padding: 10,
+    borderRadius: 5,
+    textAlign: 'center',
+    whiteSpace: 'nowrap',
   },
   switchRoot: {
     marginBottom: 20,
@@ -51,9 +54,6 @@ const useStyles = makeStyles({
   input: {
     marginLeft: 10,
     flex: 1,
-  },
-  iconButton: {
-    padding: 10,
   },
   normalRow: {
 
@@ -134,7 +134,15 @@ export default function UsersList({ users, searchText }) {
             <TableCell align="center">{user.name}</TableCell>
             <TableCell align="center">{user.updatedAt ? user.updatedAt.toDate().toUTCString() : 'N/A'}</TableCell>
             <TableCell align="center">{user.email}</TableCell>
-            <TableCell align="center">{user.role}</TableCell>
+            <TableCell align="center">
+              {user.role && Array.from(user.role).map((role) => (
+                <Typography component="div" className={classes.roleList}>
+                  <Typography componet="div" className={classes.roleListItem}>
+                    {role.toString()}
+                  </Typography>
+                </Typography>
+              ))}
+            </TableCell>
             <TableCell align="center">
               <Button onClick={() => {
                 firebase.firestore().collection('users').doc(user.id).set({
@@ -220,11 +228,11 @@ UsersList.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       email: PropTypes.string,
-      role: PropTypes.string,
+      role: PropTypes.array,
       name: PropTypes.string,
       displayName: PropTypes.string,
       isAdmin: PropTypes.bool,
     }),
   ).isRequired,
-  searchText: PropTypes.string,
+  searchText: PropTypes.string.isRequired,
 };

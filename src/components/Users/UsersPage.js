@@ -10,42 +10,16 @@ import SearchIcon from '@material-ui/icons/Search';
 import UsersList from './UsersList';
 
 const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
   searchBarRoot: {
-    marginBottom: 20,
-    padding: '2px 4px',
+    // marginBottom: 20,
+    padding: 5,
     display: 'flex',
-    alignItems: 'center',
+    // alignItems: 'center',
     width: '20%',
-  },
-  switchRoot: {
-    marginBottom: 20,
-    flexDirection: 'row',
-    display: 'flex',
-  },
-  switchAdmin: {
-    flex: 1,
-  },
-  dropdown: {
-    flex: 1,
-  },
-  spacing: {
-    flex: 3,
-  },
-  input: {
-    marginLeft: 10,
-    flex: 1,
+    justifyContent: 'space-between',
   },
   iconButton: {
     padding: 10,
-  },
-  normalRow: {
-
-  },
-  bannedRow: {
-    backgroundColor: 'LightCoral',
   },
 });
 
