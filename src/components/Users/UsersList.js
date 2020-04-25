@@ -69,10 +69,9 @@ const sortOptions = [
   'Name - Alphabetical',
 ];
 
-export default function UsersList({ users }) {
+export default function UsersList({ users, searchText }) {
   const classes = useStyles();
   const [userItems, setUserItems] = useState(null);
-  const [searchText, setSearchText] = useState(null);
   const [adminSwitch, setAdminSwitch] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -108,13 +107,13 @@ export default function UsersList({ users }) {
           switch (selectedIndex) {
           /* Newest users */
             case 0:
-              if (userA.updatedAt.toDate() > userB.updatedAt.toDate()) {
+              if (userA.updatedAt.toDate() < userB.updatedAt.toDate()) {
                 return 1;
               }
               return -1;
               /* Oldest users */
             case 1:
-              if (userA.updatedAt.toDate() < userB.updatedAt.toDate()) {
+              if (userA.updatedAt.toDate() > userB.updatedAt.toDate()) {
                 return 1;
               }
               return -1;
@@ -157,19 +156,6 @@ export default function UsersList({ users }) {
 
   return (
     <Typography component="div">
-      <Paper component="form" className={classes.searchBarRoot}>
-        <InputBase
-          className={classes.input}
-          placeholder="Search Users"
-          inputProps={{ 'aria-label': 'search users' }}
-          onChange={(e) => {
-            setSearchText(e.target.value);
-          }}
-        />
-        <IconButton type="submit" className={classes.iconButton} aria-label="search">
-          <SearchIcon />
-        </IconButton>
-      </Paper>
       <Typography component="div" className={classes.switchRoot}>
         <Grid component="label" container alignItems="center" spacing={1} className={classes.switchAdmin}>
           <Grid item>Standard Users</Grid>
@@ -240,4 +226,5 @@ UsersList.propTypes = {
       isAdmin: PropTypes.bool,
     }),
   ).isRequired,
+  searchText: PropTypes.string,
 };
