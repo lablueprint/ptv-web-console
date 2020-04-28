@@ -1,11 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as ROUTES from '../../constants/routes';
+import { AuthContext } from '../Context';
 
-export default function RouteWithAuth({
-  initialising, user, signedOutOnly, children, ...rest
-}) {
+export default function RouteWithAuth({ signedOutOnly, children, ...rest }) {
+  const { user, initialising } = useContext(AuthContext);
+
   const render = useMemo(() => {
     if (signedOutOnly) {
       return () => (user ? <Redirect to={ROUTES.RESOURCES} /> : children);
@@ -23,15 +24,9 @@ export default function RouteWithAuth({
 
 RouteWithAuth.propTypes = {
   children: PropTypes.element.isRequired,
-  initialising: PropTypes.bool,
-  user: PropTypes.shape({
-    uid: PropTypes.string.isRequired,
-  }),
   signedOutOnly: PropTypes.bool,
 };
 
 RouteWithAuth.defaultProps = {
-  initialising: null,
-  user: null,
   signedOutOnly: false,
 };

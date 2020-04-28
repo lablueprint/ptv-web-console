@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import * as ROUTES from '../../constants/routes';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
@@ -14,7 +13,7 @@ import SignUpPage from '../SignUp';
 import UsersPage from '../Users';
 import { RouteWithAuth } from '../Navigation';
 
-export default function Routes({ user, initialising }) {
+export default function Routes() {
   return (
     <>
       {/* Signed out */}
@@ -25,8 +24,6 @@ export default function Routes({ user, initialising }) {
       ].map(([route, Page]) => (
         <RouteWithAuth
           key={route}
-          intialising={initialising}
-          user={user}
           signedOutOnly
           exact
           path={route}
@@ -54,8 +51,6 @@ export default function Routes({ user, initialising }) {
       ].map(([route, Page]) => (
         <RouteWithAuth
           key={route}
-          intialising={initialising}
-          user={user}
           path={route}
         >
           <Page />
@@ -64,14 +59,3 @@ export default function Routes({ user, initialising }) {
     </>
   );
 }
-
-Routes.propTypes = {
-  initialising: PropTypes.bool.isRequired,
-  user: PropTypes.shape({
-    uid: PropTypes.string.isRequired,
-  }),
-};
-
-Routes.defaultProps = {
-  user: null,
-};
