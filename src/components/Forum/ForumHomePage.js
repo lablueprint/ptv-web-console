@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 import React from 'react';
+import { Route } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
-import { PrivateRoute } from '../Navigation';
 import ForumNavigationTabs from './ForumNavigationTabs';
 import ForumPostsListByApproval from './ForumPostsList';
 
@@ -19,12 +19,12 @@ export default function ForumHomePage() {
       <div className={classes.navigationContainer}>
         <ForumNavigationTabs />
       </div>
-      <PrivateRoute exact path={ROUTES.FORUM_HOME}>
+      <Route exact path={ROUTES.FORUM_HOME}>
         <ForumPostsListByApproval approved={false} />
-      </PrivateRoute>
-      <PrivateRoute exact path={ROUTES.FORUM_APPROVED_POSTS}>
+      </Route>
+      <Route exact path={ROUTES.FORUM_APPROVED_POSTS}>
         <ForumPostsListByApproval approved />
-      </PrivateRoute>
+      </Route>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import NavigationDrawer from './NavigationDrawer';
-import PrivateRoute from './PrivateRoute';
+import RouteWithAuth from './RouteWithAuth';
 
 export {
-  NavigationDrawer, PrivateRoute,
+  NavigationDrawer, RouteWithAuth,
 };

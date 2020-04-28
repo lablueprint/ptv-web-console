@@ -1,3 +1,4 @@
+import { Paper } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -6,14 +7,9 @@ import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import React, {
-  useCallback, useMemo, useState, useEffect,
-} from 'react';
-import { useHistory } from 'react-router-dom';
-import { Paper } from '@material-ui/core';
+import React, { useCallback, useMemo, useState } from 'react';
 import * as ROUTES from '../../constants/routes';
 
 const useStyles = makeStyles((theme) => ({
@@ -59,15 +55,6 @@ const INITIAL_FORM_STATE = {
 };
 
 export default function SignInPage() {
-  const [user, initialising] = useAuthState(firebase.auth());
-  const history = useHistory();
-
-  useEffect(() => {
-    if (!initialising && user) {
-      history.push(ROUTES.RESOURCES);
-    }
-  }, [user, initialising, history]);
-
   const classes = useStyles();
 
   const [formState, setFormState] = useState(INITIAL_FORM_STATE);
