@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import { NavigationDrawer } from '../Navigation';
 import ProfileMenu from './ProfileMenu';
 import Routes from './Routes';
+import { AuthContext } from '../Context';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -57,31 +58,33 @@ export default function App() {
   const classes = useStyles({ authenticated: !initialising && user });
 
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <Router>
-        {!initialising && user && (
+    <AuthContext.Provider value={{ user, initialising }}>
+      <div className={classes.root}>
+        <CssBaseline />
+        <Router>
+          {!initialising && user && (
           <NavigationDrawer />
-        )}
-        <div className={classes.background}>
-          <div className={classes.foreground}>
-            {!initialising && user && (
-            <div className={classes.toolbar}>
-              <ProfileMenu />
+          )}
+          <div className={classes.background}>
+            <div className={classes.foreground}>
+              {!initialising && user && (
+              <div className={classes.toolbar}>
+                <ProfileMenu />
+              </div>
+              )}
+              <main className={classes.content}>
+                <Switch>
+                  <>
+                    {initialising
+                      ? <LinearProgress size={24} />
+                      : <Routes user={user} initialising={initialising} />}
+                  </>
+                </Switch>
+              </main>
             </div>
-            )}
-            <main className={classes.content}>
-              <Switch>
-                <>
-                  {initialising
-                    ? <LinearProgress size={24} />
-                    : <Routes user={user} initialising={initialising} />}
-                </>
-              </Switch>
-            </main>
           </div>
-        </div>
-      </Router>
-    </div>
+        </Router>
+      </div>
+    </AuthContext.Provider>
   );
 }
