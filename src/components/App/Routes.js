@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import * as ROUTES from '../../constants/routes';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
@@ -12,67 +12,66 @@ import EditCategoryPage from '../Resources/Category/EditCategoryPage';
 import SignInPage from '../SignIn';
 import SignUpPage from '../SignUp';
 import UsersPage from '../Users';
-import { PrivateRoute } from '../Navigation';
+import { RouteWithAuth } from '../Navigation';
 
-export default function Routes() {
+export default function Routes({ user, initialising }) {
   return (
     <>
       {/* Signed out */}
-      <Route exact path={ROUTES.SIGN_UP}>
-        <SignUpPage />
-      </Route>
-
-      <Route exact path={ROUTES.SIGN_IN}>
-        <SignInPage />
-      </Route>
-
-      <Route exact path={ROUTES.PASSWORD_FORGET}>
-        <PasswordForgetPage />
-      </Route>
+      {[
+        [ROUTES.SIGN_UP, SignUpPage],
+        [ROUTES.SIGN_IN, SignInPage],
+        [ROUTES.PASSWORD_FORGET, PasswordForgetPage],
+      ].map(([route, Page]) => (
+        <RouteWithAuth
+          key={route}
+          intialising={initialising}
+          user={user}
+          signedOutOnly
+          exact
+          path={route}
+        >
+          <Page />
+        </RouteWithAuth>
+      ))}
 
       {/* Signed in */}
-      <PrivateRoute exact path={ROUTES.ACCOUNT}>
-        <AccountPage />
-      </PrivateRoute>
-
-      {/* Admin */}
-      <PrivateRoute exact path={ROUTES.ADMIN}>
-        <AdminPage />
-      </PrivateRoute>
-
-      <PrivateRoute exact path={ROUTES.USERS}>
-        <UsersPage />
-      </PrivateRoute>
-
-      {/* Resources */}
-      <PrivateRoute exact path={ROUTES.RESOURCES}>
-        <ResourcesPage />
-      </PrivateRoute>
-
-      <PrivateRoute exact path="/resources/new">
-        <NewCategoryPage />
-      </PrivateRoute>
-
-      <PrivateRoute exact path="/resources/:categoryId">
-        <CategoryPage />
-      </PrivateRoute>
-
-      <PrivateRoute exact path="/resources/:categoryId/new">
-        <NewResourcePage />
-      </PrivateRoute>
-
-      <PrivateRoute exact path="/resources/:categoryId/edit">
-        <EditCategoryPage />
-      </PrivateRoute>
-
-      <PrivateRoute exact path="/resources/item/:resourceId">
-        <ResourcePage />
-      </PrivateRoute>
-
-      {/* Forum */}
-      <PrivateRoute path={ROUTES.FORUM_HOME}>
-        <ForumHomePage />
-      </PrivateRoute>
+      {[
+        [ROUTES.ACCOUNT, AccountPage],
+        [ROUTES.ADMIN, AdminPage],
+        [ROUTES.USERS, UsersPage],
+        [ROUTES.RESOURCES, ResourcesPage],
+        /*
+          TODO: nest resource routes inside ResourcesPage
+          (this means resources routes won't need the `exact` prop)
+        */
+        ['/resources/new', NewCategoryPage],
+        ['/resources/:categoryId', CategoryPage],
+        ['/resources/:categoryId/new', NewResourcePage],
+        ['/resources/:categoryId/edit', EditCategoryPage],
+        ['/resources/item/:resourceId', ResourcePage],
+        [ROUTES.FORUM_HOME, ForumHomePage],
+      ].map(([route, Page]) => (
+        <RouteWithAuth
+          key={route}
+          intialising={initialising}
+          user={user}
+          path={route}
+        >
+          <Page />
+        </RouteWithAuth>
+      ))}
     </>
   );
 }
+
+Routes.propTypes = {
+  initialising: PropTypes.bool.isRequired,
+  user: PropTypes.shape({
+    uid: PropTypes.string.isRequired,
+  }),
+};
+
+Routes.defaultProps = {
+  user: null,
+};
