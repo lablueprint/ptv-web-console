@@ -2,7 +2,7 @@ import Chip from '@material-ui/core/Chip';
 import IconButton from '@material-ui/core/IconButton';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Paper from '@material-ui/core/Paper';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -10,19 +10,10 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import CheckIcon from '@material-ui/icons/Check';
-import ClearIcon from '@material-ui/icons/Clear';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
-import ReplyIcon from '@material-ui/icons/Reply';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import PropTypes from 'prop-types';
-import React, {
-  useCallback, useEffect, useMemo, useState,
-} from 'react';
-import FormattedReferencedDataField from './FormattedReferencedDataField';
-import RepliesChip from './RepliesChip';
+import React, { useCallback, useEffect, useState } from 'react';
 
 const useStyles = makeStyles({
   root: {
@@ -33,90 +24,8 @@ const useStyles = makeStyles({
   },
 });
 
-const pendingPostsListColumns = [
-  {
-    id: 'userID',
-    label: 'User',
-    format: (value) => (
-      <FormattedReferencedDataField
-        collection="users"
-        id={value}
-        field="displayName"
-        notFoundMessage="User not found"
-        render={(item) => <>{item}</>}
-      />
-    ),
-  },
-  {
-    id: 'title',
-    label: 'Post Title',
-  },
-  {
-    id: 'categoryID',
-    label: 'Category',
-    format: (value) => (
-      <FormattedReferencedDataField
-        collection="forum_categories"
-        id={value}
-        field="title"
-        notFoundMessage="Category not found"
-        render={(item) => <>{item}</>}
-      />
-    ),
-  },
-  {
-    id: 'createdAt',
-    label: 'Created At',
-    format: (value) => (value ? value.toDate().toLocaleString() : 'Date not found'),
-  },
-];
-
-const approvedPostsListColumns = [
-  {
-    id: 'userID',
-    label: 'User',
-    format: (value) => (
-      <FormattedReferencedDataField
-        collection="users"
-        id={value}
-        field="displayName"
-        notFoundMessage="User not found"
-        render={(item) => <>{item}</>}
-      />
-    ),
-  },
-  {
-    id: 'title',
-    label: 'Post Title',
-  },
-  {
-    id: 'categoryID',
-    label: 'Category',
-    format: (value) => (
-      <FormattedReferencedDataField
-        collection="forum_categories"
-        id={value}
-        field="title"
-        notFoundMessage="Category not found"
-        render={(item) => <>{item}</>}
-      />
-    ),
-  },
-  {
-    id: 'approvedAt',
-    label: 'Approved At',
-    format: (value) => (value ? value.toDate().toLocaleString() : 'Date not found'),
-  },
-  {
-    id: 'id',
-    label: 'Replies',
-    format: (value) => <RepliesChip postID={value} />,
-  },
-];
-
-export default function ForumPostsListByApproval({ approved }) {
+export default function ForumPostsListByApproval({ approved, columns, actionButtons }) {
   const classes = useStyles();
-  const theme = useTheme();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
@@ -155,35 +64,6 @@ export default function ForumPostsListByApproval({ approved }) {
     setPage(0);
   }, []);
 
-  const columns = useMemo(() => (
-    approved ? approvedPostsListColumns : pendingPostsListColumns),
-  [approved]);
-
-  const actionButtons = useMemo(() => {
-    const iconsColorsList = approved
-      ? [
-        [ReplyIcon],
-        [EditIcon, theme.palette.text.main],
-        [DeleteIcon, theme.palette.error.main],
-      ]
-      : [
-        [EditIcon, theme.palette.text.main],
-        [CheckIcon, theme.palette.success.main],
-        [ClearIcon, theme.palette.error.main],
-      ];
-    return (
-      <>
-        {iconsColorsList.map(([Icon, color], i) => (
-          // Array will not change; index is okay to use as key
-          // eslint-disable-next-line react/no-array-index-key
-          <IconButton key={i}>
-            <Icon style={{ color }} />
-          </IconButton>
-        ))}
-      </>
-    );
-  }, [approved, theme.palette.error.main, theme.palette.success.main, theme.palette.text.main]);
-
   return (
     <Paper className={classes.root} elevation={0}>
       {loading && <LinearProgress />}
@@ -214,7 +94,13 @@ export default function ForumPostsListByApproval({ approved }) {
                   );
                 })}
                 <TableCell>
-                  {actionButtons}
+                  {actionButtons.map(({ Icon, color }, i) => (
+                    // Array will never change; index okay to use as key
+                    // eslint-disable-next-line react/no-array-index-key
+                    <IconButton key={i}>
+                      <Icon style={{ color }} />
+                    </IconButton>
+                  ))}
                 </TableCell>
               </TableRow>
             ))}
@@ -236,4 +122,13 @@ export default function ForumPostsListByApproval({ approved }) {
 
 ForumPostsListByApproval.propTypes = {
   approved: PropTypes.bool.isRequired,
+  columns: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    format: PropTypes.func,
+  })).isRequired,
+  actionButtons: PropTypes.arrayOf(PropTypes.shape({
+    Icon: PropTypes.elementType.isRequired,
+    color: PropTypes.string,
+  })).isRequired,
 };
