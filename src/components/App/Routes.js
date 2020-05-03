@@ -2,7 +2,7 @@ import React from 'react';
 import * as ROUTES from '../../constants/routes';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
-import { ForumHomePage } from '../Forum';
+import ForumHomePage from '../Forum';
 import PasswordForgetPage from '../PasswordForget';
 import {
   CategoryPage, NewCategoryPage, NewResourcePage, ResourcePage, ResourcesPage,
