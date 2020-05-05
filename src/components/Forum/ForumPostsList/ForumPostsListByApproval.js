@@ -14,6 +14,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
+import FormattedReferencedDataField from './FormattedReferencedDataField';
 
 const useStyles = makeStyles({
   root: {
@@ -24,7 +25,40 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ForumPostsListByApproval({ approved, columns, actionButtons }) {
+const columns = [
+  {
+    id: 'userID',
+    label: 'User',
+    format: (value) => (
+      <FormattedReferencedDataField
+        collection="users"
+        id={value}
+        field="displayName"
+        notFoundMessage="User not found"
+        render={(item) => <>{item}</>}
+      />
+    ),
+  },
+  {
+    id: 'title',
+    label: 'Post Title',
+  },
+  {
+    id: 'categoryID',
+    label: 'Category',
+    format: (value) => (
+      <FormattedReferencedDataField
+        collection="forum_categories"
+        id={value}
+        field="title"
+        notFoundMessage="Catego;ry not found"
+        render={(item) => <>{item}</>}
+      />
+    ),
+  },
+];
+
+export default function ForumPostsListByApproval({ approved, additionalColumns, actionButtons }) {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -72,11 +106,12 @@ export default function ForumPostsListByApproval({ approved, columns, actionButt
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              {columns.map((column) => (
-                <TableCell key={column.label}>
-                  <Chip color="primary" label={column.label} />
-                </TableCell>
-              ))}
+              {[columns, additionalColumns].map((columnsList) => (
+                columnsList.map((column) => (
+                  <TableCell key={column.label}>
+                    <Chip color="primary" label={column.label} />
+                  </TableCell>
+                ))))}
               <TableCell>
                 <Chip color="primary" label="Actions" />
               </TableCell>
@@ -85,14 +120,15 @@ export default function ForumPostsListByApproval({ approved, columns, actionButt
           <TableBody>
             {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
               <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                {columns.map((column) => {
-                  const value = row[column.id];
-                  return (
-                    <TableCell key={column.label}>
-                      {column.format ? column.format(value) : value}
-                    </TableCell>
-                  );
-                })}
+                {[columns, additionalColumns].map((columnsList) => (
+                  columnsList.map((column) => {
+                    const value = row[column.id];
+                    return (
+                      <TableCell key={column.label}>
+                        {column.format ? column.format(value) : value}
+                      </TableCell>
+                    );
+                  })))}
                 <TableCell>
                   {actionButtons.map(({ Icon, color }, i) => (
                     // Array will never change; index okay to use as key
@@ -122,7 +158,7 @@ export default function ForumPostsListByApproval({ approved, columns, actionButt
 
 ForumPostsListByApproval.propTypes = {
   approved: PropTypes.bool.isRequired,
-  columns: PropTypes.arrayOf(PropTypes.shape({
+  additionalColumns: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     format: PropTypes.func,

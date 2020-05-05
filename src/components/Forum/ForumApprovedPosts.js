@@ -1,42 +1,12 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { useTheme } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ReplyIcon from '@material-ui/icons/Reply';
-import { ForumPostsListByApproval, FormattedReferencedDataField, RepliesChip } from './ForumPostsList';
+import { ForumPostsListByApproval, RepliesChip } from './ForumPostsList';
 
 const approvedPostsListColumns = [
-  {
-    id: 'userID',
-    label: 'User',
-    format: (value) => (
-      <FormattedReferencedDataField
-        collection="users"
-        id={value}
-        field="displayName"
-        notFoundMessage="User not found"
-        render={(item) => <>{item}</>}
-      />
-    ),
-  },
-  {
-    id: 'title',
-    label: 'Post Title',
-  },
-  {
-    id: 'categoryID',
-    label: 'Category',
-    format: (value) => (
-      <FormattedReferencedDataField
-        collection="forum_categories"
-        id={value}
-        field="title"
-        notFoundMessage="Category not found"
-        render={(item) => <>{item}</>}
-      />
-    ),
-  },
   {
     id: 'approvedAt',
     label: 'Approved At',
@@ -52,7 +22,7 @@ const approvedPostsListColumns = [
 export default function ForumApprovedPostsList() {
   const theme = useTheme();
 
-  const approvedActionButtons = useMemo(() => ([
+  const approvedActionButtons = [
     {
       Icon: ReplyIcon,
     },
@@ -64,7 +34,7 @@ export default function ForumApprovedPostsList() {
       Icon: DeleteIcon,
       color: theme.palette.error.main,
     },
-  ]), [theme.palette.error.main, theme.palette.text.main]);
+  ];
 
   return (
     <Switch>
@@ -72,7 +42,7 @@ export default function ForumApprovedPostsList() {
       <Route exact>
         <ForumPostsListByApproval
           approved
-          columns={approvedPostsListColumns}
+          additionalColumns={approvedPostsListColumns}
           actionButtons={approvedActionButtons}
         />
       </Route>
