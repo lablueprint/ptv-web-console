@@ -54,7 +54,7 @@ const sortOptions = [
   'Name - Alphabetical',
 ];
 
-function SearchBar({ setSearchText }) {
+function SearchBar({ setSearchText, setPage }) {
   const classes = useStyles();
   return (
     <Paper component="form" className={classes.searchBarRoot}>
@@ -63,6 +63,7 @@ function SearchBar({ setSearchText }) {
         placeholder="Search Users"
         onChange={(e) => {
           setSearchText(e.target.value);
+          setPage(0);
         }}
       />
       <IconButton type="submit" className={classes.iconButton}>
@@ -72,13 +73,19 @@ function SearchBar({ setSearchText }) {
   );
 }
 
-function AdminSwitch({ adminSwitch, setAdminSwitch }) {
+function AdminSwitch({ adminSwitch, setAdminSwitch, setPage }) {
   const classes = useStyles();
   return (
     <Grid component="label" container alignItems="center" spacing={1} className={classes.switchAdmin}>
       <Grid item>Standard Users</Grid>
       <Grid item>
-        <Switch checked={adminSwitch} onChange={(e) => { setAdminSwitch(e.target.checked); }} />
+        <Switch
+          checked={adminSwitch}
+          onChange={(e) => {
+            setAdminSwitch(e.target.checked);
+            setPage(0);
+          }}
+        />
       </Grid>
       <Grid item>Admin Users</Grid>
     </Grid>
@@ -127,6 +134,9 @@ export default function UsersPage() {
   );
   const [users, setUsers] = useState([]);
 
+  /* Page number state */
+  const [page, setPage] = useState(0);
+
   /* Search bar text state */
   const [searchText, setSearchText] = useState(null);
 
@@ -160,9 +170,9 @@ export default function UsersPage() {
   return (
     <div>
       <h1>Users List</h1>
-      <SearchBar setSearchText={setSearchText} classes={classes} />
+      <SearchBar setSearchText={setSearchText} classes={classes} setPage={setPage} />
       <Typography component="div" className={classes.switchRoot}>
-        <AdminSwitch adminSwitch={adminSwitch} setAdminSwitch={setAdminSwitch} />
+        <AdminSwitch adminSwitch={adminSwitch} setAdminSwitch={setAdminSwitch} setPage={setPage} />
         <Typography component="div" className={classes.spacing} />
         <SortDropdown
           anchorEl={anchorEl}
@@ -179,6 +189,8 @@ export default function UsersPage() {
         searchText={searchText}
         adminSwitch={adminSwitch}
         selectedIndex={selectedIndex}
+        page={page}
+        setPage={setPage}
       />
     </div>
   );
@@ -186,11 +198,13 @@ export default function UsersPage() {
 
 SearchBar.propTypes = {
   setSearchText: PropTypes.func.isRequired,
+  setPage: PropTypes.func.isRequired,
 };
 
 AdminSwitch.propTypes = {
   adminSwitch: PropTypes.bool.isRequired,
   setAdminSwitch: PropTypes.func.isRequired,
+  setPage: PropTypes.func.isRequired,
 };
 
 SortDropdown.propTypes = {
