@@ -51,7 +51,7 @@ const columns = [
         collection="forum_categories"
         id={value}
         field="title"
-        notFoundMessage="Catego;ry not found"
+        notFoundMessage="Category not found"
         render={(item) => <>{item}</>}
       />
     ),

@@ -5,6 +5,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ReplyIcon from '@material-ui/icons/Reply';
 import { ForumPostsListByApproval, RepliesChip } from './ForumPostsList';
+import * as ROUTES from '../../constants/routes';
+import ForumApprovedPostDetails from './ForumApprovedPostDetails';
 
 const approvedPostsListColumns = [
   {
@@ -38,8 +40,10 @@ export default function ForumApprovedPostsList() {
 
   return (
     <Switch>
-      {/* Nested route to an individual post goes here */}
-      <Route exact>
+      <Route exact path={ROUTES.FORUM_APPROVED_POST_DETAILS}>
+        <ForumApprovedPostDetails />
+      </Route>
+      <Route exact path={ROUTES.FORUM_APPROVED_POSTS}>
         <ForumPostsListByApproval
           approved
           additionalColumns={approvedPostsListColumns}
