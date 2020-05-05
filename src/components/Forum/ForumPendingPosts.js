@@ -2,40 +2,10 @@ import { useTheme } from '@material-ui/core';
 import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
 import EditIcon from '@material-ui/icons/Edit';
-import React, { useMemo } from 'react';
-import { ForumPostsListByApproval, FormattedReferencedDataField } from './ForumPostsList';
+import React from 'react';
+import { ForumPostsListByApproval } from './ForumPostsList';
 
 const pendingPostsListColumns = [
-  {
-    id: 'userID',
-    label: 'User',
-    format: (value) => (
-      <FormattedReferencedDataField
-        collection="users"
-        id={value}
-        field="displayName"
-        notFoundMessage="User not found"
-        render={(item) => <>{item}</>}
-      />
-    ),
-  },
-  {
-    id: 'title',
-    label: 'Post Title',
-  },
-  {
-    id: 'categoryID',
-    label: 'Category',
-    format: (value) => (
-      <FormattedReferencedDataField
-        collection="forum_categories"
-        id={value}
-        field="title"
-        notFoundMessage="Category not found"
-        render={(item) => <>{item}</>}
-      />
-    ),
-  },
   {
     id: 'createdAt',
     label: 'Created At',
@@ -46,7 +16,7 @@ const pendingPostsListColumns = [
 export default function ForumPendingPostsList() {
   const theme = useTheme();
 
-  const pendingActionButtons = useMemo(() => ([
+  const pendingActionButtons = [
     {
       Icon: EditIcon,
       color: theme.palette.text.main,
@@ -59,12 +29,12 @@ export default function ForumPendingPostsList() {
       Icon: ClearIcon,
       color: theme.palette.error.main,
     },
-  ]), [theme.palette.error.main, theme.palette.success.main, theme.palette.text.main]);
+  ];
 
   return (
     <ForumPostsListByApproval
       approved={false}
-      columns={pendingPostsListColumns}
+      additionalColumns={pendingPostsListColumns}
       actionButtons={pendingActionButtons}
     />
   );
