@@ -4,13 +4,15 @@ import { useTheme } from '@material-ui/core/styles';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useHistory } from 'react-router';
 
 export default function RepliesChip({ postID }) {
   const [numReplies, setNumReplies] = useState(0);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const theme = useTheme();
+  const history = useHistory();
 
   useEffect(() => {
     setLoading(true);
@@ -28,12 +30,17 @@ export default function RepliesChip({ postID }) {
       });
   }, [postID]);
 
+  const handleClick = useCallback(() => {
+    history.push(`/forum/approved/${postID}`);
+  }, [history, postID]);
+
   return (
     <>
       {loading
         ? <CircularProgress />
         : (
           <Chip
+            onClick={handleClick}
             label={`${numReplies} pending`}
             style={{
               backgroundColor: numReplies
