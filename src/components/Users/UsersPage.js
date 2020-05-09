@@ -8,22 +8,24 @@ import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
-import Switch from '@material-ui/core/Switch';
-import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { Typography } from '@material-ui/core';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 import UsersList from './UsersList';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   searchBarRoot: {
+    marginBottom: 20,
     padding: 5,
     display: 'flex',
-    width: '20%',
+    width: '40%',
     justifyContent: 'space-between',
+    borderRadius: 40,
   },
   iconButton: {
     padding: 10,
@@ -33,12 +35,16 @@ const useStyles = makeStyles({
     flex: 1,
   },
   switchRoot: {
-    marginBottom: 20,
     flexDirection: 'row',
     display: 'flex',
   },
   switchAdmin: {
     flex: 1,
+    paddingTop: 10,
+  },
+  tab: {
+    fontSize: theme.typography.pxToRem(20),
+    textTransform: 'none',
   },
   dropdown: {
     flex: 1,
@@ -46,7 +52,7 @@ const useStyles = makeStyles({
   spacing: {
     flex: 3,
   },
-});
+}));
 
 const sortOptions = [
   'Newest Users',
@@ -76,19 +82,21 @@ function SearchBar({ setSearchText, setPage }) {
 function AdminSwitch({ adminSwitch, setAdminSwitch, setPage }) {
   const classes = useStyles();
   return (
-    <Grid component="label" container alignItems="center" spacing={1} className={classes.switchAdmin}>
-      <Grid item>Standard Users</Grid>
-      <Grid item>
-        <Switch
-          checked={adminSwitch}
-          onChange={(e) => {
-            setAdminSwitch(e.target.checked);
-            setPage(0);
-          }}
-        />
-      </Grid>
-      <Grid item>Admin Users</Grid>
-    </Grid>
+    <Paper elevation={0}>
+      <Tabs
+        className={classes.switchAdmin}
+        value={adminSwitch}
+        onChange={(_, n) => {
+          setAdminSwitch(n);
+          setPage(0);
+        }}
+        indicatorColor="primary"
+        textColor="primary"
+      >
+        <Tab label="Standard Users" className={classes.tab} />
+        <Tab label="Admin Users" className={classes.tab} />
+      </Tabs>
+    </Paper>
   );
 }
 
@@ -141,7 +149,7 @@ export default function UsersPage() {
   const [searchText, setSearchText] = useState(null);
 
   /* Standard user to admin switch state */
-  const [adminSwitch, setAdminSwitch] = useState(false);
+  const [adminSwitch, setAdminSwitch] = useState(0);
 
   /* Sort dropdown hooks */
   const [anchorEl, setAnchorEl] = useState(null);
