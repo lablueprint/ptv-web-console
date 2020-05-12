@@ -189,7 +189,7 @@ UsersList.propTypes = {
     }),
   ).isRequired,
   searchText: PropTypes.string.isRequired,
-  adminSwitch: PropTypes.bool.isRequired,
+  adminSwitch: PropTypes.number.isRequired,
   selectedIndex: PropTypes.number.isRequired,
   page: PropTypes.number.isRequired,
   setPage: PropTypes.func.isRequired,
