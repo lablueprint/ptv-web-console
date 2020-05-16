@@ -1,8 +1,7 @@
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
-import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
+import { Link } from 'react-router-dom';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
@@ -13,29 +12,36 @@ import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import * as ROUTES from '../../constants/routes';
 
-const RoundedTextField = withStyles((theme) => ({
+const StyledTextField = withStyles((theme) => ({
   root: {
     '& fieldset': {
       borderRadius: 30,
     },
     '& input': {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
+      margin: theme.spacing(0, 1),
     },
   },
-}))(TextField);
+}))((props) => (
+  <TextField
+    {...props}
+    variant="outlined"
+    margin="normal"
+    required
+    fullWidth
+  />
+));
 
 const RoundedButton = withStyles((theme) => ({
   root: {
     borderRadius: 30,
     height: theme.typography.fontSize * 3,
-    margin: theme.spacing(3, 0, 2),
+    margin: theme.spacing(3),
     textTransform: 'none',
-    width: '50%',
+    minWidth: '50%',
   },
 }))(Button);
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -54,13 +60,10 @@ const useStyles = makeStyles({
     marginTop: -8,
     marginLeft: -8,
   },
-  linksWrapper: {
-    marginTop: 15,
-  },
   welcome: {
-    marginBottom: 30,
+    marginBottom: theme.spacing(4),
   },
-});
+}));
 
 export default function SignInForm({ setError }) {
   const classes = useStyles();
@@ -87,35 +90,36 @@ export default function SignInForm({ setError }) {
     <Container className={classes.container}>
       <Typography variant="h4" className={classes.welcome}>Welcome back</Typography>
       <FormControl>
-        <RoundedTextField
-          autoFocus
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          id="email"
-          label="Email"
-          name="email"
-          autoComplete="email"
-          value={email}
-          onChange={({ target: { value } }) => setEmail(value)}
-          disabled={loading}
-        />
-        <RoundedTextField
-          className={classes.textField}
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={({ target: { value } }) => setPassword(value)}
-          disabled={loading}
-        />
+        {[
+          {
+            label: 'Email',
+            type: 'email',
+            autoComplete: 'email',
+            value: email,
+            setState: setEmail,
+            autoFocus: true,
+          },
+          {
+            label: 'Password',
+            type: 'password',
+            autoComplete: 'current-password',
+            value: password,
+            setState: setPassword,
+          },
+        ].map(({
+          label, type, autoComplete, value, setState, autoFocus,
+        }) => (
+          <StyledTextField
+            key={label}
+            label={label}
+            type={type}
+            autoComplete={autoComplete}
+            value={value}
+            onChange={({ target }) => setState(target.value)}
+            autoFocus={autoFocus}
+            disabled={loading}
+          />
+        ))}
         <div className={classes.buttonWrapper}>
           <RoundedButton
             variant="contained"
@@ -127,16 +131,10 @@ export default function SignInForm({ setError }) {
           </RoundedButton>
           {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
         </div>
-        <Grid container justify="space-between" className={classes.linksWrapper}>
-          <Link href={ROUTES.SIGN_UP}>
-            <em>Sign up (devo)</em>
-          </Link>
-          <Link href={ROUTES.PASSWORD_FORGET}>
-            <em>Forgot password?</em>
-          </Link>
-        </Grid>
-
       </FormControl>
+      <Link className={classes.links} to={ROUTES.PASSWORD_FORGET}>
+        <em>Forgot password?</em>
+      </Link>
     </Container>
   );
 }
