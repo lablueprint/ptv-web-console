@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { DocumentDeleteButton } from '../../Firebase';
+import DocumentDeleteButton from './DocumentDeleteButton';
 
 export default function ResourcesList({ resources, categoryId }) {
   const resourceItems = resources.map((resource) => (
