@@ -90,36 +90,23 @@ export default function SignInForm({ setError }) {
     <Container className={classes.container}>
       <Typography variant="h4" className={classes.welcome}>Welcome back</Typography>
       <FormControl>
-        {[
-          {
-            label: 'Email',
-            type: 'email',
-            autoComplete: 'email',
-            value: email,
-            setState: setEmail,
-            autoFocus: true,
-          },
-          {
-            label: 'Password',
-            type: 'password',
-            autoComplete: 'current-password',
-            value: password,
-            setState: setPassword,
-          },
-        ].map(({
-          label, type, autoComplete, value, setState, autoFocus,
-        }) => (
-          <StyledTextField
-            key={label}
-            label={label}
-            type={type}
-            autoComplete={autoComplete}
-            value={value}
-            onChange={({ target }) => setState(target.value)}
-            autoFocus={autoFocus}
-            disabled={loading}
-          />
-        ))}
+        <StyledTextField
+          label="Email"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={({ target: { value } }) => setEmail(value)}
+          autoFocus
+          disabled={loading}
+        />
+        <StyledTextField
+          label="Password"
+          type="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={({ target: { value } }) => setPassword(value)}
+          disabled={loading}
+        />
         <div className={classes.buttonWrapper}>
           <RoundedButton
             variant="contained"
