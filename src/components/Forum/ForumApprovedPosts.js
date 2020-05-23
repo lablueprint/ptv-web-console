@@ -1,12 +1,45 @@
-import React from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { useTheme } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ReplyIcon from '@material-ui/icons/Reply';
-import { ForumPostsListByApproval, RepliesChip } from './ForumPostsList';
+import firebase from 'firebase/app';
+import { FormattedReferencedDataField, RepliesChip } from './ForumPostsList';
+import ListView from '../ListView';
+import 'firebase/firestore';
 
 const approvedPostsListColumns = [
+  {
+    id: 'userID',
+    label: 'User',
+    format: (value) => (
+      <FormattedReferencedDataField
+        collection="users"
+        id={value}
+        field="displayName"
+        notFoundMessage="User not found"
+        render={(item) => <>{item}</>}
+      />
+    ),
+  },
+  {
+    id: 'title',
+    label: 'Post Title',
+  },
+  {
+    id: 'categoryID',
+    label: 'Category',
+    format: (value) => (
+      <FormattedReferencedDataField
+        collection="forum_categories"
+        id={value}
+        field="title"
+        notFoundMessage="Catego;ry not found"
+        render={(item) => <>{item}</>}
+      />
+    ),
+  },
   {
     id: 'approvedAt',
     label: 'Approved At',
@@ -21,6 +54,9 @@ const approvedPostsListColumns = [
 
 export default function ForumApprovedPostsList() {
   const theme = useTheme();
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const approvedActionButtons = [
     {
@@ -36,13 +72,36 @@ export default function ForumApprovedPostsList() {
     },
   ];
 
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    firebase.firestore().collection('forum_posts')
+      .where('approved', '==', true)
+      .orderBy('approvedAt')
+      .get()
+      .then((snapshot) => {
+        const forumData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setRows(forumData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   return (
     <Switch>
       {/* Nested route to an individual post goes here */}
       <Route exact>
-        <ForumPostsListByApproval
-          approved
-          additionalColumns={approvedPostsListColumns}
+        <ListView
+          rows={rows}
+          loading={loading}
+          errorMessage={errorMessage}
+          columns={approvedPostsListColumns}
           actionButtons={approvedActionButtons}
         />
       </Route>
