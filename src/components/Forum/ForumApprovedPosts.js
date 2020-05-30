@@ -13,6 +13,7 @@ const approvedPostsListColumns = [
   {
     id: 'userID',
     label: 'User',
+    search: true,
     format: (value) => (
       <FormattedReferencedDataField
         collection="users"
@@ -26,16 +27,18 @@ const approvedPostsListColumns = [
   {
     id: 'title',
     label: 'Post Title',
+    search: true,
   },
   {
     id: 'categoryID',
     label: 'Category',
+    search: true,
     format: (value) => (
       <FormattedReferencedDataField
         collection="forum_categories"
         id={value}
         field="title"
-        notFoundMessage="Catego;ry not found"
+        notFoundMessage="Category not found"
         render={(item) => <>{item}</>}
       />
     ),
@@ -43,11 +46,13 @@ const approvedPostsListColumns = [
   {
     id: 'approvedAt',
     label: 'Approved At',
+    search: false,
     format: (value) => (value ? value.toDate().toLocaleString() : 'Date not found'),
   },
   {
     id: 'id',
     label: 'Replies',
+    search: false,
     format: (value) => <RepliesChip postID={value} />,
   },
 ];

@@ -12,6 +12,7 @@ const pendingPostsListColumns = [
   {
     id: 'userID',
     label: 'User',
+    search: true,
     format: (value) => (
       <FormattedReferencedDataField
         collection="users"
@@ -25,16 +26,18 @@ const pendingPostsListColumns = [
   {
     id: 'title',
     label: 'Post Title',
+    search: true,
   },
   {
     id: 'categoryID',
     label: 'Category',
+    search: true,
     format: (value) => (
       <FormattedReferencedDataField
         collection="forum_categories"
         id={value}
         field="title"
-        notFoundMessage="Catego;ry not found"
+        notFoundMessage="Category not found"
         render={(item) => <>{item}</>}
       />
     ),
@@ -42,6 +45,7 @@ const pendingPostsListColumns = [
   {
     id: 'createdAt',
     label: 'Created At',
+    search: false,
     format: (value) => (value ? value.toDate().toLocaleString() : 'Date not found'),
   },
 ];

@@ -104,7 +104,18 @@ export default function ListView({
             || ([columns].map((columnsList) => (
               columnsList.map((column) => {
                 const value = row[column.id] ? row[column.id] : '';
-                return value.toString().toLowerCase().search(searchText) !== -1;
+                // console.log(value);
+                // console.log(column.format ? column.format(value) : value);
+                // if (column.search) {
+                //   console.log('searching');
+                // }
+                // if (column.textValue) {
+                //   console.log('text');
+                //   console.log(column.textValue);
+                // }
+                return column.search
+                  ? value.toString().toLowerCase().search(searchText) !== -1
+                  : false;
               })
             ))).filter((nest) => nest.filter((item) => item).length !== 0).length !== 0)
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
@@ -112,6 +123,8 @@ export default function ListView({
                   {[columns].map((columnsList) => (
                     columnsList.map((column) => {
                       const value = row[column.id];
+                      const col = column;
+                      col.textValue = column.format ? column.format(value) : value;
                       return (
                         <TableCell key={column.label}>
                           {column.format ? column.format(value) : value}
@@ -150,7 +163,7 @@ ListView.propTypes = {
     id: PropTypes.string.isRequired,
   })).isRequired,
   loading: PropTypes.bool.isRequired,
-  errorMessage: PropTypes.string.isRequired,
+  errorMessage: PropTypes.string,
   columns: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
@@ -160,6 +173,10 @@ ListView.propTypes = {
     Icon: PropTypes.elementType.isRequired,
     color: PropTypes.string,
   })).isRequired,
+};
+
+ListView.defaultProps = {
+  errorMessage: null,
 };
 
 SearchBar.propTypes = {
