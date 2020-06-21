@@ -14,8 +14,14 @@ import TableRow from '@material-ui/core/TableRow';
 import SearchIcon from '@material-ui/icons/Search';
 import PropTypes from 'prop-types';
 import React, { useCallback, useState } from 'react';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import { Typography } from '@material-ui/core';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
   },
@@ -37,7 +43,31 @@ const useStyles = makeStyles({
     marginLeft: 10,
     flex: 1,
   },
-});
+  switchRoot: {
+    flexDirection: 'row',
+    display: 'flex',
+  },
+  switchAdmin: {
+    flex: 1,
+    paddingTop: 10,
+  },
+  spacing: {
+    flex: 3,
+  },
+  tab: {
+    fontSize: theme.typography.pxToRem(20),
+    textTransform: 'none',
+  },
+  dropdown: {
+    flex: 1,
+  },
+}));
+
+const sortOptions = [
+  'Newest',
+  'Oldest',
+  'Alphabetical',
+];
 
 function SearchBar({ setSearchText, setPage }) {
   const classes = useStyles();
@@ -58,8 +88,43 @@ function SearchBar({ setSearchText, setPage }) {
   );
 }
 
+function SortDropdown({
+  anchorEl, selectedIndex, handleClickListItem, handleClose, handleMenuItemClick,
+}) {
+  const classes = useStyles();
+  return (
+    <Typography component="div">
+      <List component="nav" className={classes.dropdown}>
+        <ListItem
+          button
+          onClick={handleClickListItem}
+        >
+          <ListItemText primary="Sort By: " secondary={sortOptions[selectedIndex]} />
+        </ListItem>
+      </List>
+      <Menu
+        id="lock-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        {sortOptions.map((option, index) => (
+          <MenuItem
+            key={option}
+            selected={index === selectedIndex}
+            onClick={(e) => handleMenuItemClick(e, index)}
+          >
+            {option}
+          </MenuItem>
+        ))}
+      </Menu>
+    </Typography>
+  );
+}
+
 export default function ListView({
-  rows, loading, errorMessage, columns, actionButtons,
+  rows, loading, errorMessage, columns, actionButtons, sortColumnIndex, timestampColumnIndex,
 }) {
   const classes = useStyles();
   const [page, setPage] = useState(0);
@@ -67,6 +132,24 @@ export default function ListView({
 
   /* Search bar text state */
   const [searchText, setSearchText] = useState(null);
+
+  /* Sort dropdown hooks */
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  /* Sort dropdown functions */
+  const handleClickListItem = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleMenuItemClick = (_, i) => {
+    setSelectedIndex(i);
+    setAnchorEl(null);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleChangePage = useCallback((event, newPage) => {
     event.preventDefault();
@@ -81,7 +164,17 @@ export default function ListView({
 
   return (
     <Paper className={classes.root} elevation={0}>
-      <SearchBar setSearchText={setSearchText} setPage={setPage} classes={classes} />
+      <Typography component="div" className={classes.switchRoot}>
+        <SearchBar setSearchText={setSearchText} setPage={setPage} classes={classes} />
+        <Typography component="div" className={classes.spacing} />
+        <SortDropdown
+          anchorEl={anchorEl}
+          selectedIndex={selectedIndex}
+          handleClickListItem={handleClickListItem}
+          handleClose={handleClose}
+          handleMenuItemClick={handleMenuItemClick}
+        />
+      </Typography>
       {loading && <LinearProgress />}
       {errorMessage && <p>{errorMessage}</p>}
       <TableContainer>
@@ -104,20 +197,35 @@ export default function ListView({
             || ([columns].map((columnsList) => (
               columnsList.map((column) => {
                 const value = row[column.id] ? row[column.id] : '';
-                // console.log(value);
-                // console.log(column.format ? column.format(value) : value);
-                // if (column.search) {
-                //   console.log('searching');
-                // }
-                // if (column.textValue) {
-                //   console.log('text');
-                //   console.log(column.textValue);
-                // }
                 return column.search
                   ? value.toString().toLowerCase().search(searchText) !== -1
                   : false;
               })
-            ))).filter((nest) => nest.filter((item) => item).length !== 0).length !== 0)
+            )))
+              .filter((nest) => nest.filter((item) => item).length !== 0).length !== 0)
+              .sort((a, b) => {
+                switch (selectedIndex) {
+                  case 0: /* Newest */
+                    if (a[columns[timestampColumnIndex].id].toDate()
+                      < b[columns[timestampColumnIndex].id].toDate()) {
+                      return 1;
+                    }
+                    return -1;
+                  case 1: /* Oldest */
+                    if (a[columns[timestampColumnIndex].id].toDate()
+                      > b[columns[timestampColumnIndex].id].toDate()) {
+                      return 1;
+                    }
+                    return -1;
+                  case 2: /* Alphabetical */
+                    if (a[columns[sortColumnIndex].id] > b[columns[sortColumnIndex].id]) {
+                      return 1;
+                    }
+                    return -1;
+                  default: /* Invalid selection */
+                    return true;
+                }
+              })
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                   {[columns].map((columnsList) => (
@@ -173,6 +281,8 @@ ListView.propTypes = {
     Icon: PropTypes.elementType.isRequired,
     color: PropTypes.string,
   })).isRequired,
+  sortColumnIndex: PropTypes.number.isRequired,
+  timestampColumnIndex: PropTypes.number.isRequired,
 };
 
 ListView.defaultProps = {
@@ -182,4 +292,16 @@ ListView.defaultProps = {
 SearchBar.propTypes = {
   setSearchText: PropTypes.func.isRequired,
   setPage: PropTypes.func.isRequired,
+};
+
+SortDropdown.propTypes = {
+  anchorEl: PropTypes.objectOf(PropTypes.object),
+  selectedIndex: PropTypes.number.isRequired,
+  handleClickListItem: PropTypes.func.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  handleMenuItemClick: PropTypes.func.isRequired,
+};
+
+SortDropdown.defaultProps = {
+  anchorEl: null,
 };

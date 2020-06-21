@@ -8,11 +8,13 @@ import { FormattedReferencedDataField } from './ForumPostsList';
 import ListView from '../ListView';
 import 'firebase/firestore';
 
+const pendingPostsListColumnsSortIndex = 1;
+const pendingPostsListColumnsTimeIndex = 3;
 const pendingPostsListColumns = [
   {
     id: 'userID',
     label: 'User',
-    search: true,
+    search: false,
     format: (value) => (
       <FormattedReferencedDataField
         collection="users"
@@ -31,7 +33,7 @@ const pendingPostsListColumns = [
   {
     id: 'categoryID',
     label: 'Category',
-    search: true,
+    search: false,
     format: (value) => (
       <FormattedReferencedDataField
         collection="forum_categories"
@@ -99,6 +101,8 @@ export default function ForumPendingPostsList() {
       errorMessage={errorMessage}
       columns={pendingPostsListColumns}
       actionButtons={pendingActionButtons}
+      sortColumnIndex={pendingPostsListColumnsSortIndex}
+      timestampColumnIndex={pendingPostsListColumnsTimeIndex}
     />
   );
 }

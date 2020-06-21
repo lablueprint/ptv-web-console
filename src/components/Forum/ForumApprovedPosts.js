@@ -9,11 +9,13 @@ import { FormattedReferencedDataField, RepliesChip } from './ForumPostsList';
 import ListView from '../ListView';
 import 'firebase/firestore';
 
+const approvedPostsListColumnsSortIndex = 1;
+const approvedPostsListColumnsTimeIndex = 3;
 const approvedPostsListColumns = [
   {
     id: 'userID',
     label: 'User',
-    search: true,
+    search: false,
     format: (value) => (
       <FormattedReferencedDataField
         collection="users"
@@ -32,7 +34,7 @@ const approvedPostsListColumns = [
   {
     id: 'categoryID',
     label: 'Category',
-    search: true,
+    search: false,
     format: (value) => (
       <FormattedReferencedDataField
         collection="forum_categories"
@@ -108,6 +110,8 @@ export default function ForumApprovedPostsList() {
           errorMessage={errorMessage}
           columns={approvedPostsListColumns}
           actionButtons={approvedActionButtons}
+          sortColumnIndex={approvedPostsListColumnsSortIndex}
+          timestampColumnIndex={approvedPostsListColumnsTimeIndex}
         />
       </Route>
     </Switch>
