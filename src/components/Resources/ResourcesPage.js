@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import firebase from 'firebase/app';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { CategoriesList } from './Category';
+import CategoriesGrid from './Category/CategoriesGrid';
 import 'firebase/firestore';
 
 
@@ -31,7 +31,7 @@ export default function ResourcesPage() {
       {loading && <CircularProgress />}
       {errorMessage && <p>{errorMessage}</p>}
       <Link to="/resources/new">Create a new category</Link>
-      <CategoriesList categories={categories} />
+      <CategoriesGrid categories={categories} />
     </div>
   );
 }
