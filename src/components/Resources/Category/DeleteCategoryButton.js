@@ -1,10 +1,17 @@
+import { makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import PropTypes from 'prop-types';
 
+const useStyles = makeStyles({
+  button: {
+    marginLeft: '30%',
+  },
+});
 export default function DeleteCategoryButton({ categoryFirestoreId }) {
   const [error, setError] = useState(null);
+  const classes = useStyles();
 
   const onClick = (event) => {
     event.preventDefault();
@@ -33,7 +40,7 @@ export default function DeleteCategoryButton({ categoryFirestoreId }) {
 
   return (
     <div>
-      <button type="button" onClick={onClick}>
+      <button type="button" onClick={onClick} className={classes.button}>
         Delete
       </button>
       {error && <p>{error.message}</p>}
