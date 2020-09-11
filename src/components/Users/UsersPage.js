@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import firebase from 'firebase/app';
@@ -13,10 +13,14 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { Typography } from '@material-ui/core';
+import { Typography, useTheme } from '@material-ui/core';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
+import CheckIcon from '@material-ui/icons/Check';
+import ClearIcon from '@material-ui/icons/Clear';
+import EditIcon from '@material-ui/icons/Edit';
 import UsersList from './UsersList';
+import ListView from '../ListView';
 
 const useStyles = makeStyles((theme) => ({
   searchBarRoot: {
@@ -58,6 +62,32 @@ const sortOptions = [
   'Newest Users',
   'Oldest Users',
   'Name - Alphabetical',
+];
+
+const usersListColumnsSortIndex = 0;
+const usersListColumnsTimeIndex = 2;
+const usersListColumns = [
+  {
+    id: 'name',
+    label: 'Full Name',
+    search: true,
+  },
+  {
+    id: 'displayName',
+    label: 'Display Name',
+    search: true,
+  },
+  {
+    id: 'updatedAt',
+    label: 'Date Joined',
+    search: false,
+    format: (value) => (value ? value.toDate().toLocaleString() : 'Date not found'),
+  },
+  {
+    id: 'email',
+    label: 'Email',
+    search: true,
+  },
 ];
 
 function SearchBar({ setSearchText, setPage }) {
@@ -136,72 +166,127 @@ function SortDropdown({
 }
 
 export default function UsersPage() {
-  const classes = useStyles();
-  const [value, loading, error] = useCollection(
-    firebase.firestore().collection('users'),
-  );
-  const [users, setUsers] = useState([]);
+  const theme = useTheme();
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  /* Page number state */
-  const [page, setPage] = useState(0);
+  const pendingActionButtons = [
+    {
+      Icon: EditIcon,
+      color: theme.palette.text.main,
+    },
+    {
+      Icon: CheckIcon,
+      color: theme.palette.success.main,
+    },
+    {
+      Icon: ClearIcon,
+      color: theme.palette.error.main,
+    },
+  ];
 
-  /* Search bar text state */
-  const [searchText, setSearchText] = useState(null);
-
-  /* Standard user to admin switch state */
-  const [adminSwitch, setAdminSwitch] = useState(0);
-
-  /* Sort dropdown hooks */
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  /* Sort dropdown functions */
-  const handleClickListItem = (e) => {
-    setAnchorEl(e.currentTarget);
-  };
-
-  const handleMenuItemClick = (_, i) => {
-    setSelectedIndex(i);
-    setAnchorEl(null);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    firebase.firestore().collection('users')
+      .orderBy('updatedAt')
+      .get()
+      .then((snapshot) => {
+        const forumData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setRows(forumData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
+        setLoading(false);
+      });
+  }, []);
 
   useEffect(() => {
-    if (value) {
-      setUsers(value.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    }
-  }, [value]);
+    fetchData();
+  }, [fetchData]);
 
   return (
     <div>
-      <h1>Users List</h1>
-      <SearchBar setSearchText={setSearchText} classes={classes} setPage={setPage} />
-      <Typography component="div" className={classes.switchRoot}>
-        <AdminSwitch adminSwitch={adminSwitch} setAdminSwitch={setAdminSwitch} setPage={setPage} />
-        <Typography component="div" className={classes.spacing} />
-        <SortDropdown
-          anchorEl={anchorEl}
-          selectedIndex={selectedIndex}
-          handleClickListItem={handleClickListItem}
-          handleClose={handleClose}
-          handleMenuItemClick={handleMenuItemClick}
-        />
-      </Typography>
-      {loading && <p>loading...</p>}
-      {error && <p>{error.message}</p>}
-      <UsersList
-        users={users}
-        searchText={searchText}
-        adminSwitch={adminSwitch}
-        selectedIndex={selectedIndex}
-        page={page}
-        setPage={setPage}
+      <h1>Users</h1>
+      <ListView
+        rows={rows}
+        loading={loading}
+        errorMessage={errorMessage}
+        columns={usersListColumns}
+        actionButtons={pendingActionButtons}
+        sortColumnIndex={usersListColumnsSortIndex}
+        timestampColumnIndex={usersListColumnsTimeIndex}
       />
     </div>
   );
+
+  // const classes = useStyles();
+  // const [value, loading, error] = useCollection(
+  //   firebase.firestore().collection('users'),
+  // );
+  // const [users, setUsers] = useState([]);
+
+  // /* Page number state */
+  // const [page, setPage] = useState(0);
+
+  // /* Search bar text state */
+  // const [searchText, setSearchText] = useState(null);
+
+  // /* Standard user to admin switch state */
+  // const [adminSwitch, setAdminSwitch] = useState(0);
+
+  // /* Sort dropdown hooks */
+  // const [anchorEl, setAnchorEl] = useState(null);
+  // const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // /* Sort dropdown functions */
+  // const handleClickListItem = (e) => {
+  //   setAnchorEl(e.currentTarget);
+  // };
+
+  // const handleMenuItemClick = (_, i) => {
+  //   setSelectedIndex(i);
+  //   setAnchorEl(null);
+  // };
+
+  // const handleClose = () => {
+  //   setAnchorEl(null);
+  // };
+
+  // useEffect(() => {
+  //   if (value) {
+  //     setUsers(value.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  //   }
+  // }, [value]);
+
+  // return (
+  //   <div>
+  //     <h1>Users List</h1>
+  //     <SearchBar setSearchText={setSearchText} classes={classes} setPage={setPage} />
+  //     <Typography component="div" className={classes.switchRoot}>
+  //       <AdminSwitch adminSwitch={adminSwitch} setAdminSwitch={setAdminSwitch} setPage={setPage} />
+  //       <Typography component="div" className={classes.spacing} />
+  //       <SortDropdown
+  //         anchorEl={anchorEl}
+  //         selectedIndex={selectedIndex}
+  //         handleClickListItem={handleClickListItem}
+  //         handleClose={handleClose}
+  //         handleMenuItemClick={handleMenuItemClick}
+  //       />
+  //     </Typography>
+  //     {loading && <p>loading...</p>}
+  //     {error && <p>{error.message}</p>}
+  //     <UsersList
+  //       users={users}
+  //       searchText={searchText}
+  //       adminSwitch={adminSwitch}
+  //       selectedIndex={selectedIndex}
+  //       page={page}
+  //       setPage={setPage}
+  //     />
+  //   </div>
+  // );
 }
 
 SearchBar.propTypes = {
