@@ -18,7 +18,7 @@ export default function FormattedReferencedDataField({
       firebase.firestore().collection(collection).doc(id).get()
         .then((snapshot) => {
           const data = snapshot.data();
-          if (data && data[field]) {
+          if (data/* && data[field] */) {
             setItem(data[field]);
           }
           setLoading(false);
