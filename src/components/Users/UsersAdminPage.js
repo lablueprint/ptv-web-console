@@ -31,7 +31,7 @@ const usersListColumns = [
   },
 ];
 
-export default function UsersPage() {
+export default function UsersAdminPage() {
   const theme = useTheme();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -62,7 +62,7 @@ export default function UsersPage() {
     setLoading(true);
     firebase.firestore().collection('users')
       .orderBy('updatedAt')
-      .where('isAdmin', '==', false)
+      .where('isAdmin', '==', true)
       .get()
       .then((snapshot) => {
         const forumData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));

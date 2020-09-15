@@ -13,13 +13,16 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import SearchIcon from '@material-ui/icons/Search';
 import PropTypes from 'prop-types';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { Typography } from '@material-ui/core';
+import ErrorIcon from '@material-ui/icons/Error';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -60,6 +63,11 @@ const useStyles = makeStyles((theme) => ({
   },
   dropdown: {
     flex: 1,
+  },
+  errorPop: {
+    marginLeft: 10,
+    color: theme.palette.error.main,
+    marginBottom: '-8px',
   },
 }));
 
@@ -129,6 +137,7 @@ export default function ListView({
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [banMap, setBanMap] = useState([]);
 
   /* Search bar text state */
   const [searchText, setSearchText] = useState(null);
@@ -160,6 +169,15 @@ export default function ListView({
     event.preventDefault();
     setRowsPerPage(event.target.value);
     setPage(0);
+  }, []);
+
+  useEffect(() => {
+    firebase.firestore().collection('users')
+      .get()
+      .then((snapshot) => {
+        const userData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setBanMap(new Map(userData.map((user) => [user.id, user.isBanned])));
+      });
   }, []);
 
   return (
@@ -232,21 +250,44 @@ export default function ListView({
                     columnsList.map((column) => {
                       const value = row[column.id];
                       const col = column;
-                      col.textValue = column.format ? column.format(value) : value;
+                      col.textValue = column.format ? column.format(value, row.id) : value;
                       return (
                         <TableCell key={column.label}>
-                          {column.format ? column.format(value) : value}
+                          {column.format ? column.format(value, row.id) : value}
+                          {(column.id === 'name' && banMap.get(row.id))
+                            ? <ErrorIcon className={classes.errorPop} />
+                            : null}
                         </TableCell>
                       );
                     })))}
                   <TableCell>
-                    {actionButtons.map(({ Icon, color }, i) => (
-                    // Array will never change; index okay to use as key
-                    // eslint-disable-next-line react/no-array-index-key
-                      <IconButton key={i}>
-                        <Icon style={{ color }} />
-                      </IconButton>
-                    ))}
+                    {actionButtons.map(({
+                      Icon, color, action,
+                    }, i) => ((action)
+                      ? (
+                        <IconButton
+                          onClick={() => {
+                            action(row);
+                            const tmp = banMap;
+                            tmp.set(row.id, !tmp.get(row.id));
+                            setBanMap(new Map(tmp));
+                          }}
+                          // Array will never change; index okay to use as key
+                          // eslint-disable-next-line react/no-array-index-key
+                          key={i}
+                        >
+                          <Icon style={{ color }} />
+                        </IconButton>
+                      )
+                      : (
+                        <IconButton
+                          // Array will never change; index okay to use as key
+                          // eslint-disable-next-line react/no-array-index-key
+                          key={i}
+                        >
+                          <Icon style={{ color }} />
+                        </IconButton>
+                      )))}
                   </TableCell>
                 </TableRow>
               ))}
