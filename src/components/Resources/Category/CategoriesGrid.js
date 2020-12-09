@@ -29,6 +29,12 @@ export default function CategoriesGrid({ categories }) {
   return (
     <div>
       <Grid classes={gridStyles} container spacing={spacing}>
+        <CustomCard
+          id="new"
+          title="add category"
+          imageSrc="https://firebasestorage.googleapis.com/v0/b/la-blueprint-ptv.appspot.com/o/resources%2Ficons%2FAddCategory.png?alt=media&token=8fafe6e5-0ad1-4b4b-ac70-9685d286e250"// use code to pull from firebase
+          description="hello"
+        />
         {categoryItems}
       </Grid>
     </div>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import firebase from 'firebase/app';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CategoriesGrid from './Category/CategoriesGrid';
@@ -30,8 +29,9 @@ export default function ResourcesPage() {
       <h1>Resource Categories</h1>
       {loading && <CircularProgress />}
       {errorMessage && <p>{errorMessage}</p>}
-      <Link to="/resources/new">Create a new category</Link>
-      <CategoriesGrid categories={categories} />
+      <div style={{ display: 'flex' }}>
+        <CategoriesGrid categories={categories} />
+      </div>
     </div>
   );
 }
