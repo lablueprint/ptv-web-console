@@ -28,6 +28,7 @@ const useStyles = makeStyles(() => ({
   }),
 }));
 
+// take a look at the classes
 export default function CustomCard({
   /* Note for future dev: title and description props are available to use as well */
   imageSrc, id,
