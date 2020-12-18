@@ -49,7 +49,7 @@ export default function CustomCard({
           </Card>
         </Link>
       </CardActionArea>
-      <DeleteCategoryButton categoryFirestoreId={id} />
+      {id !== 'new' && <DeleteCategoryButton categoryFirestoreId={id} />}
     </div>
   );
 }
