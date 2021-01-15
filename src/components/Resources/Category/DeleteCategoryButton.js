@@ -6,7 +6,23 @@ import PropTypes from 'prop-types';
 
 const useStyles = makeStyles({
   button: {
-    marginLeft: '30%',
+    margin: 'auto',
+    marginTop: 10,
+    borderRadius: 15,
+    backgroundColor: '#194261',
+    color: 'white',
+    borderWidth: 0,
+    textAlign: 'center',
+    paddingLeft: 45,
+    paddingRight: 45,
+    paddingTop: 5,
+    paddingBottom: 5,
+    fontFamily: 'Poppins',
+    outline: 0,
+    transition: '0.2s',
+    '&:hover': {
+      transform: 'scale(1.1)',
+    },
   },
 });
 export default function DeleteCategoryButton({ categoryFirestoreId }) {

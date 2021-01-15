@@ -13,6 +13,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
+    textAlign: 'center',
   },
   actionArea: {
     borderRadius: 15,
@@ -49,6 +50,7 @@ export default function CustomCard({
             />
           </Card>
         </Link>
+        {/* <DeleteCategoryButton categoryFirestoreId={id} /> */}
       </CardActionArea>
       <DeleteCategoryButton categoryFirestoreId={id} />
     </div>
