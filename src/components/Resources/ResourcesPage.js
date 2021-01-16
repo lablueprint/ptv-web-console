@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import firebase from 'firebase/app';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { makeStyles } from '@material-ui/core/styles';
 import CategoriesGrid from './Category/CategoriesGrid';
 import 'firebase/firestore';
 
@@ -9,6 +10,12 @@ export default function ResourcesPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+
+  const useStyles = makeStyles(() => ({
+    categoriesContainer: {
+      display: 'flex',
+    },
+  }));
 
   useEffect(() => {
     setLoading(true);
@@ -24,12 +31,13 @@ export default function ResourcesPage() {
       });
   }, []);
 
+  const classes = useStyles();
   return (
     <div>
       <h1>Resource Categories</h1>
       {loading && <CircularProgress />}
       {errorMessage && <p>{errorMessage}</p>}
-      <div style={{ display: 'flex' }}>
+      <div className={classes.categoriesContainer}>
         <CategoriesGrid categories={categories} />
       </div>
     </div>

@@ -15,13 +15,26 @@ const useStyles = makeStyles(({ breakpoints }) => ({
 export default function CategoriesGrid({ categories }) {
   const gridStyles = useStyles();
   const spacing = 4;
-  const categoryItems = categories.map((category) => (
+  const addCategoryButton = categories.filter((category) => category.id === 'new').map((category) => (
     <Grid item>
       <CustomCard
         id={category.id}
         title={category.title}
         imageSrc={category.thumbnail.src}
         description={category.description}
+        showDeleteButton={false}
+      />
+    </Grid>
+  ));
+
+  const categoryItems = categories.filter((category) => category.id !== 'new').map((category) => (
+    <Grid item>
+      <CustomCard
+        id={category.id}
+        title={category.title}
+        imageSrc={category.thumbnail.src}
+        description={category.description}
+        showDeleteButton
       />
     </Grid>
   ));
@@ -29,14 +42,7 @@ export default function CategoriesGrid({ categories }) {
   return (
     <div>
       <Grid classes={gridStyles} container spacing={spacing}>
-        <Grid item>
-          <CustomCard
-            id="new"
-            title="add category"
-            imageSrc="https://firebasestorage.googleapis.com/v0/b/la-blueprint-ptv.appspot.com/o/resources%2Ficons%2FAddCategory.png?alt=media&token=8fafe6e5-0ad1-4b4b-ac70-9685d286e250"// use code to pull from firebase
-            description="hello"
-          />
-        </Grid>
+        {addCategoryButton}
         {categoryItems}
       </Grid>
     </div>

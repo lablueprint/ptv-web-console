@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -30,8 +30,13 @@ const useStyles = makeStyles(() => ({
 
 export default function CustomCard({
   /* Note for future dev: title and description props are available to use as well */
-  imageSrc, id,
+  imageSrc, id, showDeleteButton,
 }) {
+  const [showButton, setShowButton] = useState(false);
+  useEffect(() => {
+    if (showDeleteButton) setShowButton(true);
+  }, [showDeleteButton]);
+
   const classes = useStyles();
   return (
     <div className={classes.container}>
@@ -49,7 +54,7 @@ export default function CustomCard({
           </Card>
         </Link>
       </CardActionArea>
-      {id !== 'new' && <DeleteCategoryButton categoryFirestoreId={id} />}
+      {showButton && <DeleteCategoryButton categoryFirestoreId={id} />}
     </div>
   );
 }
@@ -57,4 +62,5 @@ export default function CustomCard({
 CustomCard.propTypes = {
   id: PropTypes.string.isRequired,
   imageSrc: PropTypes.string.isRequired,
+  showDeleteButton: PropTypes.bool.isRequired,
 };
