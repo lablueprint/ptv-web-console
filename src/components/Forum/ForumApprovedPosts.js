@@ -5,6 +5,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ReplyIcon from '@material-ui/icons/Reply';
 import firebase from 'firebase/app';
+import * as ROUTES from '../../constants/routes';
+import ForumApprovedPostDetails from './ForumApprovedPostDetails';
 import { FormattedReferencedDataField, RepliesChip } from './ForumPostsList';
 import ListView from '../ListView';
 import 'firebase/firestore';
@@ -102,8 +104,10 @@ export default function ForumApprovedPostsList() {
 
   return (
     <Switch>
-      {/* Nested route to an individual post goes here */}
-      <Route exact>
+      <Route exact path={ROUTES.FORUM_APPROVED_POST_DETAILS}>
+        <ForumApprovedPostDetails />
+      </Route>
+      <Route exact path={ROUTES.FORUM_APPROVED_POSTS}>
         <ListView
           rows={rows}
           loading={loading}
