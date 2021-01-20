@@ -15,13 +15,26 @@ const useStyles = makeStyles(({ breakpoints }) => ({
 export default function CategoriesGrid({ categories }) {
   const gridStyles = useStyles();
   const spacing = 4;
-  const categoryItems = categories.map((category) => (
+  const addCategoryButton = categories.filter((category) => category.id === 'new').map((category) => (
     <Grid item>
       <CustomCard
         id={category.id}
         title={category.title}
         imageSrc={category.thumbnail.src}
         description={category.description}
+        showDeleteButton={false}
+      />
+    </Grid>
+  ));
+
+  const categoryItems = categories.filter((category) => category.id !== 'new').map((category) => (
+    <Grid item>
+      <CustomCard
+        id={category.id}
+        title={category.title}
+        imageSrc={category.thumbnail.src}
+        description={category.description}
+        showDeleteButton
       />
     </Grid>
   ));
@@ -29,6 +42,7 @@ export default function CategoriesGrid({ categories }) {
   return (
     <div>
       <Grid classes={gridStyles} container spacing={spacing}>
+        {addCategoryButton}
         {categoryItems}
       </Grid>
     </div>
