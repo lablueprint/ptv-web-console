@@ -9,3 +9,5 @@ export const FORUM_APPROVED_POSTS = '/forum/approved';
 export const FORUM_APPROVED_POST_DETAILS = '/forum/approved/:postID';
 export const FORUM_NEW_POST = '/forum/new';
 export const USERS = '/users';
+export const USERS_STANDARD_USERS = '/users/standard';
+export const USERS_ADMIN_USERS = '/users/admin';
