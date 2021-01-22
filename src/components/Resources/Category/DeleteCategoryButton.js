@@ -25,10 +25,10 @@ const useStyles = makeStyles({
     },
   },
 });
+
 export default function DeleteCategoryButton({ categoryFirestoreId }) {
   const [error, setError] = useState(null);
   const classes = useStyles();
-
   const onClick = (event) => {
     event.preventDefault();
     if (window.confirm('Are you sure you wish to delete this item?')) {
@@ -54,12 +54,18 @@ export default function DeleteCategoryButton({ categoryFirestoreId }) {
     }
   };
 
-  return (
+  const deleteButton = (
     <div>
       <button type="button" onClick={onClick} className={classes.button}>
         Delete
       </button>
       {error && <p>{error.message}</p>}
+    </div>
+  );
+
+  return (
+    <div>
+      {deleteButton}
     </div>
   );
 }
