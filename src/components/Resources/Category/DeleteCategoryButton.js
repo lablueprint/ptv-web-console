@@ -6,13 +6,31 @@ import PropTypes from 'prop-types';
 
 const useStyles = makeStyles({
   button: {
-    marginLeft: '30%',
+    margin: 'auto',
+    marginTop: 10,
+    borderRadius: 15,
+    backgroundColor: '#194261',
+    color: 'white',
+    borderWidth: 0,
+    // alignItems: 'center',
+    textAlign: 'center',
+    justifyItems: 'center',
+    paddingLeft: 45,
+    paddingRight: 45,
+    paddingTop: 5,
+    paddingBottom: 5,
+    fontFamily: 'Poppins',
+    outline: 0,
+    transition: '0.2s',
+    '&:hover': {
+      transform: 'scale(1.1)',
+    },
   },
 });
+
 export default function DeleteCategoryButton({ categoryFirestoreId }) {
   const [error, setError] = useState(null);
   const classes = useStyles();
-
   const onClick = (event) => {
     event.preventDefault();
     if (window.confirm('Are you sure you wish to delete this item?')) {
@@ -38,12 +56,18 @@ export default function DeleteCategoryButton({ categoryFirestoreId }) {
     }
   };
 
-  return (
+  const deleteButton = (
     <div>
       <button type="button" onClick={onClick} className={classes.button}>
         Delete
       </button>
       {error && <p>{error.message}</p>}
+    </div>
+  );
+
+  return (
+    <div>
+      {deleteButton}
     </div>
   );
 }
